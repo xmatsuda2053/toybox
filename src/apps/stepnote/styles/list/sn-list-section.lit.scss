@@ -1,0 +1,61 @@
+#contents-root {
+  header {
+    cursor: pointer;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    padding-block: var(--wa-space-2xs);
+    margin-block-end: var(--wa-space-3xs);
+
+    span {
+      font-size: var(--wa-font-size-s);
+      margin-inline-end: auto;
+    }
+
+    wa-icon {
+      font-size: var(--wa-font-size-l);
+
+      transform: rotate(-90deg); // デフォルト（閉じている状態）
+      transition:
+        transform 0.2s ease-in-out,
+        color 0.2s;
+    }
+
+    &:hover {
+      color: var(--wa-color-neutral-90);
+    }
+  }
+
+  .contents {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows 0.3s ease-in-out,
+      visibility 0.3s;
+
+    .contents-inner {
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+  }
+
+  &.open {
+    header {
+      wa-icon {
+        transform: rotate(0); // 開いた時は回転を戻す
+      }
+    }
+
+    .contents {
+      grid-template-rows: 1fr;
+      visibility: visible;
+
+      .contents-inner {
+        opacity: 1;
+      }
+    }
+  }
+}

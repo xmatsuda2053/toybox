@@ -1,0 +1,75 @@
+@use "../../../_shared/mixins";
+
+#contents-root {
+  height: 100%;
+
+  padding-inline: var(--wa-space-2xs);
+  margin-block-start: var(--wa-space-m);
+
+  display: flex;
+  flex-direction: column;
+
+  @include mixins.scrollable(
+    var(--wa-color-neutral-30),
+    var(--wa-color-neutral-40),
+    var(--wa-color-neutral-40)
+  );
+
+  &:hover {
+    --sb-thumb-color: var(--wa-color-neutral-20);
+  }
+
+  &.pending {
+    .status-icon {
+      color: var(--wa-color-neutral-10);
+    }
+  }
+  &.progress {
+    .status-icon {
+      color: var(--wa-color-brand-50);
+    }
+  }
+  &.done {
+    .status-icon {
+      color: var(--wa-color-success-50);
+    }
+  }
+
+  .task-item {
+    height: auto;
+    padding-block-end: var(--wa-space-m);
+
+    display: flex;
+    flex-direction: column;
+
+    .has-label {
+      display: flex;
+      align-items: center;
+
+      .label {
+        font-size: var(--wa-font-size-s);
+        width: 70px;
+        flex-shrink: 0;
+      }
+
+      .item {
+        flex-grow: 1;
+        min-width: 0;
+      }
+
+      wa-button {
+        margin-inline-start: var(--wa-space-2xs);
+      }
+    }
+
+    wa-input {
+      wa-icon {
+        font-size: var(--wa-font-size-m);
+      }
+    }
+
+    &.grow-item {
+      flex-grow: 1;
+    }
+  }
+}

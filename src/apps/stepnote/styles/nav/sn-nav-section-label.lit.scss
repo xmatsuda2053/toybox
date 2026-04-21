@@ -1,0 +1,79 @@
+@use "../../../_shared/mixins";
+
+#contents-root {
+  background: var(--wa-color-neutral-20);
+
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  overflow: hidden;
+
+  .header {
+    display: flex;
+
+    color: var(--wa-color-neutral-95);
+    font-size: var(--wa-font-size-m);
+    font-weight: bold;
+
+    padding-block: 0;
+    padding-inline: var(--wa-space-s);
+
+    .end {
+      margin-inline-start: auto;
+    }
+
+    wa-icon {
+      cursor: pointer;
+      font-size: var(--wa-font-size-l);
+
+      transition:
+        transform 0.2s ease-in-out,
+        color 0.2s;
+
+      &:hover {
+        color: var(--wa-color-neutral-70);
+      }
+    }
+  }
+
+  .search {
+    padding: 0 var(--wa-space-s);
+    margin-block-start: var(--wa-space-xs);
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .contents {
+    padding-inline-start: var(--wa-space-s);
+    padding-inline-end: var(--wa-space-2xs);
+    scrollbar-gutter: stable;
+
+    @include mixins.scrollable(
+      var(--wa-color-neutral-90),
+      var(--wa-color-neutral-70),
+      var(--wa-color-neutral-70)
+    );
+
+    &:hover {
+      --sb-thumb-color: var(--wa-color-neutral-90);
+    }
+  }
+
+  #add-dialog-overview {
+    .dialog-item {
+      &:not(:last-child) {
+        margin-block-end: var(--wa-space-m);
+      }
+    }
+
+    .hidden-item {
+      display: none;
+    }
+  }
+
+  #delete-dialog-overview {
+    .delete-confirmation {
+      color: var(--wa-color-neutral-10);
+      font-size: var(--wa-font-size-s);
+    }
+  }
+}

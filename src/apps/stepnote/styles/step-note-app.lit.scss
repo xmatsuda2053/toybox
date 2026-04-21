@@ -1,0 +1,91 @@
+$width-menu: 50px;
+$width-nav: 270px;
+$width-list: 300px;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+#importFile {
+  display: none;
+}
+
+wa-resize-observer {
+  display: block;
+  height: 100%;
+
+  wa-drawer {
+    --size: calc($width-nav + $width-list);
+    --spacing: 0px;
+
+    &::part(body) {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    &::part(dialog) {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .drawer-contents {
+      display: grid;
+      grid-template-columns: $width-nav $width-list;
+      height: 100%;
+      overflow: hidden;
+
+      .nav {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        height: 100%;
+        overflow: hidden;
+        border-right: 1px solid var(--wa-color-surface-border);
+
+        .label {
+          overflow-y: auto;
+        }
+      }
+
+      .list {
+        height: 100%;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .content {
+    display: grid;
+    grid-template-columns: $width-menu $width-nav $width-list 1fr 1fr;
+    overflow: hidden;
+
+    height: 100%;
+
+    &.thin {
+      grid-template-columns: $width-menu 0 0 1fr 1fr;
+    }
+
+    .panel {
+      overflow-y: auto;
+
+      &.menu {
+        border-right: 1px solid var(--wa-color-neutral-50);
+      }
+
+      &.nav {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        overflow: hidden;
+        border-right: 1px solid var(--wa-color-neutral-50);
+
+        .label {
+          overflow-y: auto;
+        }
+      }
+
+      &.journal {
+        border-right: 0;
+      }
+    }
+  }
+}

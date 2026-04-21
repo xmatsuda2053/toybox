@@ -1,0 +1,29 @@
+{
+  "name": "toybox",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@awesome.me/webawesome": "^3.3.1",
+    "@github/markdown-toolbar-element": "^2.2.3",
+    "dexie": "^4.0.11",
+    "dexie-export-import": "^4.4.0",
+    "github-markdown-css": "^5.9.0",
+    "lit": "^3.2.1",
+    "marked": "^17.0.4",
+    "uuidv7": "^1.2.1"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.85.0",
+    "terser": "^5.39.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0",
+    "vite-plugin-singlefile": "^2.1.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

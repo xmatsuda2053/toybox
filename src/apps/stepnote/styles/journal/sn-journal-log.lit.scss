@@ -1,0 +1,80 @@
+@use "../../../_shared/mixins";
+
+#contents-root {
+  margin-block-start: var(--wa-space-m);
+
+  padding-inline: var(--wa-space-2xs);
+  margin-block-end: var(--wa-space-m);
+
+  height: 100%;
+
+  .search-area {
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+    background-color: var(--wa-color-neutral-95);
+
+    padding-block-end: var(--wa-space-m);
+  }
+
+  .log-area {
+    flex: 1;
+    margin-block-end: var(--wa-space-s);
+
+    ps-journal-log-item:not(:last-child)::after {
+      content: "";
+      height: var(--wa-space-m);
+      border-inline-start: 2px solid var(--wa-color-neutral-80);
+      margin-inline-start: var(--wa-space-xl);
+    }
+
+    .hidden {
+      display: none;
+    }
+  }
+
+  .footer-area {
+    position: sticky;
+    bottom: 0;
+    z-index: 10000;
+    background-color: var(--wa-color-neutral-95);
+
+    padding-block-start: var(--wa-space-xs);
+    padding-block-end: var(--wa-space-m);
+
+    display: flex;
+    gap: var(--wa-space-xs);
+
+    .area {
+      flex: 1;
+
+      display: flex;
+      gap: var(--wa-space-xs);
+    }
+
+    wa-button {
+      width: 100%;
+      &::part(base) {
+        width: 100%;
+      }
+
+      &.large {
+        wa-icon {
+          font-size: var(--wa-font-size-l);
+        }
+      }
+    }
+  }
+
+  scrollbar-gutter: stable;
+
+  @include mixins.scrollable(
+    var(--wa-color-neutral-30),
+    var(--wa-color-neutral-40),
+    var(--wa-color-neutral-40)
+  );
+
+  &:hover {
+    --sb-thumb-color: var(--wa-color-neutral-20);
+  }
+}

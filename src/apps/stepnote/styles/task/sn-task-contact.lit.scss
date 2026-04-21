@@ -1,0 +1,37 @@
+#contents-root {
+  width: 100%;
+  min-width: 0;
+
+  .contents {
+    width: 100%;
+    min-width: 0;
+
+    .top-area {
+      width: 100%;
+      min-width: 0;
+      margin-block-end: var(--wa-space-2xs);
+    }
+
+    .bottom-area {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+
+      wa-input {
+        flex: 1;
+        min-width: 0;
+
+        wa-icon {
+          font-size: var(--wa-font-size-m);
+        }
+      }
+
+      wa-divider {
+        flex: 0 0 auto;
+        --spacing: var(--wa-space-xs);
+      }
+    }
+  }
+}

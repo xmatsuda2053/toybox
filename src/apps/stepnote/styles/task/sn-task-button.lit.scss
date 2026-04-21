@@ -1,0 +1,31 @@
+#contents-root {
+  cursor: pointer;
+  color: var(--wa-color-neutral-90);
+
+  .label {
+    border-radius: var(--wa-border-radius-m);
+    padding-inline: var(--wa-space-xs);
+
+    background-color: var(--wa-color-neutral-20);
+
+    span {
+      font-size: var(--wa-font-size-s);
+    }
+  }
+
+  wa-dropdown-item {
+    .pending {
+      color: var(--wa-color-neutral-10);
+    }
+    .progress {
+      color: var(--wa-color-brand-50);
+    }
+    .done {
+      color: var(--wa-color-success-50);
+    }
+
+    span {
+      font-size: var(--wa-font-size-s);
+    }
+  }
+}

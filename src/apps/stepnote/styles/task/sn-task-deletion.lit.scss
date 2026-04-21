@@ -1,0 +1,23 @@
+#contents-root {
+  height: 100%;
+
+  .contents {
+    display: flex;
+
+    .switch {
+      display: flex;
+      align-items: center;
+      wa-switch {
+        --wa-form-control-activated-color: var(--wa-color-danger-50);
+      }
+    }
+
+    .button {
+      margin-inline-start: auto;
+
+      wa-icon {
+        font-size: var(--wa-font-size-m);
+      }
+    }
+  }
+}
