@@ -168,7 +168,7 @@ export class AppContainer extends LitElement {
         </wa-dropdown>
         <wa-dropdown>
           <div class="menu-header" slot="trigger">
-            <span>Tool(T)</span>
+            <span>Utils(U)</span>
             <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
           </div>
           <wa-dropdown-item>xxx</wa-dropdown-item>
