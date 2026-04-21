@@ -24,14 +24,79 @@ import styles from "./app-container.lit.scss?inline";
 
 // 5. Initializations (Side Effects)
 setBasePath("/");
+
+type sKey = "F1" | "F2" | "F3";
+interface AppItem {
+  code: string;
+  label: string;
+  tag: HTMLTemplateResult;
+  key: sKey;
+}
+
+const APP_LIST: AppItem[] = [
+  {
+    code: "step-note",
+    label: "Step Note",
+    tag: html`<step-note-app class="app"></step-note-app>`,
+    key: "F1",
+  },
+  {
+    code: "twindex",
+    label: "Twindex",
+    tag: html``,
+    key: "F2",
+  },
+  {
+    code: "fillgo",
+    label: "Fill-Go",
+    tag: html``,
+    key: "F3",
+  },
+];
+
+/**
+ * アプリケーションコンテナー
+ *
+ * @export
+ * @class AppContainer
+ * @extends {LitElement}
+ */
 @customElement("app-container")
 export class AppContainer extends LitElement {
+  /**
+   * 選択中のアプリ
+   *
+   * @type {App}
+   * @memberof AppContainer
+   */
+  @state() selectedApp: AppItem = APP_LIST[0];
+
+  /**
+   * ショートカットキーによるアプリ切り替え
+   *
+   * @private
+   * @param {KeyboardEvent} e
+   * @memberof AppContainer
+   */
+  private _appSelect = (e: KeyboardEvent) => {
+    if (!e.shiftKey) return;
+
+    const app = APP_LIST.find((a) => a.key === e.key);
+
+    if (app) {
+      e.preventDefault();
+      this.selectedApp = app;
+    }
+  };
+
   /**
    * Creates an instance of AppContainer.
    * @memberof AppContainer
    */
   constructor() {
     super();
+
+    window.addEventListener("keydown", this._appSelect);
 
     // 独自アイコンを登録
     registerIconLibrary("my-icons", {
@@ -43,6 +108,16 @@ export class AppContainer extends LitElement {
       },
       mutator: (svg) => svg.setAttribute("fill", "currentColor"),
     });
+  }
+
+  /**
+   * コンポーネント破棄時にリスナーを削除（メモリリーク防止）
+   *
+   * @memberof AppContainer
+   */
+  disconnectedCallback() {
+    window.removeEventListener("keydown", this._appSelect);
+    super.disconnectedCallback();
   }
 
   /**
@@ -66,11 +141,46 @@ export class AppContainer extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
-      <header></header>
-      <main>
-        <step-note-app></step-note-app>
-      </main>
-      <footer></footer>
+      <header>
+        <div class="app-icon">
+          <wa-icon library="my-icons" name="cubes-stacked-solid-full"></wa-icon>
+        </div>
+        <wa-dropdown>
+          <div class="menu-header" slot="trigger">
+            <span>File(F)</span>
+            <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
+          </div>
+          <wa-dropdown-item>Config</wa-dropdown-item>
+        </wa-dropdown>
+        <wa-dropdown>
+          <div class="menu-header" slot="trigger">
+            <span>App(A)</span>
+            <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
+          </div>
+          ${APP_LIST.map((app) => {
+            return html`<wa-dropdown-item
+              @click=${() => (this.selectedApp = app)}
+            >
+              ${app.label}
+              <span slot="details">Shit + ${app.key}</span>
+            </wa-dropdown-item>`;
+          })}
+        </wa-dropdown>
+        <wa-dropdown>
+          <div class="menu-header" slot="trigger">
+            <span>Tool(T)</span>
+            <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
+          </div>
+          <wa-dropdown-item>xxx</wa-dropdown-item>
+        </wa-dropdown>
+      </header>
+      <main>${this.selectedApp.tag}</main>
+      <footer>
+        <div class="app-name">
+          <wa-icon library="my-icons" name="caret-right-solid-full"></wa-icon>
+          ${this.selectedApp.label}
+        </div>
+      </footer>
     </div>`;
   }
 
