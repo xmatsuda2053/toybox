@@ -54,6 +54,7 @@ wa-select {
 
   .contents {
     flex: 1;
+    height: 100%;
     overflow: hidden;
 
     wa-tab-group {
@@ -87,7 +88,8 @@ wa-select {
 
         &::part(base) {
           height: 100%;
-          padding-block-end: var(--wa-space-xs);
+          padding-block: var(--wa-space-m);
+          padding-block-end: var(--wa-space-m);
         }
       }
     }

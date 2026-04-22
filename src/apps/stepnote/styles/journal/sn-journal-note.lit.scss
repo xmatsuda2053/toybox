@@ -1,10 +1,7 @@
 @use "../../../_shared/mixins";
 
 #contents-root {
-  margin-block-start: var(--wa-space-m);
-
   padding-inline: var(--wa-space-2xs);
-  padding-block-end: var(--wa-space-m);
 
   height: 100%;
 

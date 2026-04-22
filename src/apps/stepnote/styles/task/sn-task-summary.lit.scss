@@ -2,11 +2,13 @@
 
 #contents-root {
   height: 100%;
+  box-sizing: border-box;
 
-  padding-inline: var(--wa-space-2xs);
-  margin-block-start: var(--wa-space-m);
+  //padding-inline: var(--wa-space-2xs);
+  //padding-block-start: var(--wa-space-m);
 
   display: flex;
+  gap: var(--wa-space-m);
   flex-direction: column;
 
   @include mixins.scrollable(
@@ -37,7 +39,8 @@
 
   .task-item {
     height: auto;
-    padding-block-end: var(--wa-space-m);
+    //padding-block-end: var(--wa-space-m);
+    box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
@@ -70,6 +73,7 @@
 
     &.grow-item {
       flex-grow: 1;
+      min-height: 0;
     }
   }
 }
