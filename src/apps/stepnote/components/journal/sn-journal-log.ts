@@ -139,7 +139,7 @@ export class SnJournalLog extends LitElement {
    * @memberof SnJournalLog
    */
   private _shortcutKey = (e: KeyboardEvent) => {
-    if (e.altKey && (e.key === "L" || e.key === "l")) {
+    if (e.altKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
       this._addLog();
     }
   };

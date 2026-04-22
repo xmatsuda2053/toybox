@@ -183,7 +183,7 @@ export class SnList extends LitElement {
    * @memberof SnList
    */
   private _shortcutKey = (e: KeyboardEvent) => {
-    if (e.altKey && (e.key === "T" || e.key === "t")) {
+    if (e.altKey && e.shiftKey && (e.key === "T" || e.key === "t")) {
       this._openAddTaskEditor();
     }
   };
