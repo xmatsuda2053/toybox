@@ -16,6 +16,7 @@ import calendar_days_solid_full from "@assets/icons/calendar-days-solid-full.svg
 import calendar_regular_full from "@assets/icons/calendar-regular-full.svg?raw";
 import calendar_solid_full from "@assets/icons/calendar-solid-full.svg?raw";
 import caret_down_solid_full from "@assets/icons/caret-down-solid-full.svg?raw";
+import caret_left_solid_full from "@assets/icons/caret-left-solid-full.svg?raw";
 import caret_right_solid_full from "@assets/icons/caret-right-solid-full.svg?raw";
 import check_solid_full from "@assets/icons/check-solid-full.svg?raw";
 import circle_check_regular_full from "@assets/icons/circle-check-regular-full.svg?raw";
@@ -82,6 +83,7 @@ export const icons: Record<string, string> = {
   "calendar-regular-full": calendar_regular_full,
   "calendar-solid-full": calendar_solid_full,
   "caret-down-solid-full": caret_down_solid_full,
+  "caret-left-solid-full": caret_left_solid_full,
   "caret-right-solid-full": caret_right_solid_full,
   "check-solid-full": check_solid_full,
   "circle-check-regular-full": circle_check_regular_full,

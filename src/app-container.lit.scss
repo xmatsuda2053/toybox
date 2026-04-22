@@ -56,11 +56,18 @@ $height-footer: 25px;
       border-radius: var(--wa-border-radius-s);
 
       span {
-        font-size: var(--wa-font-size-xs);
+        font-size: var(--wa-font-size-s);
       }
 
       &:hover {
         background-color: var(--wa-color-neutral-40);
+      }
+    }
+
+    wa-dropdown-item {
+      &::part(label),
+      &::part(details) {
+        font-size: var(--wa-font-size-s);
       }
     }
   }
@@ -78,18 +85,23 @@ $height-footer: 25px;
   footer {
     background: var(--wa-color-neutral-30);
     display: flex;
+    gap: 5px;
     align-items: center;
 
     padding-inline: var(--wa-space-xs);
+
+    .footer {
+      flex: 1;
+
+      color: var(--wa-color-neutral-95);
+      font-size: var(--wa-font-size-xs);
+    }
 
     .app-name {
       display: flex;
       gap: var(--wa-space-2xs);
       align-items: center;
-
-      margin-inline-start: auto;
-      color: var(--wa-color-neutral-95);
-      font-size: var(--wa-font-size-xs);
+      justify-content: center;
     }
   }
 }

@@ -23,7 +23,7 @@
       "@common/*": ["./src/common/*"],
       "@shared/*": ["./src/apps/_shared/*"],
       "@sn/*": ["./src/apps/stepnote/*"],
-      "@tx/*": ["./src/apps/twindex/*"]
+      "@tx/*": ["src/apps/hubaddress/*"]
     }
   },
   "include": ["src"]

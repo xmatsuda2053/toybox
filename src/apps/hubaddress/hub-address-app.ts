@@ -18,26 +18,26 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@tx/styles/twindex-app.lit.scss?inline";
+import styles from "@tx/styles/hub-address-app.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");
 
-@customElement("twindex-app")
-export class TwindexApp extends LitElement {
+@customElement("hub-address-app")
+export class HubAddressApp extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof TwindexApp
+   * @memberof HubAddressApp
    */
   static styles = css`
     ${unsafeCSS(styles)}
   `;
 
   /**
-   * Creates an instance of StepNoteApp.
-   * @memberof TwindexApp
+   * Creates an instance of HubAddressApp.
+   * @memberof HubAddressApp
    */
   constructor() {
     super();
@@ -48,7 +48,7 @@ export class TwindexApp extends LitElement {
    *
    * @protected
    * @param {PropertyValues} _changedProperties
-   * @memberof TwindexApp
+   * @memberof HubAddressApp
    */
   protected willUpdate(_changedProperties: PropertyValues) {
     super.willUpdate(_changedProperties);
@@ -61,7 +61,7 @@ export class TwindexApp extends LitElement {
    * @protected
    * @override
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
-   * @memberof TwindexApp
+   * @memberof HubAddressApp
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">

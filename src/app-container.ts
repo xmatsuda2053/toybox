@@ -36,18 +36,18 @@ interface AppItem {
 const APP_LIST: AppItem[] = [
   {
     code: "step-note",
-    label: "Step Note",
+    label: "Step-Note",
     tag: html`<step-note-app class="app"></step-note-app>`,
     key: "F1",
   },
   {
-    code: "twindex",
-    label: "Twindex",
-    tag: html`<twindex-app class="app"></twindex-app>`,
+    code: "hub-address",
+    label: "Hub-Address",
+    tag: html`<hub-address-app class="app"></hub-address-app>`,
     key: "F2",
   },
   {
-    code: "fillgo",
+    code: "fill-go",
     label: "Fill-Go",
     tag: html``,
     key: "F3",
@@ -150,7 +150,7 @@ export class AppContainer extends LitElement {
             <span>File(F)</span>
             <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
           </div>
-          <wa-dropdown-item>Config</wa-dropdown-item>
+          <wa-dropdown-item>設定</wa-dropdown-item>
         </wa-dropdown>
         <wa-dropdown>
           <div class="menu-header" slot="trigger">
@@ -176,10 +176,15 @@ export class AppContainer extends LitElement {
       </header>
       <main>${this.selectedApp.tag}</main>
       <footer>
-        <div class="app-name">
+        <div class="footer"></div>
+        <div class="footer"></div>
+        <div class="footer app-name">
           <wa-icon library="my-icons" name="caret-right-solid-full"></wa-icon>
           ${this.selectedApp.label}
+          <wa-icon library="my-icons" name="caret-left-solid-full"></wa-icon>
         </div>
+        <div class="footer"></div>
+        <div class="footer"></div>
       </footer>
     </div>`;
   }

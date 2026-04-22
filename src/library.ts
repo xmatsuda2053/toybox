@@ -42,4 +42,4 @@ import "@sn/components/journal/sn-journal-note";
 import "@sn/components/journal/sn-journal-log";
 import "@sn/components/journal/sn-journal-log-item";
 
-import "@tx/twindex-app";
+import "@/apps/hubaddress/hub-address-app";
