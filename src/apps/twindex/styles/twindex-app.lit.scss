@@ -1,0 +1,51 @@
+@use "../../_shared/mixins";
+
+$title-height: 30px;
+$search-height: 40px;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+#contents-root {
+  display: grid;
+  gap: var(--wa-space-2xs);
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--wa-space-2xs);
+
+  .base {
+    display: grid;
+    gap: var(--wa-space-2xs);
+    grid-template-rows: $title-height $search-height 1fr;
+    overflow: hidden;
+
+    height: 100%;
+
+    .title {
+      background-color: aqua;
+    }
+
+    .search {
+      background-color: red;
+    }
+
+    .viewer {
+      background-color: green;
+
+      scrollbar-gutter: stable;
+      @include mixins.scrollable(
+        var(--wa-color-neutral-30),
+        var(--wa-color-neutral-40),
+        var(--wa-color-neutral-40)
+      );
+      &:hover {
+        --sb-thumb-color: var(--wa-color-neutral-20);
+      }
+    }
+  }
+}

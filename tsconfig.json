@@ -21,8 +21,9 @@
       "@assets/*": ["./src/assets/*"],
       "@utils/*": ["./src/utils/*"],
       "@common/*": ["./src/common/*"],
+      "@shared/*": ["./src/apps/_shared/*"],
       "@sn/*": ["./src/apps/stepnote/*"],
-      "@shared/*": ["./src/apps/_shared/*"]
+      "@tx/*": ["./src/apps/twindex/*"]
     }
   },
   "include": ["src"]
