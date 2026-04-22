@@ -10,33 +10,47 @@ $search-height: 40px;
 
 #contents-root {
   display: grid;
-  gap: var(--wa-space-2xs);
+  gap: var(--wa-space-s);
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
 
   height: 100%;
   box-sizing: border-box;
-  padding: var(--wa-space-2xs);
+  padding: var(--wa-space-xs) var(--wa-space-s);
+
+  background-color: var(--wa-color-neutral-95);
 
   .base {
     display: grid;
-    gap: var(--wa-space-2xs);
+    gap: var(--wa-space-xs);
     grid-template-rows: $title-height $search-height 1fr;
     overflow: hidden;
 
     height: 100%;
 
-    .title {
-      background-color: aqua;
+    .header {
+      display: flex;
+      align-items: center;
+
+      span {
+        font-weight: bold;
+      }
     }
 
     .search {
-      background-color: red;
+      display: flex;
+      gap: var(--wa-space-xs);
+      align-items: center;
+
+      padding-inline-end: var(--wa-space-xs);
+
+      ha-search-input {
+        flex: 1;
+      }
     }
 
     .viewer {
-      background-color: green;
-
+      height: 100%;
       scrollbar-gutter: stable;
       @include mixins.scrollable(
         var(--wa-color-neutral-30),

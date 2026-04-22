@@ -18,26 +18,32 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@ha/styles/hub-address-app.lit.scss?inline";
+import sharedStyles from "@shared/shared-css.lit.scss?inline";
+import styles from "@ha/styles/file/ha-uploader.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");
 
-@customElement("hub-address-app")
-export class HubAddressApp extends LitElement {
+@customElement("ha-uploader")
+export class HaUploader extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof HubAddressApp
+   * @memberof HaUploader
    */
-  static styles = css`
-    ${unsafeCSS(styles)}
-  `;
+  static styles = [
+    css`
+      ${unsafeCSS(sharedStyles)}
+    `,
+    css`
+      ${unsafeCSS(styles)}
+    `,
+  ];
 
   /**
-   * Creates an instance of HubAddressApp.
-   * @memberof HubAddressApp
+   * Creates an instance of HaUploader.
+   * @memberof HaUploader
    */
   constructor() {
     super();
@@ -48,7 +54,7 @@ export class HubAddressApp extends LitElement {
    *
    * @protected
    * @param {PropertyValues} _changedProperties
-   * @memberof HubAddressApp
+   * @memberof HaUploader
    */
   protected willUpdate(_changedProperties: PropertyValues) {
     super.willUpdate(_changedProperties);
@@ -61,30 +67,13 @@ export class HubAddressApp extends LitElement {
    * @protected
    * @override
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
-   * @memberof HubAddressApp
+   * @memberof HaUploader
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
-      <div class="base staff">
-        <div class="header">
-          <span>職員情報</span>
-        </div>
-        <div class="search">
-          <ha-search-input></ha-search-input>
-          <ha-uploader></ha-uploader>
-        </div>
-        <div class="viewer">
-          <ha-staff-viewer></ha-staff-viewer>
-        </div>
-      </div>
-      <div class="base div">
-        <div class="header">組織情報</div>
-        <div class="search">
-          <ha-search-input></ha-search-input>
-          <ha-uploader></ha-uploader>
-        </div>
-        <div class="viewer">viewer</div>
-      </div>
+      <wa-button variant="neutral" appearance="outlined" size="small">
+        <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
+      </wa-button>
     </div>`;
   }
 }

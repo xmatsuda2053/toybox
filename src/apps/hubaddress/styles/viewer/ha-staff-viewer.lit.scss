@@ -1,0 +1,65 @@
+@use "./ha_viewer.lit";
+
+$id-width: 80px;
+$name-width: 200px;
+$row-height: 30px;
+
+#contents-root {
+  height: 100%;
+
+  .card {
+    grid-template-columns: $id-width $name-width 1fr;
+    grid-template-rows: repeat(2, minmax($row-height, auto));
+    grid-template-areas:
+      "id name-kj div-post div-post"
+      "dummy1 name-kn mail-1 mail-2";
+
+    .id {
+      grid-area: id;
+    }
+
+    .dummy1 {
+      grid-area: dummy1;
+    }
+
+    .name-kj {
+      grid-area: name-kj;
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+    }
+
+    .name-kn {
+      grid-area: name-kn;
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+      font-size: var(--wa-font-size-xs);
+    }
+
+    .div-post {
+      grid-area: div-post;
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+      border-block-end: 1px solid var(--wa-color-surface-border);
+
+      span {
+        &.separator {
+          margin-inline: var(--wa-space-3xs);
+        }
+      }
+    }
+
+    .mail {
+      &.mail-1 {
+        grid-area: mail-1;
+        border-inline-start: 1px solid var(--wa-color-surface-border);
+      }
+
+      &.mail-2 {
+        grid-area: mail-2;
+      }
+
+      span {
+        display: flex;
+        gap: var(--wa-space-2xs);
+        align-items: center;
+      }
+    }
+  }
+}
