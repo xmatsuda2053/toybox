@@ -15,6 +15,20 @@ $row-height: 30px;
       "room outside-line remark"
       "post fax remark";
 
+    &.index {
+      background-color: var(--wa-color-brand-40);
+      color: #fffffb;
+    }
+
+    &.item {
+      &:nth-child(odd of .item) {
+        background-color: #fffffb;
+      }
+      &:nth-child(even of .item) {
+        background-color: var(--wa-color-brand-95);
+      }
+    }
+
     .div {
       grid-area: div;
       border-block-end: 1px solid var(--wa-color-surface-border);

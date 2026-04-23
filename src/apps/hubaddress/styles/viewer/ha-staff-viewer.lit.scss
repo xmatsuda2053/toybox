@@ -15,6 +15,20 @@ $row-height: 30px;
       "id name-kn post post"
       "id name-kn mail-1 mail-2";
 
+    &.index {
+      background-color: var(--wa-color-green-40);
+      color: #fffffb;
+    }
+
+    &.item {
+      &:nth-child(odd of .item) {
+        background-color: #fffffb;
+      }
+      &:nth-child(even of .item) {
+        background-color: var(--wa-color-green-95);
+      }
+    }
+
     .id {
       grid-area: id;
       text-align: center;

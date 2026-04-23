@@ -26,22 +26,13 @@
     }
 
     &.index {
-      background-color: var(--wa-color-green-40);
-      color: #fffffb;
       font-weight: bold;
-
       position: sticky;
       top: 0;
       z-index: 10000;
     }
 
     &.item {
-      &:nth-child(odd of .item) {
-        background-color: #fffffb;
-      }
-      &:nth-child(even of .item) {
-        background-color: var(--wa-color-green-95);
-      }
       &:hover {
         border-color: var(--wa-color-green-40); // メインカラーで縁取り
         box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.1);
