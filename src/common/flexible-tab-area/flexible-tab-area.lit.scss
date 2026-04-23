@@ -79,6 +79,11 @@ wa-select {
         &::part(base) {
           font-size: var(--wa-font-size-s);
         }
+
+        wa-icon {
+          font-size: var(--wa-space-xs);
+          color: var(--wa-color-success-50);
+        }
       }
 
       wa-tab-panel {

@@ -30,15 +30,6 @@ import { Note } from "@sn/models/Note";
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 
-// --- Configuration & Initialization ---
-/**
- * ジャーナルエリアに表示するコンテンツの設定
- */
-const JOURNALS: config[] = [
-  { id: "log", label: "Log" },
-  { id: "note", label: "Note" },
-];
-
 setBasePath("/");
 
 /**
@@ -190,6 +181,12 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabJournal
    */
   protected render(): HTMLTemplateResult {
+    const hasNote = this.notes?.[0].value.trim() !== "";
+    const JOURNALS: config[] = [
+      { id: "log", label: "Log" },
+      { id: "note", label: "Note", mark: hasNote },
+    ];
+
     return html`<flexible-tab-area id="tab-area" .tabs=${JOURNALS}>
       JOURNAL
       <sn-journal-log

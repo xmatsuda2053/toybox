@@ -24,6 +24,7 @@ import styles from "./flexible-tab-area.lit.scss?inline";
 export interface config {
   id: string;
   label: string;
+  mark?: boolean;
 }
 
 setBasePath("/");
@@ -85,7 +86,15 @@ export class FlexibleTabArea extends LitElement {
       <div class="contents">
         <wa-tab-group id="tab-group">
           ${this.tabs.map((config) => {
-            return html`<wa-tab panel="${config.id}">${config.label}</wa-tab>`;
+            return html`<wa-tab panel="${config.id}">
+              ${config.mark
+                ? html`<wa-icon
+                    library="my-icons"
+                    name="circle-solid-full"
+                  ></wa-icon>`
+                : html``}
+              ${config.label}
+            </wa-tab>`;
           })}
           ${this.tabs.map((config) => {
             return withStatic(html)`
