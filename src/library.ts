@@ -46,3 +46,4 @@ import "@ha/hub-address-app";
 import "@ha/components/file/ha-uploader";
 import "@ha/components/search/ha-search-input";
 import "@ha/components/viewer/ha-staff-viewer";
+import "@ha/components/viewer/ha-div-viewer";

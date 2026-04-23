@@ -75,9 +75,8 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>職員番号</span></div>
         <div class="name-kj"><span>氏名</span></div>
         <div class="name-kn"></div>
-        <div class="div-post">
-          <span>所属</span><span class="separator">/</span><span>役職</span>
-        </div>
+        <div class="div"><span>所属</span></div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -96,11 +95,32 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
+        <div class="mail mail-1">
+          <span>
+            <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
+            nihon.taro1@japan.mail.co.jp
+          </span>
+        </div>
+        <div class="mail mail-2">
+          <span>
+            <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
+            nihon.taro2@japan.mail.co.jp
+          </span>
+        </div>
+      </div>
+
+      <div class="card item">
+        <div class="id"><span>12345</span></div>
+        <div class="name-kj"><span>日本 太郎</span></div>
+        <div class="name-kn"><span>ニホン タロウ</span></div>
+        <div class="div">
+          <span>第一システム事業部第一システム課</span>
+        </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -118,11 +138,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -140,11 +159,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -162,11 +180,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -184,11 +201,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -206,11 +222,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -228,11 +243,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -250,11 +264,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -272,11 +285,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
@@ -294,99 +306,10 @@ export class HaStaffViewer extends LitElement {
         <div class="id"><span>12345</span></div>
         <div class="name-kj"><span>日本 太郎</span></div>
         <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
+        <div class="div">
           <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
         </div>
-        <div class="mail mail-1">
-          <span>
-            <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
-            nihon.taro1@japan.mail.co.jp
-          </span>
-        </div>
-        <div class="mail mail-2">
-          <span>
-            <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
-            nihon.taro2@japan.mail.co.jp
-          </span>
-        </div>
-      </div>
-      <div class="card item">
-        <div class="id"><span>12345</span></div>
-        <div class="name-kj"><span>日本 太郎</span></div>
-        <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
-          <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
-        </div>
-        <div class="mail mail-1">
-          <span>
-            <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
-            nihon.taro1@japan.mail.co.jp
-          </span>
-        </div>
-        <div class="mail mail-2">
-          <span>
-            <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
-            nihon.taro2@japan.mail.co.jp
-          </span>
-        </div>
-      </div>
-      <div class="card item">
-        <div class="id"><span>12345</span></div>
-        <div class="name-kj"><span>日本 太郎</span></div>
-        <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
-          <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
-        </div>
-        <div class="mail mail-1">
-          <span>
-            <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
-            nihon.taro1@japan.mail.co.jp
-          </span>
-        </div>
-        <div class="mail mail-2">
-          <span>
-            <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
-            nihon.taro2@japan.mail.co.jp
-          </span>
-        </div>
-      </div>
-      <div class="card item">
-        <div class="id"><span>12345</span></div>
-        <div class="name-kj"><span>日本 太郎</span></div>
-        <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
-          <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
-        </div>
-        <div class="mail mail-1">
-          <span>
-            <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
-            nihon.taro1@japan.mail.co.jp
-          </span>
-        </div>
-        <div class="mail mail-2">
-          <span>
-            <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
-            nihon.taro2@japan.mail.co.jp
-          </span>
-        </div>
-      </div>
-      <div class="card item">
-        <div class="id"><span>12345</span></div>
-        <div class="name-kj"><span>日本 太郎</span></div>
-        <div class="name-kn"><span>ニホン タロウ</span></div>
-        <div class="div-post">
-          <span>第一システム事業部第一システム課</span>
-          <span class="separator">/</span>
-          <span>主任</span>
-        </div>
+        <div class="post"><span>役職</span></div>
         <div class="mail mail-1">
           <span>
             <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>

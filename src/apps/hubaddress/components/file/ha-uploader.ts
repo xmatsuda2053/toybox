@@ -71,7 +71,7 @@ export class HaUploader extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
-      <wa-button variant="neutral" appearance="outlined" size="small">
+      <wa-button variant="neutral" appearance="accent" size="small">
         <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
       </wa-button>
     </div>`;

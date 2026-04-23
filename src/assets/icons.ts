@@ -21,6 +21,7 @@ import caret_right_solid_full from "@assets/icons/caret-right-solid-full.svg?raw
 import check_solid_full from "@assets/icons/check-solid-full.svg?raw";
 import circle_check_regular_full from "@assets/icons/circle-check-regular-full.svg?raw";
 import circle_check_solid_full from "@assets/icons/circle-check-solid-full.svg?raw";
+import circle_info_solid_full from "@assets/icons/circle-info-solid-full.svg?raw";
 import circle_play_solid_full from "@assets/icons/circle-play-solid-full.svg?raw";
 import circle_solid_full from "@assets/icons/circle-solid-full.svg?raw";
 import circle_stop_solid_full from "@assets/icons/circle-stop-solid-full.svg?raw";
@@ -35,6 +36,7 @@ import envelope_regular_full from "@assets/icons/envelope-regular-full.svg?raw";
 import envelope_solid_full from "@assets/icons/envelope-solid-full.svg?raw";
 import eye_slash_solid_full from "@assets/icons/eye-slash-solid-full.svg?raw";
 import eye_solid_full from "@assets/icons/eye-solid-full.svg?raw";
+import fax_solid_full from "@assets/icons/fax-solid-full.svg?raw";
 import file_regular_full from "@assets/icons/file-regular-full.svg?raw";
 import fire_solid_full from "@assets/icons/fire-solid-full.svg?raw";
 import floppy_disk_solid_full from "@assets/icons/floppy-disk-solid-full.svg?raw";
@@ -54,6 +56,7 @@ import markdown_brands_solid_full from "@assets/icons/markdown-brands-solid-full
 import note_sticky_solid_full from "@assets/icons/note-sticky-solid-full.svg?raw";
 import palette_solid_full from "@assets/icons/palette-solid-full.svg?raw";
 import pen_to_square_solid_full from "@assets/icons/pen-to-square-solid-full.svg?raw";
+import phone_flip_solid_full from "@assets/icons/phone-flip-solid-full.svg?raw";
 import phone_solid_full from "@assets/icons/phone-solid-full.svg?raw";
 import play_solid_full from "@assets/icons/play-solid-full.svg?raw";
 import plus_solid_full from "@assets/icons/plus-solid-full.svg?raw";
@@ -89,6 +92,7 @@ export const icons: Record<string, string> = {
   "check-solid-full": check_solid_full,
   "circle-check-regular-full": circle_check_regular_full,
   "circle-check-solid-full": circle_check_solid_full,
+  "circle-info-solid-full": circle_info_solid_full,
   "circle-play-solid-full": circle_play_solid_full,
   "circle-solid-full": circle_solid_full,
   "circle-stop-solid-full": circle_stop_solid_full,
@@ -103,6 +107,7 @@ export const icons: Record<string, string> = {
   "envelope-solid-full": envelope_solid_full,
   "eye-slash-solid-full": eye_slash_solid_full,
   "eye-solid-full": eye_solid_full,
+  "fax-solid-full": fax_solid_full,
   "file-regular-full": file_regular_full,
   "fire-solid-full": fire_solid_full,
   "floppy-disk-solid-full": floppy_disk_solid_full,
@@ -122,6 +127,7 @@ export const icons: Record<string, string> = {
   "note-sticky-solid-full": note_sticky_solid_full,
   "palette-solid-full": palette_solid_full,
   "pen-to-square-solid-full": pen_to_square_solid_full,
+  "phone-flip-solid-full": phone_flip_solid_full,
   "phone-solid-full": phone_solid_full,
   "play-solid-full": play_solid_full,
   "plus-solid-full": plus_solid_full,

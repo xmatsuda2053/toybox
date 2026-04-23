@@ -12,7 +12,7 @@
     border: 1px solid var(--wa-color-neutral-border-normal);
     border-radius: var(--wa-border-radius-m);
 
-    margin-block-end: var(--wa-space-xs);
+    margin-block-end: var(--wa-space-2xs);
 
     transition: all 0.2s ease;
 
@@ -49,6 +49,10 @@
 
       div {
         span {
+          display: flex;
+          gap: var(--wa-space-2xs);
+          align-items: center;
+
           &:hover {
             cursor: pointer;
             font-weight: bold;

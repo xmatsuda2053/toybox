@@ -9,17 +9,18 @@ $row-height: 30px;
 
   .card {
     grid-template-columns: $id-width $name-width 1fr;
-    grid-template-rows: repeat(2, minmax($row-height, auto));
+    grid-template-rows: repeat(3, minmax($row-height, auto));
     grid-template-areas:
-      "id name-kj div-post div-post"
-      "dummy1 name-kn mail-1 mail-2";
+      "id name-kj div div"
+      "id name-kn post post"
+      "id name-kn mail-1 mail-2";
 
     .id {
       grid-area: id;
-    }
-
-    .dummy1 {
-      grid-area: dummy1;
+      text-align: center;
+      span {
+        justify-content: center;
+      }
     }
 
     .name-kj {
@@ -33,16 +34,16 @@ $row-height: 30px;
       font-size: var(--wa-font-size-xs);
     }
 
-    .div-post {
-      grid-area: div-post;
+    .div {
+      grid-area: div;
       border-inline-start: 1px solid var(--wa-color-surface-border);
       border-block-end: 1px solid var(--wa-color-surface-border);
+    }
 
-      span {
-        &.separator {
-          margin-inline: var(--wa-space-3xs);
-        }
-      }
+    .post {
+      grid-area: post;
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+      border-block-end: 1px solid var(--wa-color-surface-border);
     }
 
     .mail {
@@ -53,12 +54,7 @@ $row-height: 30px;
 
       &.mail-2 {
         grid-area: mail-2;
-      }
-
-      span {
-        display: flex;
-        gap: var(--wa-space-2xs);
-        align-items: center;
+        border-inline-start: 1px solid var(--wa-color-surface-border);
       }
     }
   }

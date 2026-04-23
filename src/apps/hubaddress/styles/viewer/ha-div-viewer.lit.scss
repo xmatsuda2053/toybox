@@ -1,0 +1,59 @@
+@use "./ha_viewer.lit";
+
+$phone-width: 120px;
+$remark-width: 80px;
+$row-height: 30px;
+
+#contents-root {
+  height: 100%;
+
+  .card {
+    grid-template-columns: 1fr $phone-width $remark-width;
+    grid-template-rows: repeat(3, minmax($row-height, auto));
+    grid-template-areas:
+      "div extension remark"
+      "room outside-line remark"
+      "post fax remark";
+
+    .div {
+      grid-area: div;
+      border-block-end: 1px solid var(--wa-color-surface-border);
+
+      display: flex;
+      gap: var(--wa-space-2xs);
+      align-items: center;
+    }
+    .room {
+      grid-area: room;
+      border-block-end: 1px solid var(--wa-color-surface-border);
+    }
+    .post {
+      grid-area: post;
+    }
+
+    .extension {
+      grid-area: extension;
+      border-block-end: 1px solid var(--wa-color-surface-border);
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+    }
+    .outside-line {
+      grid-area: outside-line;
+      border-block-end: 1px solid var(--wa-color-surface-border);
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+    }
+    .fax {
+      grid-area: fax;
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+    }
+
+    .remark {
+      grid-area: remark;
+      border-inline-start: 1px solid var(--wa-color-surface-border);
+      text-align: center;
+
+      wa-icon {
+        font-size: var(--wa-font-size-l);
+      }
+    }
+  }
+}

@@ -66,24 +66,25 @@ export class HubAddressApp extends LitElement {
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
       <div class="base staff">
-        <div class="header">
-          <span>職員情報</span>
-        </div>
         <div class="search">
           <ha-search-input></ha-search-input>
           <ha-uploader></ha-uploader>
         </div>
         <div class="viewer">
-          <ha-staff-viewer></ha-staff-viewer>
+          <ha-staff-viewer> </ha-staff-viewer>
         </div>
       </div>
+      <div class="divider">
+        <wa-divider orientation="vertical"></wa-divider>
+      </div>
       <div class="base div">
-        <div class="header">組織情報</div>
         <div class="search">
           <ha-search-input></ha-search-input>
           <ha-uploader></ha-uploader>
         </div>
-        <div class="viewer">viewer</div>
+        <div class="viewer">
+          <ha-div-viewer></ha-div-viewer>
+        </div>
       </div>
     </div>`;
   }
