@@ -311,11 +311,13 @@ export class SnList extends LitElement {
         LIST
         <span class="end"></span>
         ${hasLabel
-          ? html` <wa-icon
-              library="my-icons"
-              name="plus-solid-full"
-              @click=${this._openAddTaskEditor}
-            ></wa-icon>`
+          ? html` <wa-tooltip for="btn-add" placement="left">Add</wa-tooltip>
+              <wa-icon
+                id="btn-add"
+                library="my-icons"
+                name="plus-solid-full"
+                @click=${this._openAddTaskEditor}
+              ></wa-icon>`
           : ""}
       </div>
       <div class="search">

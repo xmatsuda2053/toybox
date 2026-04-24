@@ -142,7 +142,9 @@ export class SnNavSectionQuick extends LitElement {
       <div class="header">
         QUICK ACCESS
         <span class="end"></span>
+        <wa-tooltip for="btn-init" placement="left">Init</wa-tooltip>
         <wa-icon
+          id="btn-init"
           library="my-icons"
           name="arrow-rotate-right-solid-full"
           @click=${(e: Event) => {
@@ -151,6 +153,7 @@ export class SnNavSectionQuick extends LitElement {
           }}
         ></wa-icon>
         <wa-icon
+          id="expand-button"
           library="my-icons"
           name="angle-down-solid-full"
           class="toggleIcon"

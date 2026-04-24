@@ -230,18 +230,21 @@ export class SnJournalLog extends LitElement {
       </div>
       <div class="footer-area">
         <div class="area">
+          <wa-tooltip for="btn-scroll-up" placement="top">Scroll Up</wa-tooltip>
           <wa-button
             id="btn-scroll-up"
             size="small"
+            appearance="accent"
             variant="neutral"
-            appearance="outlined"
             @click=${this._scrollToTop}
           >
             <wa-icon library="my-icons" name="arrow-up-solid-full"></wa-icon>
           </wa-button>
         </div>
         <div class="area">
+          <wa-tooltip for="btn-add" placement="top">Add</wa-tooltip>
           <wa-button
+            id="btn-add"
             class="large"
             appearance="accent"
             variant="success"
@@ -252,11 +255,14 @@ export class SnJournalLog extends LitElement {
           </wa-button>
         </div>
         <div class="area">
+          <wa-tooltip for="btn-scroll-down" placement="top">
+            Scroll Down
+          </wa-tooltip>
           <wa-button
             id="btn-scroll-down"
             size="small"
+            appearance="accent"
             variant="neutral"
-            appearance="outlined"
             @click=${this._scrollToBottom}
           >
             <wa-icon library="my-icons" name="arrow-down-solid-full"></wa-icon>

@@ -244,7 +244,9 @@ export class SnNavSectionLabel extends LitElement {
       <div class="header">
         LABELS
         <span class="end"></span>
+        <wa-tooltip for="btn-add" placement="left">Add</wa-tooltip>
         <wa-icon
+          id="btn-add"
           library="my-icons"
           name="plus-solid-full"
           @click=${() => {

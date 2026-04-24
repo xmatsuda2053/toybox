@@ -72,10 +72,11 @@ export class SnMenu extends LitElement {
     return html`<div id="contents-root">
       <!--エクスプローラーボタン-->
       <div class="field active">
+        <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
         <wa-button
           variant="neutral"
           appearance="accent"
-          id="explore-button"
+          id="btn-explore"
           @click=${() => emit(this, "click-menu-explore")}
         >
           <wa-icon library="my-icons" name="file-regular-full"></wa-icon>
@@ -84,10 +85,11 @@ export class SnMenu extends LitElement {
 
       <!--インポートボタン-->
       <div class="field bottom">
+        <wa-tooltip for="btn-import" placement="right">Import</wa-tooltip>
         <wa-button
           variant="neutral"
           appearance="accent"
-          id="import-button"
+          id="btn-import"
           @click=${() => emit(this, "click-menu-import")}
         >
           <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
@@ -96,10 +98,11 @@ export class SnMenu extends LitElement {
 
       <!--エクスポートボタン-->
       <div class="field">
+        <wa-tooltip for="btn-export" placement="right">Export</wa-tooltip>
         <wa-button
           variant="neutral"
           appearance="accent"
-          id="export-button"
+          id="btn-export"
           @click=${() => emit(this, "click-menu-export")}
         >
           <wa-icon library="my-icons" name="download-solid-full"></wa-icon>

@@ -171,9 +171,11 @@ export class SnTaskSummary extends LitElement {
               slot="end"
             ></wa-icon>
           </wa-input>
+          <wa-tooltip for="btn-copy-id" placement="top">Copy ID</wa-tooltip>
           <wa-button
+            id="btn-copy-id"
             size="small"
-            appearance="filled-outlined"
+            appearance="outlined"
             variant="neutral"
             @click=${this._copyIdAndName}
           >
