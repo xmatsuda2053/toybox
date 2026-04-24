@@ -10,6 +10,7 @@ import {
 
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, property, query } from "lit/decorators.js";
+import { live } from "lit/directives/live.js";
 
 // 3. Third-party UI & SDKs (WebAwesome)
 import WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
@@ -119,7 +120,7 @@ export class SnTaskContact extends LitElement {
             id="div"
             size="small"
             placeholder="所属..."
-            value=${this.contact.div}
+            .value=${live(this.contact.div)}
             @input=${this._inputData}
           >
             <wa-icon
@@ -134,7 +135,7 @@ export class SnTaskContact extends LitElement {
             id="user"
             size="small"
             placeholder="氏名..."
-            value=${this.contact.name}
+            .value=${live(this.contact.name)}
             @input=${this._inputData}
           >
             <wa-icon
@@ -148,7 +149,7 @@ export class SnTaskContact extends LitElement {
             id="tel"
             size="small"
             placeholder="電話番号..."
-            value=${this.contact.tel}
+            .value=${live(this.contact.tel)}
             @input=${this._inputData}
           >
             <wa-icon
