@@ -13,7 +13,6 @@ import { customElement, query, state } from "lit/decorators.js";
 
 // 3. Third-party Components & Utils
 import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
-import WaDrawer from "@awesome.me/webawesome/dist/components/drawer/drawer.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Modules (Database, Models, Shared Components)
@@ -120,14 +119,6 @@ export class StepNoteApp extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
-      <wa-drawer id="drawer-overview" placement="start" without-header="false">
-        <div class="drawer-contents">
-          ${this.isThinMode
-            ? html`<div class="nav">${this._renderNav()}</div>
-                <div class="list"><sn-list></sn-list></div> `
-            : ``}
-        </div>
-      </wa-drawer>
       <div
         class="content ${this.isThinMode ? "thin" : ""}"
         @id-click=${(e: CustomEvent) => this._taskSelect(e.detail.id)}

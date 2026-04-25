@@ -81,6 +81,15 @@ export class SnList extends LitElement {
   @state() private _activeFiscalYears: number[] = [];
 
   /**
+   * 検索入力欄
+   *
+   * @private
+   * @type {HTMLInputElement}
+   * @memberof SnList
+   */
+  @query("#input-search") private _inputSearch!: HTMLInputElement;
+
+  /**
    * 新規タスクダイアログ
    *
    * @private
@@ -182,9 +191,15 @@ export class SnList extends LitElement {
    * @param {KeyboardEvent} e
    * @memberof SnList
    */
-  private _shortcutKey = (e: KeyboardEvent) => {
+  private _shortcutKey = async (e: KeyboardEvent) => {
     if (e.altKey && e.shiftKey && (e.key === "T" || e.key === "t")) {
       this._openAddTaskEditor();
+    }
+    if (e.altKey && e.shiftKey && (e.key === "F" || e.key === "f")) {
+      await snDB.resetQuickAccessSelected();
+      await snDB.resetLabelSelected();
+      await this.updateComplete;
+      this._inputSearch.focus();
     }
   };
 
@@ -322,6 +337,7 @@ export class SnList extends LitElement {
       </div>
       <div class="search">
         <wa-input
+          id="input-search"
           size="small"
           placeholder="filter inquiries..."
           @input=${this._filterTasks}

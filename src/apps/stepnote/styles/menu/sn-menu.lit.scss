@@ -33,4 +33,20 @@
       margin-block-start: auto;
     }
   }
+
+  wa-dialog {
+    .help-area {
+      display: flex;
+      font-size: var(--wa-font-size-s);
+      color: var(--wa-color-neutral-30);
+
+      padding-inline-start: var(--wa-space-2xs);
+      padding-inline-end: var(--wa-space-m);
+      margin-block-end: var(--wa-space-2xs);
+
+      .shortcut {
+        margin-inline-start: auto;
+      }
+    }
+  }
 }

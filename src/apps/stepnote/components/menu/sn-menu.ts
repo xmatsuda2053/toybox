@@ -9,10 +9,11 @@ import {
 } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement } from "lit/decorators.js";
+import { customElement, query } from "lit/decorators.js";
 
 // 3. Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
+import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // 4. Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";
@@ -50,6 +51,14 @@ export class SnMenu extends LitElement {
   ];
 
   /**
+   * ヘルプダイアログ
+   *
+   * @type {WaDialog}
+   * @memberof HaMenu
+   */
+  @query("#dialog-help") dialogHelp!: WaDialog;
+
+  /**
    * render直前に実行されます。
    *
    * @protected
@@ -70,6 +79,29 @@ export class SnMenu extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
+      <!--ヘルプダイアログ-->
+      <wa-dialog label="Help" id="dialog-help">
+        <div class="help-area">
+          <span class="text">全検索モード</span>
+          <span class="shortcut">Shift + Alt + F</span>
+        </div>
+        <div class="help-area">
+          <span class="text">エクスプローラー開閉</span>
+          <span class="shortcut">Shift + Alt + E</span>
+        </div>
+        <div class="help-area">
+          <span class="text">新規タスク作成</span>
+          <span class="shortcut">Shift + Alt + T</span>
+        </div>
+        <div class="help-area">
+          <span class="text">新規ログ追加</span>
+          <span class="shortcut">Shift + Alt + L</span>
+        </div>
+        <wa-button slot="footer" variant="brand" data-dialog="close">
+          Close
+        </wa-button>
+      </wa-dialog>
+
       <!--エクスプローラーボタン-->
       <div class="field active">
         <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
@@ -109,15 +141,18 @@ export class SnMenu extends LitElement {
         </wa-button>
       </div>
 
-      <!--設定ボタン-->
+      <!--ヘルプボタン-->
       <div class="field">
         <wa-button
           variant="neutral"
           appearance="accent"
-          id="config-button"
-          @click=${() => emit(this, "click-menu-config")}
+          id="help-button"
+          @click=${() => (this.dialogHelp.open = true)}
         >
-          <wa-icon library="my-icons" name="gear-solid-full"></wa-icon>
+          <wa-icon
+            library="my-icons"
+            name="circle-question-regular-full"
+          ></wa-icon>
         </wa-button>
       </div>
     </div>`;

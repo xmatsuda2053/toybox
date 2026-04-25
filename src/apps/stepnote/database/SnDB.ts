@@ -107,7 +107,7 @@ export class SnDB extends Dexie {
   async updateLabelSelection(id: number, isSelected: number) {
     try {
       if (isSelected) {
-        // 指定したID以外の選択を解除
+        // 全ての選択を解除
         await this.labels.where("isSelected").equals(1).modify({
           isSelected: 0,
           updatedAt: new Date(),
@@ -136,6 +136,18 @@ export class SnDB extends Dexie {
     } catch (error) {
       console.error("update error:", error);
     }
+  }
+
+  /**
+   * ラベルの選択状態を解除します。
+   *
+   * @memberof SnDB
+   */
+  async resetLabelSelected() {
+    await this.labels.where("isSelected").equals(1).modify({
+      isSelected: 0,
+      updatedAt: new Date(),
+    });
   }
 
   /**
