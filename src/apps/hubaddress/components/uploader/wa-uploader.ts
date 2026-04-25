@@ -100,6 +100,7 @@ export class HaUploader extends LitElement {
         accept="text/csv"
         @change=${this._changeInput}
       />
+      <div class="label"><slot></slot></div>
       <div
         id="drop-area"
         class="drop-area"

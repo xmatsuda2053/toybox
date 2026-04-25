@@ -36,6 +36,7 @@ import dice_one_solid_full from "@assets/icons/dice-one-solid-full.svg?raw";
 import download_solid_full from "@assets/icons/download-solid-full.svg?raw";
 import envelope_regular_full from "@assets/icons/envelope-regular-full.svg?raw";
 import envelope_solid_full from "@assets/icons/envelope-solid-full.svg?raw";
+import eraser_solid_full from "@assets/icons/eraser-solid-full.svg?raw";
 import eye_slash_solid_full from "@assets/icons/eye-slash-solid-full.svg?raw";
 import eye_solid_full from "@assets/icons/eye-solid-full.svg?raw";
 import fax_solid_full from "@assets/icons/fax-solid-full.svg?raw";
@@ -111,6 +112,7 @@ export const icons: Record<string, string> = {
   "download-solid-full": download_solid_full,
   "envelope-regular-full": envelope_regular_full,
   "envelope-solid-full": envelope_solid_full,
+  "eraser-solid-full": eraser_solid_full,
   "eye-slash-solid-full": eye_slash_solid_full,
   "eye-solid-full": eye_solid_full,
   "fax-solid-full": fax_solid_full,

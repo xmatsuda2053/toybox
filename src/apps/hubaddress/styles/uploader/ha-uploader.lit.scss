@@ -10,6 +10,12 @@
   div {
     width: 400px;
 
+    &.label {
+      text-align: center;
+      font-weight: bold;
+      color: var(--wa-color-neutral-40);
+    }
+
     &.drop-area {
       cursor: pointer;
 

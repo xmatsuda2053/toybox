@@ -143,6 +143,19 @@ export class HaMenu extends LitElement {
         </wa-button>
       </wa-dialog>
 
+      <!-- クリアボタン-->
+      <div class="field">
+        <wa-tooltip for="btn-clear" placement="right">Clear</wa-tooltip>
+        <wa-button
+          variant="neutral"
+          appearance="accent"
+          id="btn-clear"
+          @click=${() => emit(this, "clear")}
+        >
+          <wa-icon library="my-icons" name="eraser-solid-full"></wa-icon>
+        </wa-button>
+      </div>
+
       <!--削除ボタン-->
       <div class="field bottom">
         <wa-tooltip for="btn-delete" placement="right">Delete All</wa-tooltip>

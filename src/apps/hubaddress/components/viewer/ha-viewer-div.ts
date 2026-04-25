@@ -16,6 +16,8 @@ import { classMap } from "lit/directives/class-map.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Modules (Database, Models, Shared Components)
+import { emit } from "@/utils/EventUtils";
+import { Division } from "../../models/Division";
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -48,6 +50,14 @@ export class HaViewerDiv extends LitElement {
       ${unsafeCSS(styles)}
     `,
   ];
+
+  /**
+   * 表示データ
+   *
+   * @type {Division}
+   * @memberof HaViewerDiv
+   */
+  @property({ type: Object }) divData!: Division;
 
   /**
    * ヘッダレコード
@@ -117,24 +127,48 @@ export class HaViewerDiv extends LitElement {
       odd: this.odd,
       even: this.even,
     });
-    return html`<div class=${classes}>
-      <div class="div"><slot name="div"></slot></div>
-      <div class="other"><slot name="other"></slot></div>
-      <div class="place"><slot name="place"></slot></div>
-      <div class="post"><slot name="post"></slot></div>
+    return html`<div class=${classes} @click=${this.clickItem}>
+      <div class="div search" data-name="div">
+        ${this.divData?.div1} ${this.divData?.div2} ${this.divData?.div3}
+        <wa-icon
+          library="my-icons"
+          name="magnifying-glass-solid-full"
+        ></wa-icon>
+      </div>
+      <div class="other">${this.divData?.other}</div>
+      <div class="place">${this.divData?.place}</div>
+      <div class="post">${this.divData?.post}</div>
       <div class="tel1">
         <wa-icon library="my-icons" name="phone-flip-solid-full"></wa-icon>
-        <slot name="tel1"></slot>
+        ${this.divData?.tel1}
       </div>
       <div class="tel2">
         <wa-icon library="my-icons" name="phone-solid-full"></wa-icon>
-        <slot name="tel2"></slot>
+        ${this.divData?.tel2}
       </div>
       <div class="fax">
         <wa-icon library="my-icons" name="fax-solid-full"></wa-icon>
-        <slot name="fax"></slot>
+        ${this.divData?.fax}
       </div>
-      <div class="remark"><slot name="remark"></slot></div>
+      <div class="remark">${this.divData?.remark}</div>
     </div>`;
+  }
+
+  /**
+   * クリックしたアイテムの情報でイベントを発行する。
+   *
+   * @private
+   * @param {Event} e
+   * @return {*}
+   * @memberof HaViewerDiv
+   */
+  private clickItem(e: Event): void {
+    if (this.header) return;
+    const target = e.target as HTMLDivElement;
+    const text = target.innerText;
+    const name = target.dataset.name ?? "";
+    emit(this, "click-item", {
+      detail: { text: text, name: name, category: "div" },
+    });
   }
 }

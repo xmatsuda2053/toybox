@@ -43,12 +43,22 @@ $row-height: 30px;
       display: flex;
       gap: var(--wa-space-2xs);
 
+      &.search {
+        wa-icon {
+          color: transparent;
+        }
+      }
+
       &:hover {
         cursor: pointer;
         font-weight: bold;
         text-decoration: underline;
 
         color: var(--wa-color-brand-40);
+
+        wa-icon {
+          color: var(--wa-color-brand-40);
+        }
       }
     }
   }

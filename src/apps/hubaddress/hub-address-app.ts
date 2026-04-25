@@ -22,6 +22,8 @@ import Papa from "papaparse";
 import { isNotBlank } from "@/utils/CommonUtils";
 import { FileData, Category } from "@ha/models/FileData";
 import { haDB } from "@ha/database/HaDB";
+import { Staff } from "@ha/models/Staff";
+import { Division } from "./models/Division";
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -65,6 +67,22 @@ export class HubAddressApp extends LitElement {
   @state() _divs: FileData[] = [];
 
   /**
+   * 職員情報の検索キーワード
+   *
+   * @type {string}
+   * @memberof HubAddressApp
+   */
+  @state() _keywordStaff: string = "";
+
+  /**
+   * 組織情報の検索キーワード
+   *
+   * @type {string}
+   * @memberof HubAddressApp
+   */
+  @state() _keywordDiv: string = "";
+
+  /**
    * テーブルの更新を検知する
    *
    * @private
@@ -89,7 +107,7 @@ export class HubAddressApp extends LitElement {
    */
   connectedCallback() {
     super.connectedCallback();
-    this._subscribeLabels();
+    this._subscribe();
   }
 
   /**
@@ -99,8 +117,28 @@ export class HubAddressApp extends LitElement {
    * @private
    * @memberof HubAddressApp
    */
-  private _subscribeLabels() {
+  private _subscribe() {
     this._dbSubscription?.unsubscribe();
+
+    const observable = liveQuery(async () => {
+      const [staffs, divs, kStaff, kDiv] = await Promise.all([
+        haDB.getDataByCategoryAndFilter("staff"),
+        haDB.getDataByCategoryAndFilter("div"),
+        haDB.getSearchKeywordByCategory("staff"),
+        haDB.getSearchKeywordByCategory("div"),
+      ]);
+      return { staffs, divs, kStaff, kDiv };
+    });
+
+    this._dbSubscription = observable.subscribe({
+      next: async (data) => {
+        this._staffs = data.staffs;
+        this._divs = data.divs;
+        this._keywordStaff = data.kStaff;
+        this._keywordDiv = data.kDiv;
+      },
+      error: (err) => console.error("LiveQuery Error:", err),
+    });
   }
 
   /**
@@ -112,22 +150,28 @@ export class HubAddressApp extends LitElement {
    */
   protected willUpdate(_changedProperties: PropertyValues) {
     super.willUpdate(_changedProperties);
+  }
 
-    const observable = liveQuery(async () => {
-      const [staffs, divs] = await Promise.all([
-        haDB.getDataByCategory("staff"),
-        haDB.getDataByCategory("div"),
-      ]);
-      return { staffs, divs };
-    });
+  /**
+   * 職員情報が未登録であるか判定します。
+   *
+   * @private
+   * @return {*}  {boolean}
+   * @memberof HubAddressApp
+   */
+  private isEmptyStaff(): boolean {
+    return this._staffs?.length === 0 && this._keywordStaff === "";
+  }
 
-    this._dbSubscription = observable.subscribe({
-      next: async (data) => {
-        this._staffs = data.staffs;
-        this._divs = data.divs;
-      },
-      error: (err) => console.error("LiveQuery Error:", err),
-    });
+  /**
+   * 組織情報が未登録であるか判定します。
+   *
+   * @private
+   * @return {*}  {boolean}
+   * @memberof HubAddressApp
+   */
+  private isEmptyDiv(): boolean {
+    return this._divs?.length === 0 && this._keywordDiv === "";
   }
 
   /**
@@ -140,28 +184,32 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   protected render(): HTMLTemplateResult {
-    const emptyStaffData = this._staffs?.length === 0;
     const viewerStaffClassMap = classMap({
       viewer: true,
-      empty: emptyStaffData,
+      empty: this.isEmptyStaff(),
     });
 
-    const emptyDivData = this._divs?.length === 0;
     const viewerSDivClassMap = classMap({
       viewer: true,
-      empty: emptyDivData,
+      empty: this.isEmptyDiv(),
     });
 
-    return html`<div id="contents-root">
+    return html`<div id="contents-root" @click-item=${this.clickItem}>
       <div class="menu">
-        <ha-menu @delete-data=${this.deleteData}></ha-menu>
+        <ha-menu
+          @delete-data=${this.deleteData}
+          @clear=${this.clearKeyword}
+        ></ha-menu>
       </div>
       <div class="base staff">
         <div class="search">
-          <ha-search-input></ha-search-input>
+          <ha-search-input
+            searchKeyword=${this._keywordStaff}
+            @input-search=${(e: CustomEvent) => this._searchData(e, "staff")}
+          ></ha-search-input>
         </div>
         <div class=${viewerStaffClassMap}>
-          ${this._renderUploader(emptyStaffData, "staff")}
+          ${this._renderUploader(this.isEmptyStaff(), "staff", "職員情報")}
           ${this._renderStaffData()}
         </div>
       </div>
@@ -170,10 +218,14 @@ export class HubAddressApp extends LitElement {
       </div>
       <div class="base div">
         <div class="search">
-          <ha-search-input></ha-search-input>
+          <ha-search-input
+            searchKeyword=${this._keywordDiv}
+            @input-search=${(e: CustomEvent) => this._searchData(e, "div")}
+          ></ha-search-input>
         </div>
         <div class=${viewerSDivClassMap}>
-          ${this._renderUploader(emptyDivData, "div")} ${this._renderDivData()}
+          ${this._renderUploader(this.isEmptyDiv(), "div", "組織情報")}
+          ${this._renderDivData()}
         </div>
       </div>
     </div>`;
@@ -185,12 +237,14 @@ export class HubAddressApp extends LitElement {
    * @private
    * @param {boolean} emptyData
    * @param {Category} category
+   * @param {string} label
    * @return {*}  {HTMLTemplateResult}
    * @memberof HubAddressApp
    */
   private _renderUploader(
     emptyData: boolean,
     category: Category,
+    label: string,
   ): HTMLTemplateResult {
     if (!emptyData) return html``;
 
@@ -245,7 +299,9 @@ export class HubAddressApp extends LitElement {
 
     return html`<ha-uploader
       @upload-file=${(e: CustomEvent) => uploadData(e, category)}
-    ></ha-uploader>`;
+    >
+      ${label}
+    </ha-uploader>`;
   }
 
   /**
@@ -257,30 +313,40 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private _renderStaffData(): HTMLTemplateResult {
-    if (this._staffs.length === 0) return html``;
+    if (this.isEmptyStaff()) return html``;
 
-    return html` <ha-viewer-staff header>
-        <span slot="id">職員番号</span>
-        <span slot="name-kj">氏名</span>
-        <span slot="name-kn"></span>
-        <span slot="div">所属</span>
-        <span slot="post">役職</span>
-        <span slot="mail1">メールアドレス（lg）</span>
-        <span slot="mail2">メールアドレス（mie）</span>
+    const header: Staff = {
+      staffId: "職員番号",
+      nameKj: "氏名",
+      nameKn: "",
+      div: "所属",
+      post: "役職",
+      mail1: "メールアドレス（lg）",
+      mail2: "メールアドレス（mie）",
+    };
+
+    return html` <ha-viewer-staff .staffData=${header} header>
       </ha-viewer-staff>
       ${repeat(
         this._staffs,
         (staff) => staff.id,
         (staff, index) => {
           const isOdd = (index + 1) % 2 !== 0;
-          return html` <ha-viewer-staff item ?odd=${isOdd} ?even=${!isOdd}>
-            <span slot="id">${staff.data["staffId"]}</span>
-            <span slot="name-kj">${staff.data["nameKj"]}</span>
-            <span slot="name-kn">${staff.data["nameKn"]}</span>
-            <span slot="div">${staff.data["div"]}</span>
-            <span slot="post">${staff.data["post"]}</span>
-            <span slot="mail1">${staff.data["mail1"]}</span>
-            <span slot="mail2">${staff.data["mail2"]}</span>
+          const data: Staff = {
+            staffId: staff.data["staffId"],
+            nameKj: staff.data["nameKj"],
+            nameKn: staff.data["nameKn"],
+            div: staff.data["div"],
+            post: staff.data["post"],
+            mail1: staff.data["mail1"],
+            mail2: staff.data["mail2"],
+          };
+          return html` <ha-viewer-staff
+            .staffData=${data}
+            ?odd=${isOdd}
+            ?even=${!isOdd}
+            item
+          >
           </ha-viewer-staff>`;
         },
       )}`;
@@ -294,36 +360,71 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private _renderDivData(): HTMLTemplateResult {
-    if (this._divs.length === 0) return html``;
-    return html`<ha-viewer-div header>
-        <span slot="div">所属（部局 / 課 / 係）</span>
-        <span slot="other">その他組織・施設・部屋</span>
-        <span slot="place">場所</span>
-        <span slot="post">役職</span>
-        <span slot="tel1">内線</span>
-        <span slot="tel2">外線</span>
-        <span slot="fax">FAX</span>
-        <span slot="remark">備考</span>
-      </ha-viewer-div>
+    if (this.isEmptyDiv()) return html``;
+
+    const header: Division = {
+      place: "場所",
+      div1: "所属（部局 / 課 / 係）",
+      div2: "",
+      div3: "",
+      post: "役職",
+      other: "その他組織・施設・部屋",
+      tel1: "内線",
+      tel2: "外線",
+      fax: "FAX",
+      remark: "備考",
+    };
+
+    return html`<ha-viewer-div .divData=${header} header></ha-viewer-div>
       ${repeat(
         this._divs,
         (div) => div.id,
         (div, index) => {
           const isOdd = (index + 1) % 2 !== 0;
-          return html` <ha-viewer-div item ?odd=${isOdd} ?even=${!isOdd}>
-            <span slot="div">
-              ${div.data["div1"]} ${div.data["div2"]} ${div.data["div3"]}
-            </span>
-            <span slot="other">${div.data["other"]}</span>
-            <span slot="place">${div.data["place"]}</span>
-            <span slot="post">${div.data["post"]}</span>
-            <span slot="tel1">${div.data["tel1"]}</span>
-            <span slot="tel2">${div.data["tel2"]}</span>
-            <span slot="fax">${div.data["fax"]}</span>
-            <span slot="remark">${div.data["remark"]}</span>
+          const data: Division = {
+            place: div.data["place"],
+            div1: div.data["div1"],
+            div2: div.data["div2"],
+            div3: div.data["div3"],
+            post: div.data["post"],
+            other: div.data["other"],
+            tel1: div.data["tel1"],
+            tel2: div.data["tel2"],
+            fax: div.data["fax"],
+            remark: div.data["remark"],
+          };
+          return html` <ha-viewer-div
+            .divData=${data}
+            ?odd=${isOdd}
+            ?even=${!isOdd}
+            item
+          >
           </ha-viewer-div>`;
         },
       )}`;
+  }
+
+  /**
+   * 検索処理を実行します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @param {Category} category
+   * @memberof HubAddressApp
+   */
+  private async _searchData(e: CustomEvent, category: Category) {
+    const keyword = e.detail.keyword;
+    await haDB.putSearchKeyword(category, keyword);
+  }
+
+  /**
+   * 検索キーワードをクリアします。
+   *
+   * @private
+   * @memberof HubAddressApp
+   */
+  private async clearKeyword() {
+    await haDB.clearSearchKeyword();
   }
 
   /**
@@ -333,6 +434,33 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private async deleteData() {
+    await haDB.clearSearchKeyword();
     await haDB.deleteData();
+  }
+
+  /**
+   * クリックしたアイテムの内容をクリップボードにコピーする。
+   * 名前が設定されている場合、検索文字列として登録する。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof HubAddressApp
+   */
+  private async clickItem(e: CustomEvent) {
+    e.preventDefault();
+
+    // クリップボードにコピー
+    const text = e.detail.text;
+    if (!text) return;
+    await navigator.clipboard.writeText(text);
+
+    // 検索対象チェック
+    const name = e.detail.name;
+    if (!name) return;
+
+    // 検索実行
+    const category: Category = e.detail.category === "staff" ? "div" : "staff";
+
+    await haDB.putSearchKeyword(category, text);
   }
 }

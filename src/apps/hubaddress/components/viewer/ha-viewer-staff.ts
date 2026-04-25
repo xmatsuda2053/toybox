@@ -16,6 +16,8 @@ import { classMap } from "lit/directives/class-map.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Modules (Database, Models, Shared Components)
+import { emit } from "@/utils/EventUtils";
+import { Staff } from "@ha/models/Staff";
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -48,6 +50,14 @@ export class HaViewerStaff extends LitElement {
       ${unsafeCSS(styles)}
     `,
   ];
+
+  /**
+   * 表示データ
+   *
+   * @type {Staff[]}
+   * @memberof HaViewerStaff
+   */
+  @property({ type: Object }) staffData!: Staff;
 
   /**
    * ヘッダレコード
@@ -117,20 +127,44 @@ export class HaViewerStaff extends LitElement {
       odd: this.odd,
       even: this.even,
     });
-    return html`<div class=${classes}>
-      <div class="id"><slot name="id"></slot></div>
-      <div class="name-kj"><slot name="name-kj"></slot></div>
-      <div class="name-kn"><slot name="name-kn"></slot></div>
-      <div class="div"><slot name="div"></slot></div>
-      <div class="post"><slot name="post"></slot></div>
+    return html`<div class=${classes} @click=${this.clickItem}>
+      <div class="id">${this.staffData?.staffId}</div>
+      <div class="name-kj">${this.staffData?.nameKj}</div>
+      <div class="name-kn">${this.staffData?.nameKn}</div>
+      <div class="div search" data-name="div">
+        ${this.staffData?.div}
+        <wa-icon
+          library="my-icons"
+          name="magnifying-glass-solid-full"
+        ></wa-icon>
+      </div>
+      <div class="post">${this.staffData?.post}</div>
       <div class="mail mail-1">
         <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
-        <slot name="mail1"></slot>
+        ${this.staffData?.mail1}
       </div>
       <div class="mail mail-2">
         <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
-        <slot name="mail2"></slot>
+        ${this.staffData?.mail2}
       </div>
     </div>`;
+  }
+
+  /**
+   * クリックしたアイテムの情報でイベントを発行する。
+   *
+   * @private
+   * @param {Event} e
+   * @return {*}
+   * @memberof HaViewerDiv
+   */
+  private clickItem(e: Event): void {
+    if (this.header) return;
+    const target = e.target as HTMLDivElement;
+    const text = target.innerText;
+    const name = target.dataset.name ?? "";
+    emit(this, "click-item", {
+      detail: { text: text, name: name, category: "staff" },
+    });
   }
 }
