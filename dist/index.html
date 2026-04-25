@@ -4269,7 +4269,61 @@ Char: `+y.c,p=new Error(p),y.error=p,q(y,"onerror",p),y}function Ie(y){return(y.
         <sn-nav-section-label></sn-nav-section-label>
       </div>`}_toggleExploreNav(){this.isThinMode=!this.isThinMode}_importDataSelect(){this._inputFile.click()}async _importData(){const e=this._inputFile?.files?.[0];e&&(await st.importDatabase(e),this._dialogImportCompleat.open=!0)}async _exportData(){await st.exportDatabase()}_showConfig(){console.log("Showing configuration...")}async _taskSelect(e){await st.selectSingleTask(Number(e),!0)}};yo.styles=xe`
     ${Ge(xw)}
-  `;Fa([tt()],yo.prototype,"isThinMode",2);Fa([_e("#importFile")],yo.prototype,"_inputFile",2);Fa([_e("#dialog-import-complete-overview")],yo.prototype,"_dialogImportCompleat",2);yo=Fa([Ye("step-note-app")],yo);const Yt=":host,*,*:before,*:after{box-sizing:border-box}wa-input::part(base),wa-input::part(input){outline:none}wa-textarea::part(base),wa-textarea::part(control),wa-textarea::part(textarea){outline:none}wa-select::part(combobox),wa-select::part(form-control),wa-select::part(form-control-input){outline:none}",Sw="#contents-root{display:flex;flex-direction:column;gap:var(--wa-space-xs) 0;background:var(--wa-color-neutral-20);height:100%;padding-block:var(--wa-space-2xs);padding-inline-start:var(--wa-space-3xs)}#contents-root .field wa-icon{font-size:var(--wa-font-size-xl);color:var(--wa-color-neutral-60);transition:transform .2s ease-in-out,color .2s}#contents-root .field wa-icon:hover{color:var(--wa-color-neutral-95)}#contents-root .field.active wa-icon{color:var(--wa-color-neutral-95)}#contents-root .field.bottom{margin-block-start:auto}#contents-root wa-dialog .help-area{display:flex;font-size:var(--wa-font-size-s);color:var(--wa-color-neutral-30);padding-inline-start:var(--wa-space-2xs);padding-inline-end:var(--wa-space-m);margin-block-end:var(--wa-space-2xs)}#contents-root wa-dialog .help-area .shortcut{margin-inline-start:auto}";var Ew=Object.defineProperty,Aw=Object.getOwnPropertyDescriptor,pd=(e,t,r,n)=>{for(var o=n>1?void 0:n?Aw(t,r):t,a=e.length-1,l;a>=0;a--)(l=e[a])&&(o=(n?l(t,r,o):l(o))||o);return n&&o&&Ew(t,r,o),o};zt("/");let va=class extends $t{willUpdate(e){super.willUpdate(e)}render(){return X`<div id="contents-root">
+  `;Fa([tt()],yo.prototype,"isThinMode",2);Fa([_e("#importFile")],yo.prototype,"_inputFile",2);Fa([_e("#dialog-import-complete-overview")],yo.prototype,"_dialogImportCompleat",2);yo=Fa([Ye("step-note-app")],yo);const Yt=":host,*,*:before,*:after{box-sizing:border-box}wa-input::part(base),wa-input::part(input){outline:none}wa-textarea::part(base),wa-textarea::part(control),wa-textarea::part(textarea){outline:none}wa-select::part(combobox),wa-select::part(form-control),wa-select::part(form-control-input){outline:none}",Sw="#contents-root{display:flex;flex-direction:column;gap:var(--wa-space-xs) 0;background:var(--wa-color-neutral-20);height:100%;padding-block:var(--wa-space-2xs);padding-inline-start:var(--wa-space-3xs)}#contents-root .field wa-icon{font-size:var(--wa-font-size-xl);color:var(--wa-color-neutral-60);transition:transform .2s ease-in-out,color .2s}#contents-root .field wa-icon:hover{color:var(--wa-color-neutral-95)}#contents-root .field.active wa-icon{color:var(--wa-color-neutral-95)}#contents-root .field.bottom{margin-block-start:auto}wa-dialog .help-area{display:flex;font-size:var(--wa-font-size-s);color:var(--wa-color-neutral-30);padding-inline-start:var(--wa-space-2xs);padding-inline-end:var(--wa-space-m);margin-block-end:var(--wa-space-2xs)}wa-dialog .help-area .shortcut{margin-inline-start:auto}";var Ew=Object.defineProperty,Aw=Object.getOwnPropertyDescriptor,pd=(e,t,r,n)=>{for(var o=n>1?void 0:n?Aw(t,r):t,a=e.length-1,l;a>=0;a--)(l=e[a])&&(o=(n?l(t,r,o):l(o))||o);return n&&o&&Ew(t,r,o),o};zt("/");let va=class extends $t{willUpdate(e){super.willUpdate(e)}render(){return X`<div id="contents-root">
+        \x3C!--エクスプローラーボタン-->
+        <div class="field active">
+          <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="btn-explore"
+            @click=${()=>Qt(this,"click-menu-explore")}
+          >
+            <wa-icon library="my-icons" name="file-regular-full"></wa-icon>
+          </wa-button>
+        </div>
+
+        \x3C!--インポートボタン-->
+        <div class="field bottom">
+          <wa-tooltip for="btn-import" placement="right">Import</wa-tooltip>
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="btn-import"
+            @click=${()=>Qt(this,"click-menu-import")}
+          >
+            <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
+          </wa-button>
+        </div>
+
+        \x3C!--エクスポートボタン-->
+        <div class="field">
+          <wa-tooltip for="btn-export" placement="right">Export</wa-tooltip>
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="btn-export"
+            @click=${()=>Qt(this,"click-menu-export")}
+          >
+            <wa-icon library="my-icons" name="download-solid-full"></wa-icon>
+          </wa-button>
+        </div>
+
+        \x3C!--ヘルプボタン-->
+        <div class="field">
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="help-button"
+            @click=${()=>this.dialogHelp.open=!0}
+          >
+            <wa-icon
+              library="my-icons"
+              name="circle-question-regular-full"
+            ></wa-icon>
+          </wa-button>
+        </div>
+      </div>
       \x3C!--ヘルプダイアログ-->
       <wa-dialog label="Help" id="dialog-help">
         <div class="help-area">
@@ -4291,62 +4345,7 @@ Char: `+y.c,p=new Error(p),y.error=p,q(y,"onerror",p),y}function Ie(y){return(y.
         <wa-button slot="footer" variant="brand" data-dialog="close">
           Close
         </wa-button>
-      </wa-dialog>
-
-      \x3C!--エクスプローラーボタン-->
-      <div class="field active">
-        <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="btn-explore"
-          @click=${()=>Qt(this,"click-menu-explore")}
-        >
-          <wa-icon library="my-icons" name="file-regular-full"></wa-icon>
-        </wa-button>
-      </div>
-
-      \x3C!--インポートボタン-->
-      <div class="field bottom">
-        <wa-tooltip for="btn-import" placement="right">Import</wa-tooltip>
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="btn-import"
-          @click=${()=>Qt(this,"click-menu-import")}
-        >
-          <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
-        </wa-button>
-      </div>
-
-      \x3C!--エクスポートボタン-->
-      <div class="field">
-        <wa-tooltip for="btn-export" placement="right">Export</wa-tooltip>
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="btn-export"
-          @click=${()=>Qt(this,"click-menu-export")}
-        >
-          <wa-icon library="my-icons" name="download-solid-full"></wa-icon>
-        </wa-button>
-      </div>
-
-      \x3C!--ヘルプボタン-->
-      <div class="field">
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="help-button"
-          @click=${()=>this.dialogHelp.open=!0}
-        >
-          <wa-icon
-            library="my-icons"
-            name="circle-question-regular-full"
-          ></wa-icon>
-        </wa-button>
-      </div>
-    </div>`}};va.styles=[xe`
+      </wa-dialog>`}};va.styles=[xe`
       ${Ge(Yt)}
     `,xe`
       ${Ge(Sw)}
