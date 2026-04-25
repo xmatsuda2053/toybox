@@ -79,6 +79,60 @@ export class SnMenu extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
+        <!--エクスプローラーボタン-->
+        <div class="field active">
+          <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="btn-explore"
+            @click=${() => emit(this, "click-menu-explore")}
+          >
+            <wa-icon library="my-icons" name="file-regular-full"></wa-icon>
+          </wa-button>
+        </div>
+
+        <!--インポートボタン-->
+        <div class="field bottom">
+          <wa-tooltip for="btn-import" placement="right">Import</wa-tooltip>
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="btn-import"
+            @click=${() => emit(this, "click-menu-import")}
+          >
+            <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
+          </wa-button>
+        </div>
+
+        <!--エクスポートボタン-->
+        <div class="field">
+          <wa-tooltip for="btn-export" placement="right">Export</wa-tooltip>
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="btn-export"
+            @click=${() => emit(this, "click-menu-export")}
+          >
+            <wa-icon library="my-icons" name="download-solid-full"></wa-icon>
+          </wa-button>
+        </div>
+
+        <!--ヘルプボタン-->
+        <div class="field">
+          <wa-button
+            variant="neutral"
+            appearance="accent"
+            id="help-button"
+            @click=${() => (this.dialogHelp.open = true)}
+          >
+            <wa-icon
+              library="my-icons"
+              name="circle-question-regular-full"
+            ></wa-icon>
+          </wa-button>
+        </div>
+      </div>
       <!--ヘルプダイアログ-->
       <wa-dialog label="Help" id="dialog-help">
         <div class="help-area">
@@ -100,61 +154,6 @@ export class SnMenu extends LitElement {
         <wa-button slot="footer" variant="brand" data-dialog="close">
           Close
         </wa-button>
-      </wa-dialog>
-
-      <!--エクスプローラーボタン-->
-      <div class="field active">
-        <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="btn-explore"
-          @click=${() => emit(this, "click-menu-explore")}
-        >
-          <wa-icon library="my-icons" name="file-regular-full"></wa-icon>
-        </wa-button>
-      </div>
-
-      <!--インポートボタン-->
-      <div class="field bottom">
-        <wa-tooltip for="btn-import" placement="right">Import</wa-tooltip>
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="btn-import"
-          @click=${() => emit(this, "click-menu-import")}
-        >
-          <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
-        </wa-button>
-      </div>
-
-      <!--エクスポートボタン-->
-      <div class="field">
-        <wa-tooltip for="btn-export" placement="right">Export</wa-tooltip>
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="btn-export"
-          @click=${() => emit(this, "click-menu-export")}
-        >
-          <wa-icon library="my-icons" name="download-solid-full"></wa-icon>
-        </wa-button>
-      </div>
-
-      <!--ヘルプボタン-->
-      <div class="field">
-        <wa-button
-          variant="neutral"
-          appearance="accent"
-          id="help-button"
-          @click=${() => (this.dialogHelp.open = true)}
-        >
-          <wa-icon
-            library="my-icons"
-            name="circle-question-regular-full"
-          ></wa-icon>
-        </wa-button>
-      </div>
-    </div>`;
+      </wa-dialog>`;
   }
 }
