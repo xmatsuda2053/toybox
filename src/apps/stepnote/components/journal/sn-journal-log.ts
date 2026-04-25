@@ -276,21 +276,21 @@ export class SnJournalLog extends LitElement {
         </div>
         <wa-button
           slot="footer"
-          variant="neutral"
-          appearance="filled-outlined"
-          size="small"
-          data-dialog="close"
-        >
-          キャンセル
-        </wa-button>
-        <wa-button
-          slot="footer"
           variant="danger"
           appearance="accent"
           size="small"
           @click=${this._deleteLog}
         >
           削除
+        </wa-button>
+        <wa-button
+          slot="footer"
+          variant="neutral"
+          appearance="filled-outlined"
+          size="small"
+          data-dialog="close"
+        >
+          キャンセル
         </wa-button>
       </wa-dialog>
     </div>`;

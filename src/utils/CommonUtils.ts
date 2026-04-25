@@ -44,3 +44,16 @@ export function rotateElement(el: HTMLElement | null) {
     iterations: 1,
   });
 }
+
+/**
+ * 指定された文字列が空（null, undefined, 空文字）でないか判定します。
+ * * @param val - 判定対象の文字列
+ * @returns 空でない場合は true、それ以外（null, undefined, ""）は false
+ * * @example
+ * isNotBlank("hello") // true
+ * isNotBlank("")      // false
+ * isNotBlank(null)    // false
+ */
+export function isNotBlank(val: string | null | undefined): boolean {
+  return val !== null && val !== undefined && val !== "";
+}

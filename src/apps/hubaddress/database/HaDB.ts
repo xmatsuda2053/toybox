@@ -1,8 +1,5 @@
 import Dexie, { Table } from "dexie";
-import "dexie-export-import";
-
-import { Staff } from "../models/Staff";
-import { Division } from "../models/Division";
+import { FileData, Category } from "../models/FileData";
 
 /**
  * データベース
@@ -12,15 +9,48 @@ import { Division } from "../models/Division";
  * @extends {Dexie}
  */
 export class HaDB extends Dexie {
-  staffs!: Table<Staff>;
-  divisions!: Table<Division>;
+  fileData!: Table<FileData>;
 
   /**
-   * Creates an instance of SnDB.
-   * @memberof SnDB
+   * Creates an instance of CccGoDB.
+   * @memberof CccGoDB
    */
   constructor() {
     super("HaDB");
-    this.version(1).stores({});
+    this.version(1).stores({
+      fileData: "++id, category, *searchTerms",
+    });
+  }
+
+  /**
+   * データを削除する。
+   *
+   * @memberof HaDB
+   */
+  async deleteData() {
+    await this.fileData.clear();
+  }
+
+  /**
+   * データを登録する。
+   *
+   * @param {FileData[]} data
+   * @return {*}  {Promise<number>}
+   * @memberof HaDB
+   */
+  async importData(data: FileData[]): Promise<number> {
+    return await this.fileData.bulkAdd(data);
+  }
+
+  /**
+   * カテゴリに合致するデータを取得する。
+   *
+   * @param {Category} category
+   * @return {*}  {Promise<FileData[]>}
+   * @memberof HaDB
+   */
+  async getDataByCategory(category: Category): Promise<FileData[]> {
+    return await this.fileData.where("category").equals(category).toArray();
   }
 }
+export const haDB = new HaDB();

@@ -19,6 +19,7 @@ import "@awesome.me/webawesome/dist/components/relative-time/relative-time.js";
 import "@awesome.me/webawesome/dist/components/select/select.js";
 import "@awesome.me/webawesome/dist/components/option/option.js";
 import "@awesome.me/webawesome/dist/components/spinner/spinner.js";
+import "@awesome.me/webawesome/dist/components/format-bytes/format-bytes.js";
 
 import "@common/thin-markdown-editor/thin-markdown-editor.ts";
 import "@common/flexible-tab-area/flexible-tab-area";
@@ -43,7 +44,8 @@ import "@sn/components/journal/sn-journal-log";
 import "@sn/components/journal/sn-journal-log-item";
 
 import "@ha/hub-address-app";
-import "@ha/components/file/ha-uploader";
+import "@ha/components/menu/ha-menu";
+import "@ha/components/uploader/wa-uploader";
 import "@ha/components/search/ha-search-input";
-import "@ha/components/viewer/ha-staff-viewer";
-import "@ha/components/viewer/ha-div-viewer";
+import "@ha/components/viewer/ha-viewer-staff";
+import "@ha/components/viewer/ha-viewer-div";

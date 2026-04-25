@@ -1,0 +1,49 @@
+#contents-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs) 0;
+
+  background: var(--wa-color-neutral-20);
+  height: 100%;
+
+  padding-block: var(--wa-space-2xs);
+  padding-inline-start: var(--wa-space-3xs);
+
+  #dialog-help {
+    --width: 650px;
+
+    .message-area {
+      margin-block-end: var(--wa-space-m);
+      .label {
+        font-weight: bold;
+        font-size: var(--wa-font-size-m);
+        margin-block-end: var(--wa-space-xs);
+      }
+    }
+  }
+
+  .field {
+    wa-icon {
+      font-size: var(--wa-font-size-xl);
+      color: var(--wa-color-neutral-60);
+
+      transition:
+        transform 0.2s ease-in-out,
+        color 0.2s;
+
+      &:hover {
+        color: var(--wa-color-neutral-95);
+      }
+    }
+
+    &.active {
+      wa-icon {
+        color: var(--wa-color-neutral-95);
+      }
+    }
+
+    &.bottom {
+      margin-block-start: auto;
+    }
+  }
+}

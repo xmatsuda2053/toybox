@@ -1,0 +1,98 @@
+#contents-root {
+  display: flex;
+  gap: var(--wa-space-m);
+  flex-flow: column;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  div {
+    width: 400px;
+
+    &.drop-area {
+      cursor: pointer;
+
+      display: flex;
+      gap: var(--wa-space-s);
+      flex-flow: column;
+
+      align-items: center;
+      justify-content: center;
+
+      padding-block: var(--wa-space-xl);
+
+      border: 1px dashed var(--wa-form-control-border-color);
+      border-radius: var(--wa-border-radius-l);
+
+      wa-icon {
+        font-size: var(--wa-font-size-3xl);
+        color: var(--wa-color-neutral-40);
+      }
+      .label {
+        font-weight: bold;
+        font-size: var(--wa-font-size-m);
+        color: var(--wa-color-neutral-40);
+      }
+
+      &:hover,
+      &.drag-over {
+        border: 1px solid var(--wa-color-brand-40);
+        background-color: var(--wa-color-brand-95);
+
+        wa-icon,
+        .label {
+          color: var(--wa-color-brand-40);
+        }
+      }
+      & * {
+        pointer-events: none;
+      }
+    }
+
+    &.file-data {
+      display: flex;
+      gap: var(--wa-space-s);
+      align-items: center;
+
+      padding-block: var(--wa-space-m);
+      padding-inline: var(--wa-space-m);
+
+      border: 1px solid var(--wa-color-surface-border);
+      border-radius: var(--wa-border-radius-l);
+
+      .icon-area {
+        flex: 1;
+        flex-shrink: 0; /* 隣に押されても縮まない */
+        flex-grow: 0; /* 余白があっても伸びない */
+        padding: var(--wa-space-s);
+        background-color: var(--wa-color-neutral-90);
+        border-radius: var(--wa-border-radius-m);
+
+        wa-icon {
+          font-size: var(--wa-font-size-l);
+        }
+      }
+
+      .meta-area {
+        flex: 1;
+
+        display: flex;
+        gap: var(--wa-space-3xs);
+        flex-flow: column;
+
+        font-size: var(--wa-font-size-s);
+
+        wa-format-bytes {
+          color: var(--wa-color-neutral-40);
+        }
+      }
+
+      .button-area {
+        flex: 1;
+        flex-shrink: 0; /* 隣に押されても縮まない */
+        flex-grow: 0; /* 余白があっても伸びない */
+      }
+    }
+  }
+}

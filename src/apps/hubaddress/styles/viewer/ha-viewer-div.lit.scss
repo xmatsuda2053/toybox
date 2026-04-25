@@ -1,0 +1,70 @@
+@use "./ha_viewer.lit";
+
+$tel-width: 140px;
+$remark-width: 60px;
+
+.card {
+  grid-template-columns: 1fr 0.5fr $tel-width $remark-width;
+  grid-template-areas:
+    "div div tel1 remark"
+    "other other tel2 remark"
+    "place post fax remark";
+
+  &.header {
+    background-color: var(--wa-color-brand-40);
+    color: #fffffb;
+  }
+
+  &.item {
+    &.odd {
+      background-color: #fffffb;
+    }
+    &.even {
+      background-color: var(--wa-color-brand-95);
+    }
+  }
+
+  .div {
+    grid-area: div;
+    border-block-end: 1px solid var(--wa-color-surface-border);
+  }
+
+  .other {
+    grid-area: other;
+    border-block-end: 1px solid var(--wa-color-surface-border);
+  }
+
+  .place {
+    grid-area: place;
+  }
+
+  .post {
+    grid-area: post;
+    border-inline-start: 1px solid var(--wa-color-surface-border);
+  }
+
+  .tel1 {
+    grid-area: tel1;
+    border-inline-start: 1px solid var(--wa-color-surface-border);
+    border-block-end: 1px solid var(--wa-color-surface-border);
+  }
+
+  .tel2 {
+    grid-area: tel2;
+    border-inline-start: 1px solid var(--wa-color-surface-border);
+    border-block-end: 1px solid var(--wa-color-surface-border);
+  }
+
+  .fax {
+    grid-area: fax;
+    border-inline-start: 1px solid var(--wa-color-surface-border);
+  }
+
+  .remark {
+    grid-area: remark;
+    border-inline-start: 1px solid var(--wa-color-surface-border);
+
+    text-align: center;
+    justify-content: center;
+  }
+}

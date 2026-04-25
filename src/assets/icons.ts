@@ -10,6 +10,7 @@ import blockquote_left from "@assets/icons/blockquote-left.svg?raw";
 import bold_solid_full from "@assets/icons/bold-solid-full.svg?raw";
 import bookmark_regular_full from "@assets/icons/bookmark-regular-full.svg?raw";
 import bookmark_solid_full from "@assets/icons/bookmark-solid-full.svg?raw";
+import border_none_solid_full from "@assets/icons/border-none-solid-full.svg?raw";
 import building_solid_full from "@assets/icons/building-solid-full.svg?raw";
 import calendar_day_solid_full from "@assets/icons/calendar-day-solid-full.svg?raw";
 import calendar_days_solid_full from "@assets/icons/calendar-days-solid-full.svg?raw";
@@ -23,6 +24,7 @@ import circle_check_regular_full from "@assets/icons/circle-check-regular-full.s
 import circle_check_solid_full from "@assets/icons/circle-check-solid-full.svg?raw";
 import circle_info_solid_full from "@assets/icons/circle-info-solid-full.svg?raw";
 import circle_play_solid_full from "@assets/icons/circle-play-solid-full.svg?raw";
+import circle_question_regular_full from "@assets/icons/circle-question-regular-full.svg?raw";
 import circle_solid_full from "@assets/icons/circle-solid-full.svg?raw";
 import circle_stop_solid_full from "@assets/icons/circle-stop-solid-full.svg?raw";
 import circle_user_solid_full from "@assets/icons/circle-user-solid-full.svg?raw";
@@ -37,9 +39,11 @@ import envelope_solid_full from "@assets/icons/envelope-solid-full.svg?raw";
 import eye_slash_solid_full from "@assets/icons/eye-slash-solid-full.svg?raw";
 import eye_solid_full from "@assets/icons/eye-solid-full.svg?raw";
 import fax_solid_full from "@assets/icons/fax-solid-full.svg?raw";
+import file_code_solid_full from "@assets/icons/file-code-solid-full.svg?raw";
 import file_regular_full from "@assets/icons/file-regular-full.svg?raw";
 import fire_solid_full from "@assets/icons/fire-solid-full.svg?raw";
 import floppy_disk_solid_full from "@assets/icons/floppy-disk-solid-full.svg?raw";
+import folder_open_solid_full from "@assets/icons/folder-open-solid-full.svg?raw";
 import folder_regular_full from "@assets/icons/folder-regular-full.svg?raw";
 import gear_solid_full from "@assets/icons/gear-solid-full.svg?raw";
 import hashtag_solid_full from "@assets/icons/hashtag-solid-full.svg?raw";
@@ -81,6 +85,7 @@ export const icons: Record<string, string> = {
   "bold-solid-full": bold_solid_full,
   "bookmark-regular-full": bookmark_regular_full,
   "bookmark-solid-full": bookmark_solid_full,
+  "border-none-solid-full": border_none_solid_full,
   "building-solid-full": building_solid_full,
   "calendar-day-solid-full": calendar_day_solid_full,
   "calendar-days-solid-full": calendar_days_solid_full,
@@ -94,6 +99,7 @@ export const icons: Record<string, string> = {
   "circle-check-solid-full": circle_check_solid_full,
   "circle-info-solid-full": circle_info_solid_full,
   "circle-play-solid-full": circle_play_solid_full,
+  "circle-question-regular-full": circle_question_regular_full,
   "circle-solid-full": circle_solid_full,
   "circle-stop-solid-full": circle_stop_solid_full,
   "circle-user-solid-full": circle_user_solid_full,
@@ -108,9 +114,11 @@ export const icons: Record<string, string> = {
   "eye-slash-solid-full": eye_slash_solid_full,
   "eye-solid-full": eye_solid_full,
   "fax-solid-full": fax_solid_full,
+  "file-code-solid-full": file_code_solid_full,
   "file-regular-full": file_regular_full,
   "fire-solid-full": fire_solid_full,
   "floppy-disk-solid-full": floppy_disk_solid_full,
+  "folder-open-solid-full": folder_open_solid_full,
   "folder-regular-full": folder_regular_full,
   "gear-solid-full": gear_solid_full,
   "hashtag-solid-full": hashtag_solid_full,
