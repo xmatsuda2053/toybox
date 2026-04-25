@@ -37,15 +37,6 @@ export class StepNoteApp extends LitElement {
   @state() isThinMode: boolean = false;
 
   /**
-   * 小表示モード時のドロワー
-   *
-   * @private
-   * @type {WaDrawer}
-   * @memberof StepNoteApp
-   */
-  @query("#drawer-overview") private _drawerOverview!: WaDrawer;
-
-  /**
    * ファイル選択
    *
    * @private
@@ -75,11 +66,36 @@ export class StepNoteApp extends LitElement {
   `;
 
   /**
+   * ショートカットキー
+   *
+   * @private
+   * @param {KeyboardEvent} e
+   * @memberof SnList
+   */
+  private _shortcutKey = (e: KeyboardEvent) => {
+    if (e.altKey && e.shiftKey && (e.key === "E" || e.key === "e")) {
+      this._toggleExploreNav();
+    }
+  };
+
+  /**
    * Creates an instance of StepNoteApp.
    * @memberof StepNoteApp
    */
   constructor() {
     super();
+    window.addEventListener("keydown", this._shortcutKey);
+  }
+
+  /**
+   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
+   *
+   * @override
+   * @memberof SnList
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener("keydown", this._shortcutKey);
   }
 
   /**
@@ -103,7 +119,7 @@ export class StepNoteApp extends LitElement {
    * @memberof StepNoteApp
    */
   protected render(): HTMLTemplateResult {
-    return html`<wa-resize-observer @wa-resize=${this._responsive}>
+    return html`<div id="contents-root">
       <wa-drawer id="drawer-overview" placement="start" without-header="false">
         <div class="drawer-contents">
           ${this.isThinMode
@@ -118,7 +134,7 @@ export class StepNoteApp extends LitElement {
       >
         <div class="panel menu">
           <sn-menu
-            @click-menu-explore=${this._showExploreNav}
+            @click-menu-explore=${this._toggleExploreNav}
             @click-menu-import=${this._importDataSelect}
             @click-menu-export=${this._exportData}
             @click-menu-config=${this._showConfig}
@@ -146,22 +162,7 @@ export class StepNoteApp extends LitElement {
           >Close</wa-button
         >
       </wa-dialog>
-    </wa-resize-observer> `;
-  }
-
-  /**
-   * レスポンシブデザインの制御を行う。
-   *
-   * @private
-   * @param {CustomEvent} e
-   * @memberof StepNoteApp
-   */
-  private _responsive(e: CustomEvent) {
-    const width = e.detail.entries[0].contentRect.width;
-
-    if (width > 0) {
-      this.isThinMode = width <= 1500;
-    }
+    </div> `;
   }
 
   /**
@@ -186,10 +187,8 @@ export class StepNoteApp extends LitElement {
    * @private
    * @memberof StepNoteApp
    */
-  private _showExploreNav() {
-    if (this.isThinMode && this._drawerOverview) {
-      this._drawerOverview.open = true;
-    }
+  private _toggleExploreNav() {
+    this.isThinMode = !this.isThinMode;
   }
 
   /**
