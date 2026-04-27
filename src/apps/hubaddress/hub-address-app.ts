@@ -12,6 +12,7 @@ import { liveQuery, type Subscription } from "dexie";
 // 2. Decorators & Directives
 import { customElement, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
+import "@lit-labs/virtualizer";
 
 // 3. Third-party Components & Utils
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -335,10 +336,9 @@ export class HubAddressApp extends LitElement {
 
     return html` <ha-viewer-staff .staffData=${header} header>
       </ha-viewer-staff>
-      ${repeat(
-        this._staffs,
-        (staff) => staff.id,
-        (staff, index) => {
+      <lit-virtualizer
+        .items=${this._staffs}
+        .renderItem=${((staff: FileData, index: number) => {
           const isOdd = (index + 1) % 2 !== 0;
           const data: Staff = {
             staffId: staff.data["staffId"],
@@ -349,15 +349,17 @@ export class HubAddressApp extends LitElement {
             mail1: staff.data["mail1"],
             mail2: staff.data["mail2"],
           };
-          return html` <ha-viewer-staff
-            .staffData=${data}
-            ?odd=${isOdd}
-            ?even=${!isOdd}
-            item
-          >
-          </ha-viewer-staff>`;
-        },
-      )}`;
+          return html`
+            <ha-viewer-staff
+              .staffData=${data}
+              ?odd=${isOdd}
+              ?even=${!isOdd}
+              item
+            >
+            </ha-viewer-staff>
+          `;
+        }) as any}
+      ></lit-virtualizer>`;
   }
 
   /**
@@ -386,10 +388,9 @@ export class HubAddressApp extends LitElement {
     };
 
     return html`<ha-viewer-div .divData=${header} header></ha-viewer-div>
-      ${repeat(
-        this._divs,
-        (div) => div.id,
-        (div, index) => {
+      <lit-virtualizer
+        .items=${this._divs}
+        .renderItem=${((div: FileData, index: number) => {
           const isOdd = (index + 1) % 2 !== 0;
           const data: Division = {
             place: div.data["place"],
@@ -403,15 +404,12 @@ export class HubAddressApp extends LitElement {
             fax: div.data["fax"],
             remark: div.data["remark"],
           };
-          return html` <ha-viewer-div
-            .divData=${data}
-            ?odd=${isOdd}
-            ?even=${!isOdd}
-            item
-          >
-          </ha-viewer-div>`;
-        },
-      )}`;
+          return html`
+            <ha-viewer-div .divData=${data} ?odd=${isOdd} ?even=${!isOdd} item>
+            </ha-viewer-div>
+          `;
+        }) as any}
+      ></lit-virtualizer>`;
   }
 
   /**

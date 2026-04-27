@@ -6,6 +6,10 @@ $row-height: 30px;
   grid-auto-rows: 1fr;
   grid-template-rows: repeat(3, minmax($row-height, auto));
 
+  width: 100%; // 親（virtualizerのコンテナ）に合わせる
+  min-width: 100%; // 縮小を防止
+  box-sizing: border-box; // paddingが原因で溢れるのを防ぐ
+
   gap: 0px 0px;
   grid-auto-flow: row;
 
