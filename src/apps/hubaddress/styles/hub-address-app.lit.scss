@@ -79,6 +79,16 @@ $search-height: 40px;
           display: block;
         }
       }
+
+      &.loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        wa-spinner {
+          font-size: 200px;
+        }
+      }
     }
   }
 }

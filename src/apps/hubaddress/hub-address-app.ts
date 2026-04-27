@@ -56,7 +56,7 @@ export class HubAddressApp extends LitElement {
    * @type {FileData[]}
    * @memberof HubAddressApp
    */
-  @state() _staffs: FileData[] = [];
+  @state() _staffs: FileData[] | undefined = undefined;
 
   /**
    * 組織情報
@@ -64,7 +64,7 @@ export class HubAddressApp extends LitElement {
    * @type {FileData[]}
    * @memberof HubAddressApp
    */
-  @state() _divs: FileData[] = [];
+  @state() _divs: FileData[] | undefined = undefined;
 
   /**
    * 職員情報の検索キーワード
@@ -160,6 +160,8 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private isEmptyStaff(): boolean {
+    if (!this._staffs) return false;
+
     return this._staffs?.length === 0 && this._keywordStaff === "";
   }
 
@@ -171,6 +173,8 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private isEmptyDiv(): boolean {
+    if (!this._divs) return false;
+
     return this._divs?.length === 0 && this._keywordDiv === "";
   }
 
@@ -187,11 +191,13 @@ export class HubAddressApp extends LitElement {
     const viewerStaffClassMap = classMap({
       viewer: true,
       empty: this.isEmptyStaff(),
+      loading: this._staffs === undefined,
     });
 
     const viewerSDivClassMap = classMap({
       viewer: true,
       empty: this.isEmptyDiv(),
+      loading: this._divs === undefined,
     });
 
     return html`<div id="contents-root" @click-item=${this.clickItem}>
@@ -313,6 +319,8 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private _renderStaffData(): HTMLTemplateResult {
+    if (!this._staffs) return html`<wa-spinner></wa-spinner>`;
+
     if (this.isEmptyStaff()) return html``;
 
     const header: Staff = {
@@ -360,6 +368,8 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private _renderDivData(): HTMLTemplateResult {
+    if (!this._divs) return html`<wa-spinner></wa-spinner>`;
+
     if (this.isEmptyDiv()) return html``;
 
     const header: Division = {

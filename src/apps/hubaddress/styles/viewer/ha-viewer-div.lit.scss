@@ -11,7 +11,7 @@ $remark-width: 150px;
     "place post fax remark";
 
   &.header {
-    background-color: var(--wa-color-brand-40);
+    background-color: var(--wa-color-indigo-40);
     color: #fffffb;
   }
 
@@ -20,7 +20,7 @@ $remark-width: 150px;
       background-color: #fffffb;
     }
     &.even {
-      background-color: var(--wa-color-brand-95);
+      background-color: var(--wa-color-indigo-95);
     }
   }
 
