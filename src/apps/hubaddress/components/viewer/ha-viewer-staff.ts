@@ -127,25 +127,35 @@ export class HaViewerStaff extends LitElement {
       odd: this.odd,
       even: this.even,
     });
-    return html`<div class=${classes} @click=${this.clickItem}>
-      <div class="id">${this.staffData?.staffId}</div>
-      <div class="name-kj">${this.staffData?.nameKj}</div>
-      <div class="name-kn">${this.staffData?.nameKn}</div>
-      <div class="div search" data-name="div">
-        ${this.staffData?.div}
+    return html`<div class=${classes}>
+      <div class="id">
+        <span @click=${this.clickItem}>${this.staffData?.staffId}</span>
+      </div>
+      <div class="name-kj">
+        <span @click=${this.clickItem}>${this.staffData?.nameKj}</span>
+      </div>
+      <div class="name-kn">
+        <span @click=${this.clickItem}>${this.staffData?.nameKn}</span>
+      </div>
+      <div class="div has-icon">
+        <span class="search" @click=${this.clickItem}>
+          ${this.staffData?.div}
+        </span>
         <wa-icon
           library="my-icons"
           name="magnifying-glass-solid-full"
         ></wa-icon>
       </div>
-      <div class="post">${this.staffData?.post}</div>
-      <div class="mail mail-1">
-        <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
-        ${this.staffData?.mail1}
+      <div class="post">
+        <span @click=${this.clickItem}>${this.staffData?.post}</span>
       </div>
-      <div class="mail mail-2">
+      <div class="mail mail-1 has-icon">
+        <wa-icon library="my-icons" name="envelope-solid-full"></wa-icon>
+        <span @click=${this.clickItem}>${this.staffData?.mail1}</span>
+      </div>
+      <div class="mail mail-2 has-icon">
         <wa-icon library="my-icons" name="envelope-regular-full"></wa-icon>
-        ${this.staffData?.mail2}
+        <span @click=${this.clickItem}>${this.staffData?.mail2}</span>
       </div>
     </div>`;
   }
@@ -162,9 +172,9 @@ export class HaViewerStaff extends LitElement {
     if (this.header) return;
     const target = e.target as HTMLDivElement;
     const text = target.innerText;
-    const name = target.dataset.name ?? "";
+    const hasSearch = target.classList.contains("search");
     emit(this, "click-item", {
-      detail: { text: text, name: name, category: "staff" },
+      detail: { text: text, search: hasSearch, category: "staff" },
     });
   }
 }

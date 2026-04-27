@@ -91,6 +91,23 @@ export class HaDB extends Dexie {
   }
 
   /**
+   * 検索キーワードを追記する。
+   *
+   * @param {Category} category
+   * @param {string} keyword
+   * @memberof HaDB
+   */
+  async concatSearchKeyword(category: Category, keyword: string) {
+    const data = await this.searchKeywords.get(category);
+    if (!data) {
+      await this.putSearchKeyword(category, keyword);
+      return;
+    }
+    const newKeyword = data.keyword + " " + keyword;
+    await this.putSearchKeyword(category, newKeyword);
+  }
+
+  /**
    * 検索キーワードを取得する。
    *
    * @param {Category} category

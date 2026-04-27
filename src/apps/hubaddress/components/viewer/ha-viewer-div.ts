@@ -127,30 +127,46 @@ export class HaViewerDiv extends LitElement {
       odd: this.odd,
       even: this.even,
     });
-    return html`<div class=${classes} @click=${this.clickItem}>
-      <div class="div search" data-name="div">
-        ${this.divData?.div1} ${this.divData?.div2} ${this.divData?.div3}
+    return html`<div class=${classes}>
+      <div class="div has-icon">
+        <span class="search" @click=${this.clickItem}>
+          ${this.divData?.div1}
+        </span>
+        <span class="search" @click=${this.clickItem}>
+          ${this.divData?.div2}
+        </span>
+        <span class="search" @click=${this.clickItem}>
+          ${this.divData?.div3}
+        </span>
         <wa-icon
           library="my-icons"
           name="magnifying-glass-solid-full"
         ></wa-icon>
       </div>
-      <div class="other">${this.divData?.other}</div>
-      <div class="place">${this.divData?.place}</div>
-      <div class="post">${this.divData?.post}</div>
-      <div class="tel1">
+      <div class="other">
+        <span @click=${this.clickItem}>${this.divData?.other}</span>
+      </div>
+      <div class="place">
+        <span @click=${this.clickItem}>${this.divData?.place}</span>
+      </div>
+      <div class="post">
+        <span @click=${this.clickItem}>${this.divData?.post}</span>
+      </div>
+      <div class="tel1 has-icon">
         <wa-icon library="my-icons" name="phone-flip-solid-full"></wa-icon>
-        ${this.divData?.tel1}
+        <span @click=${this.clickItem}>${this.divData?.tel1}</span>
       </div>
-      <div class="tel2">
+      <div class="tel2 has-icon">
         <wa-icon library="my-icons" name="phone-solid-full"></wa-icon>
-        ${this.divData?.tel2}
+        <span @click=${this.clickItem}>${this.divData?.tel2}</span>
       </div>
-      <div class="fax">
+      <div class="fax has-icon">
         <wa-icon library="my-icons" name="fax-solid-full"></wa-icon>
-        ${this.divData?.fax}
+        <span @click=${this.clickItem}>${this.divData?.fax}</span>
       </div>
-      <div class="remark">${this.divData?.remark}</div>
+      <div class="remark">
+        <span @click=${this.clickItem}>${this.divData?.remark}</span>
+      </div>
     </div>`;
   }
 
@@ -166,9 +182,9 @@ export class HaViewerDiv extends LitElement {
     if (this.header) return;
     const target = e.target as HTMLDivElement;
     const text = target.innerText;
-    const name = target.dataset.name ?? "";
+    const hasSearch = target.classList.contains("search");
     emit(this, "click-item", {
-      detail: { text: text, name: name, category: "div" },
+      detail: { text: text, search: hasSearch, category: "div" },
     });
   }
 }

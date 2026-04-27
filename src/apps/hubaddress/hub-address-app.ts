@@ -455,12 +455,12 @@ export class HubAddressApp extends LitElement {
     await navigator.clipboard.writeText(text);
 
     // 検索対象チェック
-    const name = e.detail.name;
-    if (!name) return;
+    const search = e.detail.search;
+    if (!search) return;
 
     // 検索実行
     const category: Category = e.detail.category === "staff" ? "div" : "staff";
 
-    await haDB.putSearchKeyword(category, text);
+    await haDB.concatSearchKeyword(category, text);
   }
 }

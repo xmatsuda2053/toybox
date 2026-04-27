@@ -69,7 +69,7 @@ export class AppContainer extends LitElement {
    * @type {App}
    * @memberof AppContainer
    */
-  @state() selectedApp: AppItem = APP_LIST[0];
+  @state() selectedApp: AppItem = APP_LIST[1];
 
   /**
    * ショートカットキーによるアプリ切り替え
