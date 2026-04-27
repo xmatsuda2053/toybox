@@ -128,7 +128,7 @@ export class HaViewerDiv extends LitElement {
       even: this.even,
     });
     return html`<div class=${classes}>
-      <div class="div has-icon">
+      <div class="div has-icon ellipsis">
         <span class="search" @click=${this.clickItem}>
           ${this.divData?.div1}
         </span>
@@ -143,13 +143,13 @@ export class HaViewerDiv extends LitElement {
           name="magnifying-glass-solid-full"
         ></wa-icon>
       </div>
-      <div class="other">
+      <div class="other ellipsis">
         <span @click=${this.clickItem}>${this.divData?.other}</span>
       </div>
-      <div class="place">
+      <div class="place ellipsis">
         <span @click=${this.clickItem}>${this.divData?.place}</span>
       </div>
-      <div class="post">
+      <div class="post ellipsis">
         <span @click=${this.clickItem}>${this.divData?.post}</span>
       </div>
       <div class="tel1 has-icon">
@@ -164,7 +164,7 @@ export class HaViewerDiv extends LitElement {
         <wa-icon library="my-icons" name="fax-solid-full"></wa-icon>
         <span @click=${this.clickItem}>${this.divData?.fax}</span>
       </div>
-      <div class="remark">
+      <div class="remark ">
         <span @click=${this.clickItem}>${this.divData?.remark}</span>
       </div>
     </div>`;

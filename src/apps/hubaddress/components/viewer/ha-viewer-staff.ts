@@ -131,13 +131,13 @@ export class HaViewerStaff extends LitElement {
       <div class="id">
         <span @click=${this.clickItem}>${this.staffData?.staffId}</span>
       </div>
-      <div class="name-kj">
+      <div class="name-kj ellipsis">
         <span @click=${this.clickItem}>${this.staffData?.nameKj}</span>
       </div>
-      <div class="name-kn">
+      <div class="name-kn ellipsis">
         <span @click=${this.clickItem}>${this.staffData?.nameKn}</span>
       </div>
-      <div class="div has-icon">
+      <div class="div ellipsis has-icon ">
         <span class="search" @click=${this.clickItem}>
           ${this.staffData?.div}
         </span>
@@ -146,7 +146,7 @@ export class HaViewerStaff extends LitElement {
           name="magnifying-glass-solid-full"
         ></wa-icon>
       </div>
-      <div class="post">
+      <div class="post ellipsis">
         <span @click=${this.clickItem}>${this.staffData?.post}</span>
       </div>
       <div class="mail mail-1 has-icon">

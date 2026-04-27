@@ -47,6 +47,13 @@ $row-height: 30px;
         align-items: center;
       }
 
+      &.ellipsis {
+        display: block;
+        white-space: nowrap; /* 絶対に改行させない */
+        overflow: hidden; /* はみ出た分を隠す */
+        text-overflow: ellipsis; /* 三点リーダーを表示 */
+      }
+
       span {
         &:hover {
           cursor: pointer;

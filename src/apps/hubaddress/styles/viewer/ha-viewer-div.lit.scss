@@ -1,7 +1,7 @@
 @use "./ha_viewer.lit";
 
-$tel-width: 140px;
-$remark-width: 60px;
+$tel-width: 130px;
+$remark-width: 150px;
 
 .card {
   grid-template-columns: 1fr 0.5fr $tel-width $remark-width;
@@ -64,7 +64,14 @@ $remark-width: 60px;
     grid-area: remark;
     border-inline-start: 1px solid var(--wa-color-surface-border);
 
-    text-align: center;
-    justify-content: center;
+    span {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 5;
+      line-clamp: 5;
+      text-overflow: ellipsis;
+      white-space: normal;
+      overflow: hidden;
+    }
   }
 }
