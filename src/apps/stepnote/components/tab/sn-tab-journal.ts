@@ -121,6 +121,7 @@ export class SnTabJournal extends LitElement {
 
     const observable = liveQuery(async () => {
       const tasks = await snDB.tasks.where("selected").equals(1).toArray();
+
       const task = tasks?.[0];
       if (!task) {
         return { task: null, logs: [], notes: [] };
@@ -181,7 +182,8 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabJournal
    */
   protected render(): HTMLTemplateResult {
-    const hasNote = this.notes?.[0].value.trim() !== "";
+    const hasNote =
+      this.notes?.length > 0 && this.notes?.[0].value.trim() !== "";
     const JOURNALS: config[] = [
       { id: "log", label: "Log" },
       { id: "note", label: "Note", mark: hasNote },
