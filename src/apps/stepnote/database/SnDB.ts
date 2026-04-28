@@ -48,8 +48,8 @@ export class SnDB extends Dexie {
         isDoneSelected: 0,
         isOverdueSelected: 0,
         isUpcomingSelected: 0,
-        isProgressSelected: 0,
-        isPendingSelected: 0,
+        isProgressSelected: 1,
+        isPendingSelected: 1,
         isUncategorizedSelected: 0,
       });
     });
