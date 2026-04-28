@@ -31,7 +31,14 @@ export class HaDB extends Dexie {
    * @memberof HaDB
    */
   async deleteData() {
-    await this.fileData.clear();
+    // 1. 現在のデータベース接続を閉じる
+    this.close();
+
+    // 2. データベース自体を削除（これでカウンターがリセットされる）
+    await this.delete();
+
+    // 3. 再度データベースを開く（スキーマが再定義される）
+    await this.open();
   }
 
   /**
@@ -128,14 +135,8 @@ export class HaDB extends Dexie {
    * @memberof HaDB
    */
   async clearSearchKeyword() {
-    // 1. 現在のデータベース接続を閉じる
-    this.close();
-
-    // 2. データベース自体を削除（これでカウンターがリセットされる）
-    await this.delete();
-
-    // 3. 再度データベースを開く（スキーマが再定義される）
-    await this.open();
+    await this.putSearchKeyword("staff", "");
+    await this.putSearchKeyword("div", "");
   }
 }
 export const haDB = new HaDB();
