@@ -110,6 +110,9 @@ export class HaDB extends Dexie {
       await this.putSearchKeyword(category, keyword);
       return;
     }
+    if (data.keyword.includes(keyword)) {
+      return;
+    }
     const newKeyword = data.keyword + " " + keyword;
     await this.putSearchKeyword(category, newKeyword);
   }
