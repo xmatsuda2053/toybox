@@ -119,7 +119,7 @@ export class SnMenu extends LitElement {
         </div>
 
         <!--ヘルプボタン-->
-        <div class="field">
+        <div class="field ">
           <wa-button
             variant="neutral"
             appearance="accent"

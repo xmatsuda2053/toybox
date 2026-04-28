@@ -10,13 +10,14 @@ import {
 
 // 2. Library Extensions & Third-party
 import { customElement, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
 
 // 3. Internal Assets & Logic
 import { icons } from "@assets/icons";
 import "@/library";
+import { snDB } from "@sn/database/SnDB";
+import { ScheduleUtils } from "@/utils/ScheduleUtils";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -63,6 +64,32 @@ const APP_LIST: AppItem[] = [
  */
 @customElement("app-container")
 export class AppContainer extends LitElement {
+  /**
+   * スケジュール管理用のインスタンスを準備
+   *
+   * @private
+   * @memberof SnMenu
+   */
+  private _exportScheduler = new ScheduleUtils(
+    [
+      { hour: 8, minute: 30 },
+      { hour: 12, minute: 0 },
+      { hour: 17, minute: 15 },
+      { hour: 20, minute: 0 },
+    ],
+    () => this._exportData(),
+  );
+
+  /**
+   * データをエクスポートする
+   *
+   * @private
+   * @memberof StepNoteApp
+   */
+  private async _exportData() {
+    await snDB.exportDatabase();
+  }
+
   /**
    * 選択中のアプリ
    *
@@ -111,13 +138,25 @@ export class AppContainer extends LitElement {
   }
 
   /**
+   * コンポーネント追加時
+   *
+   * @memberof SnMenu
+   */
+  connectedCallback() {
+    super.connectedCallback();
+    // スケジュール開始
+    this._exportScheduler.start();
+  }
+
+  /**
    * コンポーネント破棄時にリスナーを削除（メモリリーク防止）
    *
    * @memberof AppContainer
    */
   disconnectedCallback() {
-    window.removeEventListener("keydown", this._appSelect);
     super.disconnectedCallback();
+    window.removeEventListener("keydown", this._appSelect);
+    this._exportScheduler.stop();
   }
 
   /**

@@ -590,6 +590,13 @@ export class SnDB extends Dexie {
    * @memberof SnDB
    */
   async exportDatabase() {
+    // 1. 各テーブルのデータ件数を取得
+    const tableCounts = await snDB.tasks.count();
+    if (tableCounts === 0) {
+      return; // タスク未登録の場合はエクスポート不要
+    }
+
+    // 2. エクスポート処理の実行
     const blob = await snDB.export({
       progressCallback: ({ totalRows, completedRows }) => {
         console.log(`Progress: ${completedRows}/${totalRows}`);
@@ -597,6 +604,7 @@ export class SnDB extends Dexie {
       },
     });
 
+    // 3. ダウンロード処理
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
