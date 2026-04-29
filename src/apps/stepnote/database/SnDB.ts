@@ -4,7 +4,6 @@ import "dexie-export-import";
 import { QuickAccess } from "@sn/models/QuickAccess";
 import { Label } from "@sn/models/Label";
 import { Task } from "@sn/models/Task";
-import { Contact } from "@sn/models/Contact";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
 import { TaskStatus } from "@sn/code/TaskStatus";
@@ -314,14 +313,13 @@ export class SnDB extends Dexie {
    */
   async selectTaskAscSortKey(keyword?: string): Promise<Task[]> {
     const quickAccess = (await this.quickAccesses.toArray())[0];
+    const allLabels = await this.labels.toArray();
+    const selectedLabelIds = allLabels
+      .filter((l) => l.isSelected)
+      .map((l) => l.id);
+    const existingLabelSet = new Set(allLabels.map((l) => l.id)); // 全ラベルIDのSet
 
-    const selectedLabelIds = (await this.labels.toArray())
-      .filter((label) => label.isSelected)
-      .map((label) => {
-        return label.id;
-      });
-
-    const hasQuickAccessSelected = (target: QuickAccess) => {
+    const hasQuickAccess = (target: QuickAccess) => {
       const { id, ...flags } = target;
       return Object.values(flags).includes(1);
     };
@@ -330,151 +328,137 @@ export class SnDB extends Dexie {
     if (
       !keyword &&
       selectedLabelIds.length === 0 &&
-      !hasQuickAccessSelected(quickAccess)
+      !hasQuickAccess(quickAccess)
     ) {
       return [];
     }
 
+    // フィルタ対象のデータを取得する。
+    // - ログとノートは、検索キーワードが存在する場合のみ取得する。
     let result = await this.tasks.toArray();
-    let logs = await this.logs.toArray();
-    let notes = await this.notes.toArray();
+    let logs = keyword ? await this.logs.toArray() : [];
+    let notes = keyword ? await this.notes.toArray() : [];
 
-    // タスク状態判定は最初に行う。
+    // --- [1] 状態・ラベル・クイックアクセスの複合フィルタ（1回の走査にまとめる） ---
     const isDoneOff = quickAccess.isDoneSelected === 0;
     const isProgressOff = quickAccess.isProgressSelected === 0;
     const isPendingOff = quickAccess.isPendingSelected === 0;
-    if (isDoneOff || isProgressOff || isPendingOff) {
-      result = result.filter((task) => {
-        const taskStatus = TaskStatus.fromCode(task.statusCode);
-        if (isDoneOff && taskStatus.isDone()) return false;
-        if (isProgressOff && taskStatus.isProgress()) return false;
-        if (isPendingOff && taskStatus.isPending()) return false;
-        return true;
-      });
-    }
-
-    // ラベルフィルタ
-    if (selectedLabelIds.length !== 0) {
-      result = result.filter((task) => {
-        return selectedLabelIds.some((id) => {
-          return task.labelId === id;
-        });
-      });
-    }
-
-    // クイックアクセスフィルタ
     const isBookmarkOn = quickAccess.isBookmarkSelected === 1;
     const isUncategorizedOn = quickAccess.isUncategorizedSelected === 1;
     const isOverdueOn = quickAccess.isOverdueSelected === 1;
     const isUpcomingOn = quickAccess.isUpcomingSelected === 1;
 
-    if (hasQuickAccessSelected(quickAccess)) {
-      // フィルタ：お気に入り、未分類
-      if (isBookmarkOn || isUncategorizedOn) {
-        const labelIdsInResult = [
-          ...new Set(result.map((task) => task.labelId)),
-        ];
+    result = result.filter((task) => {
+      const status = TaskStatus.fromCode(task.statusCode);
+      const isDone = status.isDone();
 
-        const existingLabelIds = await this.labels
-          .where("id")
-          .anyOf(labelIdsInResult)
-          .primaryKeys();
+      // タスク状態フィルタ
+      if (isDoneOff && isDone) return false;
+      if (isProgressOff && status.isProgress()) return false;
+      if (isPendingOff && status.isPending()) return false;
 
-        const existingLabelsSet = new Set(existingLabelIds);
-
-        result = result.filter((task) => {
-          const bookmark = task.bookmark === 1;
-          const existLabel = existingLabelsSet.has(task.labelId);
-          if (isBookmarkOn && bookmark) return true;
-          if (isUncategorizedOn && !existLabel) return true;
-          return false;
-        });
+      // 選択中のラベルに属するタスクであるかチェック
+      if (
+        selectedLabelIds.length !== 0 &&
+        !selectedLabelIds.includes(task.labelId)
+      ) {
+        return false;
       }
 
-      // フィルタ：期限切れ、期限間近
-      if (isOverdueOn || isUpcomingOn) {
-        result = result.filter((task) => {
-          const taskStatus = TaskStatus.fromCode(task.statusCode);
-          const overdue = isOverdue(taskStatus.isDone(), task.dueDate);
-          const upcoming = isWithinAnyDaysBefore(
-            taskStatus.isDone(),
-            task.dueDate,
-            3,
-          );
+      // クイックアクセスの状態に合致するかチェック
+      if (hasQuickAccess(quickAccess)) {
+        let qaMatch = false;
 
-          if (isOverdueOn && overdue) return true;
-          if (isUpcomingOn && upcoming) return true;
+        // ブックマークフィルタ
+        if (isBookmarkOn && task.bookmark === 1) {
+          qaMatch = true;
+        }
+
+        // 未分類フィルタ
+        if (
+          !qaMatch &&
+          isUncategorizedOn &&
+          !existingLabelSet.has(task.labelId)
+        ) {
+          qaMatch = true;
+        }
+
+        // 期限日超過フィルタ
+        if (!qaMatch && isOverdueOn && isOverdue(isDone, task.dueDate)) {
+          qaMatch = true;
+        }
+
+        // 期限間近フィルタ
+        if (
+          !qaMatch &&
+          isUpcomingOn &&
+          isWithinAnyDaysBefore(isDone, task.dueDate, 3)
+        ) {
+          qaMatch = true;
+        }
+
+        // いずれのクイックアクセスにもヒットしない場合、false
+        if (
+          !qaMatch &&
+          (isBookmarkOn || isUncategorizedOn || isOverdueOn || isUpcomingOn)
+        ) {
           return false;
-        });
+        }
+
+        return true;
       }
-    }
+    });
 
     // キーワードフィルタ
+    // - タスク名,説明,年度
+    // - 連絡先（氏名,所属,電話番号)
+    // - ログ
+    // - ノート
     if (keyword && keyword.trim() !== "") {
-      const lowerKeyword = keyword.toLowerCase();
+      const keywords = keyword
+        .trim()
+        .toLowerCase()
+        .split(/[\s\u3000]+/) // \sは半角空白やタブ、\u3000は全角空白
+        .filter(Boolean); // 空文字を除去
 
-      const filterKeys: (keyof Task)[] = ["name", "description"];
-      const contactFields: (keyof Contact)[] = ["name", "div", "tel"];
+      // 計算量を下げるため、どのタスクに、どのログ／タスクが関連付けされているかマッピング
+      const logsMap = Map.groupBy(logs, (l) => l.taskId);
+      const notesMap = Map.groupBy(notes, (n) => n.taskId);
 
       result = result.filter((task) => {
-        // 指定したキーのいずれかにキーワードが含まれているか判定
-        const matchesMainFields = filterKeys.some((key) => {
-          const value = task[key];
-          return (
-            typeof value === "string" &&
-            value.toLowerCase().includes(lowerKeyword)
-          );
-        });
+        const targetValues = [
+          task.name?.toLowerCase(),
+          task.description?.toLowerCase(),
+          task.fiscalYear.toString(),
+          "+" + formatDate(task.createdAt, "yyyy/MM/dd"),
+          "@" + formatDate(task.dueDate, "yyyy/MM/dd"),
+          ...task.contacts.flatMap((c) => [
+            c.name.toLowerCase(),
+            c.div.toLowerCase(),
+            c.tel,
+          ]),
+          ...(logsMap.get(task.id!)?.map((l) => l.value.toLowerCase()) ?? []),
+          ...(notesMap.get(task.id!)?.map((n) => n.value.toLowerCase()) ?? []),
+        ].filter((t) => t?.trim());
 
-        // contacts（配列）の中の要素も検索対象に含める
-        const matchInContacts = task.contacts?.some((contact) => {
-          return contactFields.some((key) => {
-            const value = contact[key];
-            return (
-              typeof value === "string" &&
-              value.toLowerCase().includes(lowerKeyword)
-            );
+        return keywords.every((keyword) => {
+          return targetValues.some((value) => {
+            return value.includes(keyword);
           });
         });
-
-        // logs（ログ）の中の要素も検索対象に含める
-        const matchInLogs = logs.some((log) => {
-          return (
-            task.id === log.taskId &&
-            log.value.toLowerCase().includes(lowerKeyword)
-          );
-        });
-
-        // notes（ノート）の中の要素も検索対象に含める
-        const matchInNotes = notes.some((note) => {
-          return (
-            task.id === note.taskId &&
-            note.value.toLowerCase().includes(lowerKeyword)
-          );
-        });
-
-        return (
-          matchesMainFields || matchInContacts || matchInLogs || matchInNotes
-        );
       });
     }
 
     // ソート
     result.sort((a, b) => {
-      // 比較ロジックの配列（インデックスが小さいほど優先度が高い）
-      const comparators = [
-        () => b.fiscalYear - a.fiscalYear, // [1] 年度の降順
-        () => a.dueDate.getTime() - b.dueDate.getTime(), // [2] 期限日の昇順
-        () => a.name.localeCompare(b.name), // [3] 名前の昇順
-      ];
-
-      for (const compare of comparators) {
-        const res = compare();
-        // 0以外（差がある）場合は、その時点で順序を確定させる
-        if (res !== 0) return res;
-      }
-
-      return 0;
+      // 1. 年度
+      if (b.fiscalYear !== a.fiscalYear) return b.fiscalYear - a.fiscalYear;
+      // 2. 期限日
+      const timeA = a.dueDate.getTime();
+      const timeB = b.dueDate.getTime();
+      if (timeA !== timeB) return timeA - timeB;
+      // 3. 名前
+      return a.name.localeCompare(b.name);
     });
 
     return result;
