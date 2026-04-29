@@ -17,6 +17,7 @@ import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // 4. Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";
+import { HelpItem } from "@/common/help-viewer/help-viewer";
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -25,6 +26,54 @@ import styles from "@sn/styles/menu/sn-menu.lit.scss?inline";
 
 // 6. Initializations
 setBasePath("/");
+
+// 7. Configuration & Initialization ---
+import mdIntroduction from "./help/introduction.md?raw";
+
+import mdMenu from "./help/menu.md?raw";
+import mdQuickAccess from "./help/quick-access.md?raw";
+import mdLabels from "./help/labels.md?raw";
+import mdLists from "./help/list.md?raw";
+import mdTasks from "./help/task.md?raw";
+import mdJournal from "./help/journal.md?raw";
+
+const helpItems: HelpItem[] = [
+  {
+    name: "introduction",
+    title: "INTRODUCTION",
+    markdown: mdIntroduction,
+  },
+  {
+    name: "menu",
+    title: "MENU",
+    markdown: mdMenu,
+  },
+  {
+    name: "quick-access",
+    title: "QUICK ACCESS",
+    markdown: mdQuickAccess,
+  },
+  {
+    name: "labels",
+    title: "LABELS",
+    markdown: mdLabels,
+  },
+  {
+    name: "list",
+    title: "LIST",
+    markdown: mdLists,
+  },
+  {
+    name: "task",
+    title: "TASK",
+    markdown: mdTasks,
+  },
+  {
+    name: "journal",
+    title: "JOURNAL",
+    markdown: mdJournal,
+  },
+];
 
 /**
  * メニュー
@@ -134,26 +183,8 @@ export class SnMenu extends LitElement {
         </div>
       </div>
       <!--ヘルプダイアログ-->
-      <wa-dialog label="Help" id="dialog-help">
-        <div class="help-area">
-          <span class="text">全検索モード</span>
-          <span class="shortcut">Shift + Alt + F</span>
-        </div>
-        <div class="help-area">
-          <span class="text">エクスプローラー開閉</span>
-          <span class="shortcut">Shift + Alt + E</span>
-        </div>
-        <div class="help-area">
-          <span class="text">新規タスク作成</span>
-          <span class="shortcut">Shift + Alt + T</span>
-        </div>
-        <div class="help-area">
-          <span class="text">新規ログ追加</span>
-          <span class="shortcut">Shift + Alt + L</span>
-        </div>
-        <wa-button slot="footer" variant="brand" data-dialog="close">
-          Close
-        </wa-button>
+      <wa-dialog light-dismiss label="HOW TO USE" id="dialog-help">
+        <help-viewer .helpItems=${helpItems}></help-viewer>
       </wa-dialog>`;
   }
 }

@@ -43,6 +43,10 @@ $height-footer: 25px;
     gap: var(--wa-space-2xs);
     align-items: center;
 
+    .app-icon {
+      margin-block-start: var(--wa-space-3xs);
+    }
+
     padding-block: var(--wa-space-s);
     padding-inline: var(--wa-space-xs);
 

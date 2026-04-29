@@ -187,7 +187,7 @@ export class SnTabTask extends LitElement {
       .tabs=${TASKS}
       @input=${this._updateTask}
     >
-      TASKS
+      TASK
       <sn-task-button
         slot="end"
         @change-status=${this._changeStatus}
