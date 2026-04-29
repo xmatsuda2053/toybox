@@ -74,32 +74,13 @@ export class SnListSection extends LitElement {
    * @memberof SnListSection
    */
   protected render(): HTMLTemplateResult {
-    return html`<div
-      id="contents-root"
-      class="${this.isExpanded ? "open" : ""}"
-    >
-      <header @click=${this._toggleExpand}>
-        <span><slot name="year"></slot></span>
+    return html`<div id="contents-root">
+      <header>
+        <span><slot name="year"></slot>年度</span>
         <wa-badge appearance="filled" variant="neutral" pill>
           <slot name="count"></slot>
         </wa-badge>
-        <wa-icon library="my-icons" name="angle-down-solid-full"></wa-icon>
       </header>
-      <div class="contents">
-        <div class="contents-inner">
-          <slot name="item"></slot>
-        </div>
-      </div>
     </div>`;
-  }
-
-  /**
-   * コンテンツの開閉を切り替える
-   *
-   * @private
-   * @memberof SnListSection
-   */
-  private _toggleExpand() {
-    this.isExpanded = !this.isExpanded;
   }
 }

@@ -59,6 +59,13 @@
     &:hover {
       --sb-thumb-color: var(--wa-color-neutral-90);
     }
+
+    lit-virtualizer {
+      sn-list-section,
+      sn-list-item {
+        width: 100%;
+      }
+    }
   }
 
   #task-dialog-overview {

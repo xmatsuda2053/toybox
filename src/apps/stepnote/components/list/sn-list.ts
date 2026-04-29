@@ -12,6 +12,7 @@ import { liveQuery, type Subscription } from "dexie";
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
+import "@lit-labs/virtualizer";
 
 // 3. Third-party UI & SDKs (WebAwesome)
 import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
@@ -41,6 +42,13 @@ import styles from "@sn/styles/list/sn-list.lit.scss?inline";
 // --- Configuration & Initialization ---
 const yearList = getYearList(2024, new Date().getFullYear() + 1);
 const currentFiscalYear = getCurrentFiscalYear();
+
+/**
+ * 年度またはタスクアイテムを描画するための型定義
+ */
+type RenderItem =
+  | { type: "year"; year: number; count: number }
+  | { type: "task"; task: Task; labelId: number };
 
 setBasePath("/");
 
@@ -306,6 +314,32 @@ export class SnList extends LitElement {
   }
 
   /**
+   * 描画するアイテムデータの一覧を取得します。
+   * virtualizerを使用するために、年度とタスクを一つの配列に統合しています。
+   *
+   * @readonly
+   * @private
+   * @type {RenderItem[]}
+   * @memberof SnList
+   */
+  private get _getRenderItems(): RenderItem[] {
+    const items: RenderItem[] = [];
+
+    this._activeFiscalYears.forEach((year) => {
+      const tasks = this._filterTasksByFiscalYear(year);
+      items.push({ type: "year", year, count: tasks.length });
+      tasks.forEach((task) => {
+        items.push({
+          type: "task",
+          task,
+          labelId: task.labelId,
+        });
+      });
+    });
+
+    return items;
+  }
+  /**
    * タスクリストをレンダリングします。
    *
    * @protected
@@ -318,7 +352,6 @@ export class SnList extends LitElement {
       return html``;
     }
 
-    const today = formatDate(new Date(), "yyyy-MM-dd");
     const hasLabel = this._labels.length !== 0;
 
     return html`<div id="contents-root">
@@ -352,25 +385,24 @@ export class SnList extends LitElement {
         </wa-input>
       </div>
       <div class="items">
-        ${this._activeFiscalYears.map((year) => {
-          const tasks = this._filterTasksByFiscalYear(year);
-          return html`<sn-list-section
-            .isExpanded=${year === currentFiscalYear}
-          >
-            ${html`<span slot="year">${year}年度</span>`}
-            ${html`<span slot="count">${tasks.length}</span>`}
-            ${repeat(
-              tasks,
-              (task) => task.id,
-              (task) =>
-                html`<sn-list-item
-                  .task=${task}
-                  .labelName=${this._getLabelName(task.labelId)}
-                  slot="item"
-                ></sn-list-item>`,
-            )}
-          </sn-list-section>`;
-        })}
+        <lit-virtualizer
+          .items=${this._getRenderItems}
+          .renderItem=${((item: RenderItem) => {
+            if (item.type === "year") {
+              return html`<sn-list-section>
+                ${html`<span slot="year">${item.year}</span>`}
+                ${html`<span slot="count">${item.count}</span>`}
+              </sn-list-section>`;
+            } else {
+              return html`<sn-list-item
+                .task=${item.task}
+                .labelName=${this._getLabelName(item.labelId)}
+                slot="item"
+              ></sn-list-item>`;
+            }
+          }) as any}
+        >
+        </lit-virtualizer>
       </div>
       <wa-dialog label="Add Task" id="task-dialog-overview">
         <form id="task-form" @submit=${this._addTask}>
@@ -401,7 +433,7 @@ export class SnList extends LitElement {
               type="text"
               onfocus="this.type='date'"
               onblur="this.type='text'"
-              value=${today}
+              value=${formatDate(new Date(), "yyyy-MM-dd")}
             >
             </wa-input>
           </div>
