@@ -29,7 +29,6 @@ setBasePath("/");
 
 // 7. Configuration & Initialization ---
 import mdIntroduction from "./help/introduction.md?raw";
-
 import mdMenu from "./help/menu.md?raw";
 import mdQuickAccess from "./help/quick-access.md?raw";
 import mdLabels from "./help/labels.md?raw";

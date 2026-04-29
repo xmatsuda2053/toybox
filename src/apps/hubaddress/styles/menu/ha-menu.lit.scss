@@ -9,19 +9,6 @@
   padding-block: var(--wa-space-2xs);
   padding-inline-start: var(--wa-space-3xs);
 
-  #dialog-help {
-    --width: 650px;
-
-    .message-area {
-      margin-block-end: var(--wa-space-m);
-      .label {
-        font-weight: bold;
-        font-size: var(--wa-font-size-m);
-        margin-block-end: var(--wa-space-xs);
-      }
-    }
-  }
-
   .field {
     wa-icon {
       font-size: var(--wa-font-size-xl);
@@ -45,5 +32,13 @@
     &.bottom {
       margin-block-start: auto;
     }
+  }
+}
+
+wa-dialog {
+  --width: 70%;
+
+  &::part(dialog) {
+    height: 90%;
   }
 }
