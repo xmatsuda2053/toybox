@@ -10,8 +10,7 @@ import {
 import { liveQuery, type Subscription } from "dexie";
 
 // 2. Decorators & Directives
-import { customElement, query, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
+import { customElement, state } from "lit/decorators.js";
 import "@lit-labs/virtualizer";
 
 // 3. Third-party Components & Utils
