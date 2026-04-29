@@ -23,6 +23,7 @@ import "@awesome.me/webawesome/dist/components/format-bytes/format-bytes.js";
 
 import "@common/thin-markdown-editor/thin-markdown-editor.ts";
 import "@common/flexible-tab-area/flexible-tab-area";
+import "@common/copy-button/copy-button";
 
 import "@sn/step-note-app";
 import "@sn/components/menu/sn-menu";

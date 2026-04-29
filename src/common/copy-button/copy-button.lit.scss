@@ -1,0 +1,49 @@
+:host {
+  display: inline-block;
+}
+
+wa-button {
+  &::part(base) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lapper-icon {
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  wa-icon {
+    grid-area: 1 / 1;
+
+    font-size: var(--wa-font-size-l);
+    transition: all 0.2s ease-in-out; // ここでアニメーション時間を制御
+
+    &.check {
+      opacity: 0;
+      transform: scale(0.5) rotate(-20deg);
+      color: var(--wa-color-success-50);
+    }
+    &.copy {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  &.is-copied {
+    .copy {
+      opacity: 0;
+      transform: scale(0.3); // 小さくして消す
+      transition: all 0.15s ease-in;
+    }
+
+    .check {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); // 少し弾むような動き
+      transition-delay: 0.05s; // わずかに遅らせて登場させる
+    }
+  }
+}
