@@ -179,7 +179,7 @@ export class SnTaskSummary extends LitElement {
             variant="neutral"
             @click=${this._copyIdAndName}
           >
-            <wa-icon library="my-icons" name="hashtag-solid-full"></wa-icon>
+            <wa-icon library="my-icons" name="copy-regular-full"></wa-icon>
           </wa-button>
         </div>
       </div>
