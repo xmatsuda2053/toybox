@@ -173,9 +173,11 @@ export class ThinMarkdownEditor extends LitElement {
     super();
     this.renderer.link = ({ href, text }) => {
       const safeHref = href.replace(/\\/g, "%5C");
-      return `<a class="copy-link" href="${safeHref}">
-                <wa-icon library="my-icons" name="copy-regular-full"></wa-icon>${text}
-              </a>`;
+      const copyIcon = `<wa-icon library="my-icons" name="copy-regular-full" class="copy-icon"></wa-icon>`;
+      const frontIcon = safeHref.startsWith("http")
+        ? `link-solid-full`
+        : `folder-regular-full`;
+      return `<a class="copy-link" href="${safeHref}"><wa-icon library="my-icons" name="${frontIcon}"></wa-icon>${text}${copyIcon}</a>`;
     };
 
     marked.use({

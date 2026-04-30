@@ -120,11 +120,25 @@
     .markdown-body {
       margin-block: var(--wa-space-m);
       margin-inline: var(--wa-space-m);
-      font-size: 0.85rem;
+      font-size: 0.95rem;
 
       a {
+        display: flex;
+        gap: var(--wa-space-3xs);
+        align-items: center;
+
+        wa-icon {
+          margin-block-start: 2px;
+        }
+
+        .copy-icon {
+          color: transparent;
+        }
         &:hover {
           font-weight: bold;
+          .copy-icon {
+            color: var(--wa-color-text-link);
+          }
         }
       }
 
