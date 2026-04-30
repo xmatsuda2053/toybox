@@ -119,7 +119,7 @@ export class SnTabTask extends LitElement {
       labelId: property.labelId,
     };
     await snDB.putTask(updateTask);
-  }, 400);
+  }, 800);
 
   /**
    * コンポーネントがドキュメントの DOM に追加されたときに実行されます。

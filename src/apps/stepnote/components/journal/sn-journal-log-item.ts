@@ -92,7 +92,7 @@ export class SnJournalLogItem extends LitElement {
       value: this.logEditor.value,
     };
     snDB.putLog(log);
-  }, 400);
+  }, 800);
 
   /**
    * Creates an instance of PsJournalLogItem.

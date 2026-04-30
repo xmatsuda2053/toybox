@@ -90,7 +90,7 @@ export class SnJournalNote extends LitElement {
       value: this.noteEditor.value,
     };
     snDB.putNote(note);
-  }, 400);
+  }, 800);
 
   /**
    * Creates an instance of PsJournalNote.
