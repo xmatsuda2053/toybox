@@ -12,6 +12,8 @@ import {
 import { customElement, state } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
+import { live } from "lit/directives/live.js";
+import WaDropdownItem from "@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js";
 
 // 3. Internal Assets & Logic
 import { icons } from "@assets/icons";
@@ -46,12 +48,6 @@ const APP_LIST: AppItem[] = [
     label: "Hub-Address",
     tag: html`<hub-address-app class="app"></hub-address-app>`,
     key: "F2",
-  },
-  {
-    code: "fill-go",
-    label: "Fill-Go",
-    tag: html``,
-    key: "F3",
   },
 ];
 
@@ -191,14 +187,16 @@ export class AppContainer extends LitElement {
           </div>
           <wa-dropdown-item>設定</wa-dropdown-item>
         </wa-dropdown>
-        <wa-dropdown>
+        <wa-dropdown @wa-select=${this._appDropDownSelect}>
           <div class="menu-header" slot="trigger">
             <span>App(A)</span>
             <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
           </div>
           ${APP_LIST.map((app) => {
             return html`<wa-dropdown-item
-              @click=${() => (this.selectedApp = app)}
+              .value=${app.code}
+              type="checkbox"
+              ?checked=${live(this.selectedApp.code === app.code)}
             >
               ${app.label}
               <span slot="details">Shit + ${app.key}</span>
@@ -226,6 +224,28 @@ export class AppContainer extends LitElement {
         <div class="footer"></div>
       </footer>
     </div>`;
+  }
+
+  /**
+   * APP選択の画面切り替えを制御します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @return {*}
+   * @memberof AppContainer
+   */
+  private _appDropDownSelect(e: CustomEvent): void {
+    const item: WaDropdownItem = e.detail.item;
+    const app = APP_LIST.find((a) => a.code === item.value);
+
+    if (!app) return;
+
+    if (this.selectedApp === app) {
+      item.checked = true;
+      return;
+    }
+
+    this.selectedApp = app;
   }
 
   /**
