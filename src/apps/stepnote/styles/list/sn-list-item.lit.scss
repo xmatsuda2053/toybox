@@ -18,7 +18,7 @@
   &.overdue {
     .due {
       wa-icon {
-        color: var(--wa-color-danger-50);
+        color: var(--wa-color-danger-60);
       }
     }
   }
@@ -82,6 +82,11 @@
 
       width: 100%; /* 親の幅いっぱいに広げる */
       font-size: var(--wa-font-size-xs);
+
+      wa-icon {
+        font-size: var(--wa-font-size-m);
+        margin-block-start: var(--wa-space-3xs);
+      }
 
       .bookmark {
         wa-icon {

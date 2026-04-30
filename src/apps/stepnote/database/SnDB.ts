@@ -32,10 +32,10 @@ export class SnDB extends Dexie {
    */
   constructor() {
     super("SnDB");
-    this.version(1).stores({
+    this.version(2).stores({
       labels: "++id, name, fiscalYear, isSelected",
       quickAccesses: "++id",
-      tasks: "++id, name, dueDate, fiscalYear, selected",
+      tasks: "++id, statusCode, name, dueDate, fiscalYear, selected",
       logs: "++id, taskId, [taskId+id]",
       notes: "++id, taskId, [taskId+id]",
     });
@@ -285,6 +285,55 @@ export class SnDB extends Dexie {
     } catch (error) {
       console.error("Failed to update selection:", error);
     }
+  }
+
+  /**
+   * 期限切れタスクの有無を判定します。
+   *
+   * @return {*}  {Promise<boolean>}
+   * @memberof SnDB
+   */
+  async hasOverdueTasks(): Promise<boolean> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return (
+      (await this.tasks
+        .where("statusCode")
+        .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
+        .filter((task) => task.dueDate < today) // 当日(00:00)より前
+        .count()) > 0
+    );
+  }
+
+  /**
+   * 期限切れタスクのみ表示する。
+   *
+   * @memberof SnDB
+   */
+  async viewOverdueTasks() {
+    await snDB.transaction(
+      "rw",
+      [this.labels, this.quickAccesses, this.tasks],
+      async () => {
+        await this.resetLabelSelected();
+        await this.resetQuickAccessSelected();
+        await this.resetTaskSelected();
+
+        const newData: QuickAccess = {
+          id: 1,
+          isBookmarkSelected: 0,
+          isDoneSelected: 0,
+          isOverdueSelected: 1,
+          isUpcomingSelected: 0,
+          isProgressSelected: 1,
+          isPendingSelected: 1,
+          isUncategorizedSelected: 0,
+        };
+
+        await this.putQuickAccess(newData);
+      },
+    );
   }
 
   /**

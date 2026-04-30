@@ -11,7 +11,7 @@ import { liveQuery, type Subscription } from "dexie";
 
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, query, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import "@lit-labs/virtualizer";
 
 // 3. Third-party UI & SDKs (WebAwesome)
@@ -178,6 +178,22 @@ export class SnList extends LitElement {
   @state() private _loading = false;
 
   /**
+   * 期限切れタスクの有無
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _hasOverdue = false;
+
+  /**
+   * 期限切れのアラートアニメーションを停止する。
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _overdueAlertStop = false;
+
+  /**
    * スタイルシートを適用
    *
    * @static
@@ -242,16 +258,16 @@ export class SnList extends LitElement {
     this._dbSubscription?.unsubscribe();
 
     const observable = liveQuery(async () => {
-      const [quickAccess, labels, tasks, activeFiscalYears] = await Promise.all(
-        [
+      const [quickAccess, labels, tasks, activeFiscalYears, hasOverdue] =
+        await Promise.all([
           snDB.getQuickAccess(),
           snDB.selectLabelsAscName(),
           snDB.selectTaskAscSortKey(this._filterKeyword),
           snDB.getActiveFiscalYears(this._filterKeyword),
-        ],
-      );
+          snDB.hasOverdueTasks(),
+        ]);
 
-      return { quickAccess, labels, tasks, activeFiscalYears };
+      return { quickAccess, labels, tasks, activeFiscalYears, hasOverdue };
     });
 
     this._dbSubscription = observable.subscribe({
@@ -260,6 +276,7 @@ export class SnList extends LitElement {
         this._tasks = data.tasks;
         this._activeFiscalYears = data.activeFiscalYears;
         this._loading = false;
+        this._hasOverdue = data.hasOverdue;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -358,15 +375,26 @@ export class SnList extends LitElement {
       <div class="header">
         LIST
         <span class="end"></span>
+        ${this._hasOverdue
+          ? html`<wa-icon
+              id="btn-alert"
+              library="my-icons"
+              name="fire-solid-full"
+              animation=${ifDefined(
+                this._overdueAlertStop ? undefined : "bounce",
+              )}
+              @click=${this._viewOverdueTasks}
+            ></wa-icon>`
+          : html``}
         ${hasLabel
-          ? html` <wa-tooltip for="btn-add" placement="left">Add</wa-tooltip>
+          ? html` <wa-tooltip for="btn-add" placement="top">Add</wa-tooltip>
               <wa-icon
                 id="btn-add"
                 library="my-icons"
                 name="plus-solid-full"
                 @click=${this._openAddTaskEditor}
               ></wa-icon>`
-          : ""}
+          : html``}
       </div>
       <div class="search">
         <wa-input
@@ -576,5 +604,16 @@ export class SnList extends LitElement {
    */
   private _filterTasksByFiscalYear(targetYear: number): Task[] {
     return this._tasks.filter((task) => task.fiscalYear === targetYear);
+  }
+
+  /**
+   * 期限切れタスクを表示します。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _viewOverdueTasks() {
+    this._overdueAlertStop = true;
+    await snDB.viewOverdueTasks();
   }
 }
