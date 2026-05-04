@@ -22,6 +22,7 @@
       "@utils/*": ["./src/utils/*"],
       "@common/*": ["./src/common/*"],
       "@shared/*": ["./src/apps/_shared/*"],
+      "@ap/*": ["./src/apps/appcontainer/*"],
       "@sn/*": ["./src/apps/stepnote/*"],
       "@ha/*": ["./src/apps/hubaddress/*"]
     }

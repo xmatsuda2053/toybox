@@ -23,7 +23,7 @@ import { ScheduleUtils } from "@/utils/ScheduleUtils";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "./app-container.lit.scss?inline";
+import styles from "@ap/styles/app-container.lit.scss?inline";
 
 // 5. Initializations (Side Effects)
 setBasePath("/");
