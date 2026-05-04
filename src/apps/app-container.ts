@@ -16,8 +16,6 @@ import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
 // 3. Internal Assets & Logic
 import "@/library";
 import { icons } from "@assets/icons";
-import { snDB } from "@sn/database/SnDB";
-import { ScheduleUtils } from "@/utils/ScheduleUtils";
 import { AppItem } from "@ap/models/AppItem";
 
 // 4. Styles
@@ -60,32 +58,6 @@ export class AppContainer extends LitElement {
   };
 
   /**
-   * スケジュール管理用のインスタンスを準備
-   *
-   * @private
-   * @memberof SnMenu
-   */
-  private _exportScheduler = new ScheduleUtils(
-    [
-      { hour: 8, minute: 30 },
-      { hour: 12, minute: 0 },
-      { hour: 17, minute: 15 },
-      { hour: 20, minute: 0 },
-    ],
-    () => this._exportData(),
-  );
-
-  /**
-   * データをエクスポートする
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private async _exportData() {
-    await snDB.exportDatabase();
-  }
-
-  /**
    * Creates an instance of AppContainer.
    * @memberof AppContainer
    */
@@ -111,8 +83,6 @@ export class AppContainer extends LitElement {
    */
   connectedCallback() {
     super.connectedCallback();
-    // スケジュール開始
-    this._exportScheduler.start();
   }
 
   /**
@@ -122,7 +92,6 @@ export class AppContainer extends LitElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this._exportScheduler.stop();
   }
 
   /**
@@ -150,13 +119,7 @@ export class AppContainer extends LitElement {
         <div class="app-icon">
           <wa-icon library="my-icons" name="cubes-stacked-solid-full"></wa-icon>
         </div>
-        <wa-dropdown>
-          <div class="menu-header" slot="trigger">
-            <span>File(F)</span>
-            <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
-          </div>
-          <wa-dropdown-item>設定</wa-dropdown-item>
-        </wa-dropdown>
+        <ap-file></ap-file>
         <ap-selector @set-app=${this._setApp}></ap-selector>
         <wa-dropdown>
           <div class="menu-header" slot="trigger">

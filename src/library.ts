@@ -26,6 +26,7 @@ import "@common/flexible-tab-area/flexible-tab-area";
 import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
 
+import "@ap/components/file/ap-file";
 import "@ap/components/apps/ap-selector";
 
 import "@sn/step-note-app";
