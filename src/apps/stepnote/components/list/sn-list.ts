@@ -186,12 +186,27 @@ export class SnList extends LitElement {
   @state() private _hasOverdue = false;
 
   /**
+   * 期限間近タスクの有無
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _hasUpcoming = false;
+
+  /**
    * 期限切れのアラートアニメーションを停止する。
    *
    * @private
    * @memberof SnList
    */
   @state() private _overdueAlertStop = false;
+
+  /**
+   * 期限間近のアラートアニメーションを停止する。
+   *
+   * @private
+   */
+  @state() private _upcomingAlertStop = false;
 
   /**
    * スタイルシートを適用
@@ -258,16 +273,30 @@ export class SnList extends LitElement {
     this._dbSubscription?.unsubscribe();
 
     const observable = liveQuery(async () => {
-      const [quickAccess, labels, tasks, activeFiscalYears, hasOverdue] =
-        await Promise.all([
-          snDB.getQuickAccess(),
-          snDB.selectLabelsAscName(),
-          snDB.selectTaskAscSortKey(this._filterKeyword),
-          snDB.getActiveFiscalYears(this._filterKeyword),
-          snDB.hasOverdueTasks(),
-        ]);
+      const [
+        quickAccess,
+        labels,
+        tasks,
+        activeFiscalYears,
+        hasOverdue,
+        hasUpcoming,
+      ] = await Promise.all([
+        snDB.getQuickAccess(),
+        snDB.selectLabelsAscName(),
+        snDB.selectTaskAscSortKey(this._filterKeyword),
+        snDB.getActiveFiscalYears(this._filterKeyword),
+        snDB.hasOverdueTasks(),
+        snDB.hasUpcomingTasks(),
+      ]);
 
-      return { quickAccess, labels, tasks, activeFiscalYears, hasOverdue };
+      return {
+        quickAccess,
+        labels,
+        tasks,
+        activeFiscalYears,
+        hasOverdue,
+        hasUpcoming,
+      };
     });
 
     this._dbSubscription = observable.subscribe({
@@ -277,6 +306,7 @@ export class SnList extends LitElement {
         this._activeFiscalYears = data.activeFiscalYears;
         this._loading = false;
         this._hasOverdue = data.hasOverdue;
+        this._hasUpcoming = data.hasUpcoming;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -375,6 +405,17 @@ export class SnList extends LitElement {
       <div class="header">
         LIST
         <span class="end"></span>
+        ${this._hasUpcoming
+          ? html`<wa-icon
+              id="btn-warning"
+              library="my-icons"
+              name="calendar-solid-full"
+              animation=${ifDefined(
+                this._upcomingAlertStop ? undefined : "bounce",
+              )}
+              @click=${this._viewUpcomingTasks}
+            ></wa-icon>`
+          : html``}
         ${this._hasOverdue
           ? html`<wa-icon
               id="btn-alert"
@@ -615,5 +656,16 @@ export class SnList extends LitElement {
   private async _viewOverdueTasks() {
     this._overdueAlertStop = true;
     await snDB.viewOverdueTasks();
+  }
+
+  /**
+   * 期限間近タスクを表示します。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _viewUpcomingTasks() {
+    this._upcomingAlertStop = true;
+    await snDB.viewUpcomingTasks();
   }
 }

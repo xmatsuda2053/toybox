@@ -38,6 +38,12 @@
         --fade-opacity: 0.6;
       }
 
+      &#btn-warning {
+        color: var(--wa-color-yellow-60);
+        --animation-duration: 2s;
+        --fade-opacity: 0.6;
+      }
+
       &:hover {
         color: var(--wa-color-neutral-70);
       }

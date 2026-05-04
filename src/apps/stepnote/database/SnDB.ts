@@ -337,6 +337,52 @@ export class SnDB extends Dexie {
   }
 
   /**
+   * 期限間近タスクの有無を判定します。
+   *
+   * @return {*}  {Promise<boolean>}
+   * @memberof SnDB
+   */
+  async hasUpcomingTasks(): Promise<boolean> {
+    return (
+      (await this.tasks
+        .where("statusCode")
+        .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
+        .filter((task) => isWithinAnyDaysBefore(false, task.dueDate, 3)) // 当日(00:00)より前
+        .count()) > 0
+    );
+  }
+
+  /**
+   * 期限間近タスクのみ表示する。
+   *
+   * @memberof SnDB
+   */
+  async viewUpcomingTasks() {
+    await snDB.transaction(
+      "rw",
+      [this.labels, this.quickAccesses, this.tasks],
+      async () => {
+        await this.resetLabelSelected();
+        await this.resetQuickAccessSelected();
+        await this.resetTaskSelected();
+
+        const newData: QuickAccess = {
+          id: 1,
+          isBookmarkSelected: 0,
+          isDoneSelected: 0,
+          isOverdueSelected: 0,
+          isUpcomingSelected: 1,
+          isProgressSelected: 1,
+          isPendingSelected: 1,
+          isUncategorizedSelected: 0,
+        };
+
+        await this.putQuickAccess(newData);
+      },
+    );
+  }
+
+  /**
    * タスクの選択状態を解除します。
    *
    * @return {*}  {Promise<void>}
