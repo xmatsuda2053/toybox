@@ -17,7 +17,7 @@ export default defineConfig({
     minify: "esbuild",
     reportCompressedSize: false,
     rollupOptions: {
-      input: "./index.html",
+      input: "./toybox.html",
       output: {
         inlineDynamicImports: true,
         manualChunks: undefined,
