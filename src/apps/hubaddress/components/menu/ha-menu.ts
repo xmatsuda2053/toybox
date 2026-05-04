@@ -46,14 +46,14 @@ const helpItems: HelpItem[] = [
     markdown: mdMenu,
   },
   {
-    name: "search",
-    title: "SEARCH",
-    markdown: mdSearch,
-  },
-  {
     name: "upload",
     title: "UPLOAD",
     markdown: mdUploader,
+  },
+  {
+    name: "search",
+    title: "SEARCH",
+    markdown: mdSearch,
   },
   {
     name: "viewer",
