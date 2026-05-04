@@ -5,29 +5,6 @@
   box-sizing: border-box;
 }
 
-wa-input {
-  &::part(base),
-  &::part(input) {
-    outline: none;
-  }
-}
-
-wa-textarea {
-  &::part(base),
-  &::part(control),
-  &::part(textarea) {
-    outline: none;
-  }
-}
-
-wa-select {
-  &::part(combobox),
-  &::part(form-control),
-  &::part(form-control-input) {
-    outline: none;
-  }
-}
-
 $height-header: 30px;
 $height-footer: 25px;
 

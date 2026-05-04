@@ -12,44 +12,20 @@ import {
 import { customElement, state } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
-import { live } from "lit/directives/live.js";
-import WaDropdownItem from "@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js";
 
 // 3. Internal Assets & Logic
-import { icons } from "@assets/icons";
 import "@/library";
+import { icons } from "@assets/icons";
 import { snDB } from "@sn/database/SnDB";
 import { ScheduleUtils } from "@/utils/ScheduleUtils";
+import { AppItem } from "@ap/models/AppItem";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@ap/styles/app-container.lit.scss?inline";
+import styles from "@apps/app-container.lit.scss?inline";
 
 // 5. Initializations (Side Effects)
 setBasePath("/");
-
-type sKey = "F1" | "F2" | "F3";
-interface AppItem {
-  code: string;
-  label: string;
-  tag: HTMLTemplateResult;
-  key: sKey;
-}
-
-const APP_LIST: AppItem[] = [
-  {
-    code: "step-note",
-    label: "Step-Note",
-    tag: html`<step-note-app class="app"></step-note-app>`,
-    key: "F1",
-  },
-  {
-    code: "hub-address",
-    label: "Hub-Address",
-    tag: html`<hub-address-app class="app"></hub-address-app>`,
-    key: "F2",
-  },
-];
 
 /**
  * アプリケーションコンテナー
@@ -60,6 +36,29 @@ const APP_LIST: AppItem[] = [
  */
 @customElement("app-container")
 export class AppContainer extends LitElement {
+  /**
+   * スタイルシートを適用します。
+   *
+   * @static
+   * @memberof AppContainer
+   */
+  static styles = css`
+    ${unsafeCSS(styles)}
+  `;
+
+  /**
+   * 選択中のアプリ
+   *
+   * @type {App}
+   * @memberof AppContainer
+   */
+  @state() selectedApp: AppItem = {
+    code: "",
+    label: "",
+    tag: html``,
+    key: "F1",
+  };
+
   /**
    * スケジュール管理用のインスタンスを準備
    *
@@ -87,39 +86,11 @@ export class AppContainer extends LitElement {
   }
 
   /**
-   * 選択中のアプリ
-   *
-   * @type {App}
-   * @memberof AppContainer
-   */
-  @state() selectedApp: AppItem = APP_LIST[0];
-
-  /**
-   * ショートカットキーによるアプリ切り替え
-   *
-   * @private
-   * @param {KeyboardEvent} e
-   * @memberof AppContainer
-   */
-  private _appSelect = (e: KeyboardEvent) => {
-    if (!e.shiftKey) return;
-
-    const app = APP_LIST.find((a) => a.key === e.key);
-
-    if (app) {
-      e.preventDefault();
-      this.selectedApp = app;
-    }
-  };
-
-  /**
    * Creates an instance of AppContainer.
    * @memberof AppContainer
    */
   constructor() {
     super();
-
-    window.addEventListener("keydown", this._appSelect);
 
     // 独自アイコンを登録
     registerIconLibrary("my-icons", {
@@ -151,7 +122,6 @@ export class AppContainer extends LitElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener("keydown", this._appSelect);
     this._exportScheduler.stop();
   }
 
@@ -187,22 +157,7 @@ export class AppContainer extends LitElement {
           </div>
           <wa-dropdown-item>設定</wa-dropdown-item>
         </wa-dropdown>
-        <wa-dropdown @wa-select=${this._appDropDownSelect}>
-          <div class="menu-header" slot="trigger">
-            <span>App(A)</span>
-            <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
-          </div>
-          ${APP_LIST.map((app) => {
-            return html`<wa-dropdown-item
-              .value=${app.code}
-              type="checkbox"
-              ?checked=${live(this.selectedApp.code === app.code)}
-            >
-              ${app.label}
-              <span slot="details">Shit + ${app.key}</span>
-            </wa-dropdown-item>`;
-          })}
-        </wa-dropdown>
+        <ap-selector @set-app=${this._setApp}></ap-selector>
         <wa-dropdown>
           <div class="menu-header" slot="trigger">
             <span>Tool(T)</span>
@@ -227,34 +182,13 @@ export class AppContainer extends LitElement {
   }
 
   /**
-   * APP選択の画面切り替えを制御します。
+   * メニュー選択したアプリをセットします。
    *
    * @private
    * @param {CustomEvent} e
-   * @return {*}
    * @memberof AppContainer
    */
-  private _appDropDownSelect(e: CustomEvent): void {
-    const item: WaDropdownItem = e.detail.item;
-    const app = APP_LIST.find((a) => a.code === item.value);
-
-    if (!app) return;
-
-    if (this.selectedApp === app) {
-      item.checked = true;
-      return;
-    }
-
-    this.selectedApp = app;
+  private _setApp(e: CustomEvent) {
+    this.selectedApp = e.detail.app;
   }
-
-  /**
-   * スタイルシートを適用します。
-   *
-   * @static
-   * @memberof AppContainer
-   */
-  static styles = css`
-    ${unsafeCSS(styles)}
-  `;
 }
