@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
           manualChunks: undefined,
         },
       },
+      outDir: `./dist/${target}`,
     },
   };
 });

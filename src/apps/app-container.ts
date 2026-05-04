@@ -11,11 +11,10 @@ import {
 // 2. Library Extensions & Third-party
 import { customElement, state } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
-import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
 
 // 3. Internal Assets & Logic
 import "@/library";
-import { icons } from "@assets/icons";
+import { registerIcons } from "@/utils/CommonUtils";
 import { AppItem } from "@ap/models/AppItem";
 
 // 4. Styles
@@ -63,17 +62,7 @@ export class AppContainer extends LitElement {
    */
   constructor() {
     super();
-
-    // 独自アイコンを登録
-    registerIconLibrary("my-icons", {
-      resolver: (name: string) => {
-        if (name in icons) {
-          return `data:image/svg+xml;utf8,${encodeURIComponent(icons[name])}`;
-        }
-        return "";
-      },
-      mutator: (svg) => svg.setAttribute("fill", "currentColor"),
-    });
+    registerIcons();
   }
 
   /**

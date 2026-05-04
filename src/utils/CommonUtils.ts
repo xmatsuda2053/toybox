@@ -1,3 +1,23 @@
+import { registerIconLibrary } from "@awesome.me/webawesome/dist/webawesome.js";
+import { icons } from "@assets/icons";
+
+/**
+ * カスタムアイコンを登録する。
+ *
+ * @export
+ */
+export function registerIcons() {
+  registerIconLibrary("my-icons", {
+    resolver: (name: string) => {
+      if (name in icons) {
+        return `data:image/svg+xml;utf8,${encodeURIComponent(icons[name])}`;
+      }
+      return "";
+    },
+    mutator: (svg) => svg.setAttribute("fill", "currentColor"),
+  });
+}
+
 /**
  * 指定された時間（ms）、実行を待機させるデバウンス関数
  * * @param func 実行したい関数
