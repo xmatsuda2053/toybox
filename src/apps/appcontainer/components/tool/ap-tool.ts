@@ -13,8 +13,6 @@ import { customElement } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 3. Internal Assets & Logic
-import { snDB } from "@sn/database/SnDB";
-import { ScheduledTime, ScheduleUtils } from "@/utils/ScheduleUtils";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -23,78 +21,49 @@ import styles from "@ap/styles/_header-item.lit.scss?inline";
 // 5. Initializations (Side Effects)
 setBasePath("/");
 
-const backupSchedule: ScheduledTime[] = [
-  { hour: 8, minute: 30 },
-  { hour: 12, minute: 0 },
-  { hour: 17, minute: 15 },
-  { hour: 20, minute: 0 },
-];
-
 /**
  * アプリケーションコンテナー
  *
  * @export
- * @class ApFile
+ * @class ApTool
  * @extends {LitElement}
  */
-@customElement("ap-file")
-export class ApFile extends LitElement {
+@customElement("ap-tool")
+export class ApTool extends LitElement {
   /**
    * スタイルシートを適用します。
    *
    * @static
-   * @memberof ApFile
+   * @memberof ApTool
    */
   static styles = css`
     ${unsafeCSS(styles)}
   `;
 
   /**
-   * Creates an instance of ApFile.
-   * @memberof ApFile
+   * Creates an instance of ApTool.
+   * @memberof ApTool
    */
   constructor() {
     super();
   }
 
   /**
-   * データをエクスポートする
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private async _exportData() {
-    await snDB.exportDatabase();
-  }
-
-  /**
-   * スケジュール管理用のインスタンスを準備
-   *
-   * @private
-   * @memberof SnMenu
-   */
-  private _exportScheduler = new ScheduleUtils(backupSchedule, () =>
-    this._exportData(),
-  );
-
-  /**
    * コンポーネント追加時
    *
-   * @memberof ApFile
+   * @memberof ApTool
    */
   connectedCallback() {
     super.connectedCallback();
-    this._exportScheduler.start();
   }
 
   /**
    * コンポーネント破棄時にリスナーを削除（メモリリーク防止）
    *
-   * @memberof ApFile
+   * @memberof ApTool
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this._exportScheduler.stop();
   }
 
   /**
@@ -102,7 +71,7 @@ export class ApFile extends LitElement {
    *
    * @protected
    * @param {PropertyValues} _changedProperties
-   * @memberof ApFile
+   * @memberof ApTool
    */
   protected willUpdate(_changedProperties: PropertyValues) {
     super.willUpdate(_changedProperties);
@@ -113,7 +82,7 @@ export class ApFile extends LitElement {
    *
    * @protected
    * @param {PropertyValues} _changedProperties
-   * @memberof ApFile
+   * @memberof ApTool
    */
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
@@ -125,15 +94,15 @@ export class ApFile extends LitElement {
    * @protected
    * @override
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
-   * @memberof ApFile
+   * @memberof ApTool
    */
   protected render(): HTMLTemplateResult {
     return html`<wa-dropdown>
       <div class="menu-header" slot="trigger">
-        <span>File(F)</span>
+        <span>Tool(T)</span>
         <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
       </div>
-      <wa-dropdown-item>設定</wa-dropdown-item>
+      <wa-dropdown-item>xxx</wa-dropdown-item>
     </wa-dropdown>`;
   }
 }

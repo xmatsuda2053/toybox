@@ -27,7 +27,8 @@ import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
 
 import "@ap/components/file/ap-file";
-import "@ap/components/apps/ap-selector";
+import "@ap/components/app/ap-selector";
+import "@ap/components/tool/ap-tool";
 
 import "@sn/step-note-app";
 import "@sn/components/menu/sn-menu";

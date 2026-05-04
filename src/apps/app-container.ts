@@ -121,13 +121,7 @@ export class AppContainer extends LitElement {
         </div>
         <ap-file></ap-file>
         <ap-selector @set-app=${this._setApp}></ap-selector>
-        <wa-dropdown>
-          <div class="menu-header" slot="trigger">
-            <span>Tool(T)</span>
-            <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
-          </div>
-          <wa-dropdown-item>xxx</wa-dropdown-item>
-        </wa-dropdown>
+        <ap-tool></ap-tool>
       </header>
       <main>${this.selectedApp.tag}</main>
       <footer>
