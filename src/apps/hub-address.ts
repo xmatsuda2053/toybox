@@ -30,7 +30,61 @@ export class HubAddress extends LitElement {
    * @static
    * @memberof HubAddress
    */
-  static styles = css``;
+  static styles = css`
+    #contents-root {
+      display: grid;
+      grid-template-rows: 30px 1fr 25px;
+      height: 100vh;
+
+      header {
+        background: var(--wa-color-neutral-30);
+
+        display: flex;
+        gap: var(--wa-space-2xs);
+        align-items: center;
+
+        .app-icon {
+          margin-block-start: var(--wa-space-3xs);
+        }
+
+        padding-block: var(--wa-space-s);
+        padding-inline: var(--wa-space-xs);
+      }
+
+      main {
+        height: 100%;
+        overflow: hidden;
+
+        .app {
+          display: block;
+          height: 100%;
+        }
+      }
+
+      footer {
+        background: var(--wa-color-neutral-30);
+        display: flex;
+        gap: 5px;
+        align-items: center;
+
+        padding-inline: var(--wa-space-xs);
+
+        .footer {
+          flex: 1;
+
+          color: var(--wa-color-neutral-95);
+          font-size: var(--wa-font-size-xs);
+        }
+
+        .app-name {
+          display: flex;
+          gap: var(--wa-space-2xs);
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+  `;
 
   /**
    * Creates an instance of HubAddress.
@@ -50,7 +104,27 @@ export class HubAddress extends LitElement {
    * @memberof HubAddress
    */
   protected render(): HTMLTemplateResult {
-    console.log("render");
-    return html`<hub-address-app></hub-address-app>`;
+    return html`<div id="contents-root">
+      <header>
+        <div class="app-icon">
+          <wa-icon library="my-icons" name="icon-hub-address"></wa-icon>
+        </div>
+        <ap-tool></ap-tool>
+      </header>
+      <main>
+        <hub-address-app></hub-address-app>
+      </main>
+      <footer>
+        <div class="footer"></div>
+        <div class="footer"></div>
+        <div class="footer app-name">
+          <wa-icon library="my-icons" name="caret-right-solid-full"></wa-icon>
+          Hub-Address
+          <wa-icon library="my-icons" name="caret-left-solid-full"></wa-icon>
+        </div>
+        <div class="footer"></div>
+        <div class="footer"></div>
+      </footer>
+    </div>`;
   }
 }

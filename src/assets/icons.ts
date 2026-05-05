@@ -50,6 +50,7 @@ import gear_solid_full from "@assets/icons/gear-solid-full.svg?raw";
 import hashtag_solid_full from "@assets/icons/hashtag-solid-full.svg?raw";
 import heading_solid_full from "@assets/icons/heading-solid-full.svg?raw";
 import html5_brands_solid_full from "@assets/icons/html5-brands-solid-full.svg?raw";
+import icon_hub_address from "@assets/icons/icon-hub-address.svg?raw";
 import italic_solid_full from "@assets/icons/italic-solid-full.svg?raw";
 import link_solid_full from "@assets/icons/link-solid-full.svg?raw";
 import list_check_solid_full from "@assets/icons/list-check-solid-full.svg?raw";
@@ -126,6 +127,7 @@ export const icons: Record<string, string> = {
   "hashtag-solid-full": hashtag_solid_full,
   "heading-solid-full": heading_solid_full,
   "html5-brands-solid-full": html5_brands_solid_full,
+  "icon-hub-address": icon_hub_address,
   "italic-solid-full": italic_solid_full,
   "link-solid-full": link_solid_full,
   "list-check-solid-full": list_check_solid_full,
