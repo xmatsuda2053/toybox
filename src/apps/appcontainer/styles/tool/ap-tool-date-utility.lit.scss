@@ -47,10 +47,7 @@ header {
 main {
   .row {
     display: grid;
-    grid-template-columns:
-      repeat(2, 80px)
-      repeat(4, 1fr)
-      80px;
+    grid-template-columns: repeat(3, 80px) repeat(4, 1fr);
 
     &.body {
       &:nth-child(odd) {

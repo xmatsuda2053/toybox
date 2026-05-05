@@ -130,21 +130,21 @@ export class ApToolDateUtility extends LitElement {
         <div class="row head">
           <div class="col">月数</div>
           <div class="col">年数</div>
+          <div class="col">曜日</div>
           <div class="col">西暦日</div>
           <div class="col">和暦日</div>
           <div class="col">前月末日(西暦)</div>
           <div class="col">前月末日(和暦)</div>
-          <div class="col">曜日</div>
         </div>
         ${monthlyList.map((item) => {
           return html` <div class="row body">
             <div class="col">${item.month}</div>
             <div class="col">${item.year}</div>
+            <div class="col">${item.wd}</div>
             <div class="col">${item.adDate}</div>
             <div class="col">${item.jpDate}</div>
             <div class="col">${item.adPrevMonthLastDay}</div>
             <div class="col">${item.jpPrevMonthLastDay}</div>
-            <div class="col">${item.wd}</div>
           </div>`;
         })}
       </main>
