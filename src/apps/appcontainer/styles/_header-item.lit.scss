@@ -22,3 +22,11 @@ wa-dropdown-item {
     font-size: var(--wa-font-size-s);
   }
 }
+
+wa-dialog {
+  --width: 70%;
+
+  &::part(dialog) {
+    height: 90%;
+  }
+}

@@ -29,6 +29,7 @@ import "@common/help-viewer/help-viewer";
 import "@ap/components/file/ap-file";
 import "@ap/components/app/ap-selector";
 import "@ap/components/tool/ap-tool";
+import "@ap/components/tool/ap-tool-date-utility";
 
 import "@sn/step-note-app";
 import "@sn/components/menu/sn-menu";

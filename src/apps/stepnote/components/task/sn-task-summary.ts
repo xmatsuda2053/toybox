@@ -23,6 +23,7 @@ import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
 
 // 5. Internal Shared (Utils)
+import { formatDate } from "@/utils/DateUtils";
 import { emit } from "@utils/EventUtils";
 
 // 6. Styles
@@ -186,7 +187,7 @@ export class SnTaskSummary extends LitElement {
             class="item"
             size="small"
             type="date"
-            .value=${this.task.dueDate.toISOString().split("T")[0]}
+            .value=${formatDate(this.task.dueDate, "yyyy-MM-dd")}
           >
           </wa-input>
         </div>

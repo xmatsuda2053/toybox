@@ -26,31 +26,6 @@ $height-footer: 25px;
 
     padding-block: var(--wa-space-s);
     padding-inline: var(--wa-space-xs);
-
-    .menu-header {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      padding-inline: var(--wa-space-xs);
-
-      color: var(--wa-color-neutral-95);
-      border-radius: var(--wa-border-radius-s);
-
-      span {
-        font-size: var(--wa-font-size-s);
-      }
-
-      &:hover {
-        background-color: var(--wa-color-neutral-40);
-      }
-    }
-
-    wa-dropdown-item {
-      &::part(label),
-      &::part(details) {
-        font-size: var(--wa-font-size-s);
-      }
-    }
   }
 
   main {
