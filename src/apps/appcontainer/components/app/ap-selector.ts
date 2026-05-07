@@ -63,6 +63,12 @@ export class ApSelector extends LitElement {
       tag: html`<hub-address-app class="app"></hub-address-app>`,
       key: "F2",
     },
+    {
+      code: "fill-go",
+      label: "Fill-Go",
+      tag: html`<fill-go-app class="app"></fill-go-app>`,
+      key: "F3",
+    },
   ];
 
   /**

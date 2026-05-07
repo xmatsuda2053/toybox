@@ -25,7 +25,8 @@
       "@shared/*": ["./src/apps/_shared/*"],
       "@ap/*": ["./src/apps/appcontainer/*"],
       "@sn/*": ["./src/apps/stepnote/*"],
-      "@ha/*": ["./src/apps/hubaddress/*"]
+      "@ha/*": ["./src/apps/hubaddress/*"],
+      "@fgo/*": ["./src/apps/fillgo/*"]
     }
   },
   "include": ["src"]

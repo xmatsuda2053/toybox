@@ -1,0 +1,39 @@
+$width-menu: 50px;
+$width-nav: 270px;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+#contents-root {
+  display: block;
+  height: 100%;
+
+  .content {
+    display: grid;
+    grid-template-columns: $width-menu $width-nav 1fr 1fr;
+    overflow: hidden;
+
+    height: 100%;
+
+    .panel {
+      overflow-y: auto;
+
+      &.menu {
+        border-inline-end: 1px solid var(--wa-color-neutral-50);
+      }
+
+      &.nav {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        overflow: hidden;
+        border-inline-end: 1px solid var(--wa-color-neutral-50);
+      }
+
+      &.input {
+        border-inline-end: 1px solid var(--wa-color-neutral-50);
+      }
+    }
+  }
+}

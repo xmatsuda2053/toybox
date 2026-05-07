@@ -56,3 +56,5 @@ import "@ha/components/uploader/wa-uploader";
 import "@ha/components/search/ha-search-input";
 import "@ha/components/viewer/ha-viewer-staff";
 import "@ha/components/viewer/ha-viewer-div";
+
+import "@fgo/fill-go-app";
