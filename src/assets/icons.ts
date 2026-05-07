@@ -47,6 +47,7 @@ import floppy_disk_solid_full from "@assets/icons/floppy-disk-solid-full.svg?raw
 import folder_open_solid_full from "@assets/icons/folder-open-solid-full.svg?raw";
 import folder_regular_full from "@assets/icons/folder-regular-full.svg?raw";
 import gear_solid_full from "@assets/icons/gear-solid-full.svg?raw";
+import globe_solid_full from "@assets/icons/globe-solid-full.svg?raw";
 import hashtag_solid_full from "@assets/icons/hashtag-solid-full.svg?raw";
 import heading_solid_full from "@assets/icons/heading-solid-full.svg?raw";
 import html5_brands_solid_full from "@assets/icons/html5-brands-solid-full.svg?raw";
@@ -124,6 +125,7 @@ export const icons: Record<string, string> = {
   "folder-open-solid-full": folder_open_solid_full,
   "folder-regular-full": folder_regular_full,
   "gear-solid-full": gear_solid_full,
+  "globe-solid-full": globe_solid_full,
   "hashtag-solid-full": hashtag_solid_full,
   "heading-solid-full": heading_solid_full,
   "html5-brands-solid-full": html5_brands_solid_full,

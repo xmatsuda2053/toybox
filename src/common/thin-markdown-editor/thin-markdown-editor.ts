@@ -172,11 +172,20 @@ export class ThinMarkdownEditor extends LitElement {
   constructor() {
     super();
     this.renderer.link = ({ href, text }) => {
+      const getFrontIcon = (h: string) => {
+        if (h.startsWith("http")) {
+          return "globe-solid-full";
+        } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(h)) {
+          return "envelope-solid-full";
+        } else {
+          return "folder-open-solid-full";
+        }
+      };
+
       const safeHref = href.replace(/\\/g, "%5C");
       const copyIcon = `<wa-icon library="my-icons" name="copy-regular-full" class="copy-icon"></wa-icon>`;
-      const frontIcon = safeHref.startsWith("http")
-        ? `link-solid-full`
-        : `folder-regular-full`;
+      const frontIcon = getFrontIcon(href);
+
       return `<a class="copy-link" href="${safeHref}"><wa-icon library="my-icons" name="${frontIcon}"></wa-icon>${text}${copyIcon}</a>`;
     };
 
