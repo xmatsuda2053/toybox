@@ -132,9 +132,16 @@ export class StepNoteApp extends LitElement {
           ></sn-menu>
           <input type="file" id="importFile" @change=${this._importData} />
         </div>
-        <div class="panel nav">${this.isThinMode ? "" : this._renderNav()}</div>
+        <div class="panel nav">
+          <div class="quick">
+            <sn-nav-section-quick></sn-nav-section-quick>
+          </div>
+          <div class="label">
+            <sn-nav-section-label></sn-nav-section-label>
+          </div>
+        </div>
         <div class="panel list">
-          ${this.isThinMode ? "" : html`<sn-list></sn-list>`}
+          <sn-list></sn-list>
         </div>
         <div class="panel task">
           <sn-tab-task></sn-tab-task>
@@ -154,22 +161,6 @@ export class StepNoteApp extends LitElement {
         >
       </wa-dialog>
     </div> `;
-  }
-
-  /**
-   * ナビゲーションをレンダリングする。
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof StepNoteApp
-   */
-  private _renderNav(): HTMLTemplateResult {
-    return html`<div class="quick">
-        <sn-nav-section-quick></sn-nav-section-quick>
-      </div>
-      <div class="label">
-        <sn-nav-section-label></sn-nav-section-label>
-      </div>`;
   }
 
   /**
