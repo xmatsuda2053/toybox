@@ -151,6 +151,52 @@
           font-weight: bold;
         }
       }
+
+      // 箇条書きのマーク位置が下詰めになる。
+      // この問題を解決するため、Flexとすることでデザインを調整する。
+      ul {
+        padding-inline-start: var(--wa-space-m);
+        list-style: none; /* デフォルトのマークを消す */
+
+        li {
+          display: flex;
+          align-items: center;
+          margin-block-end: var(--wa-space-2xs);
+
+          &::before {
+            content: "";
+            display: inline-block;
+            width: var(--wa-space-xs);
+            height: var(--wa-space-xs);
+            background-color: var(--wa-color-neutral-30);
+            border-radius: 50%;
+            margin-inline-end: var(--wa-space-xs);
+            flex-shrink: 0; /* 改行してもマークが潰れないように固定 */
+          }
+        }
+      }
+
+      ol {
+        padding-inline-start: var(--wa-space-m);
+        list-style: none;
+        counter-reset: li-count;
+
+        li {
+          display: flex;
+          align-items: center;
+          margin-block-end: var(--wa-space-2xs);
+          counter-increment: li-count; /* liタグが出るたびにカウンターを 1 ずつ増やす */
+
+          &::before {
+            /* 現在のカウンターの値を表示 */
+            content: counter(li-count) ".";
+            display: inline-block;
+            margin-inline-end: var(--wa-space-xs);
+            font-weight: bold;
+            flex-shrink: 0;
+          }
+        }
+      }
     }
   }
 
