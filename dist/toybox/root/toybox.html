@@ -4350,7 +4350,7 @@ Char: `+_.c,f=new Error(f),_.error=f,W(_,"onerror",f),_}function Ie(_){return(_.
       ${je(Ut)}
     `,ve`
       ${je(aw)}
-    `];Rl([Ge()],hi.prototype,"isErrorJpBaseDate",2);Rl([Ge()],hi.prototype,"baseDate",2);hi=Rl([qe("ap-tool-date-utility")],hi);const dw=":host{display:block;height:100%}#importFile{display:none}#contents-root{display:block;height:100%}#contents-root wa-drawer{--size: calc($width-nav + $width-list);--spacing: 0px}#contents-root wa-drawer::part(body){height:100%;overflow:hidden}#contents-root wa-drawer::part(dialog){height:100%;overflow:hidden}#contents-root wa-drawer .drawer-contents{display:grid;grid-template-columns:270px 300px;height:100%;overflow:hidden}#contents-root wa-drawer .drawer-contents .nav{display:grid;grid-template-rows:auto 1fr;height:100%;overflow:hidden;border-right:1px solid var(--wa-color-surface-border)}#contents-root wa-drawer .drawer-contents .nav .label{overflow-y:auto}#contents-root wa-drawer .drawer-contents .list{height:100%;overflow:hidden}#contents-root .content{display:grid;grid-template-columns:50px 270px 300px 1fr 1fr;overflow:hidden;height:100%}#contents-root .content.thin{grid-template-columns:50px 0 0 1fr 1fr}#contents-root .content .panel{overflow-y:auto}#contents-root .content .panel.menu{border-right:1px solid var(--wa-color-neutral-50)}#contents-root .content .panel.nav{display:grid;grid-template-rows:auto 1fr;overflow:hidden;border-right:1px solid var(--wa-color-neutral-50)}#contents-root .content .panel.nav .label{overflow-y:auto}#contents-root .content .panel.journal{border-right:0}";var hw=Object.defineProperty,pw=Object.getOwnPropertyDescriptor,Gs=(t,e,n,r)=>{for(var o=r>1?void 0:r?pw(e,n):e,s=t.length-1,l;s>=0;s--)(l=t[s])&&(o=(r?l(e,n,o):l(o))||o);return r&&o&&hw(e,n,o),o};_t("/");let _o=class extends ct{constructor(){super(),this.isThinMode=!1,this._shortcutKey=t=>{t.altKey&&t.shiftKey&&(t.key==="E"||t.key==="e")&&this._toggleExploreNav()},window.addEventListener("keydown",this._shortcutKey)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("keydown",this._shortcutKey)}willUpdate(t){super.willUpdate(t)}render(){return Y`<div id="contents-root">
+    `];Rl([Ge()],hi.prototype,"isErrorJpBaseDate",2);Rl([Ge()],hi.prototype,"baseDate",2);hi=Rl([qe("ap-tool-date-utility")],hi);const dw=":host{display:block;height:100%}#importFile{display:none}#contents-root{display:block;height:100%}#contents-root wa-drawer{--size: calc($width-nav + $width-list);--spacing: 0px}#contents-root wa-drawer::part(body){height:100%;overflow:hidden}#contents-root wa-drawer::part(dialog){height:100%;overflow:hidden}#contents-root wa-drawer .drawer-contents{display:grid;grid-template-columns:270px 300px;height:100%;overflow:hidden}#contents-root wa-drawer .drawer-contents .nav{display:grid;grid-template-rows:auto 1fr;height:100%;overflow:hidden;border-right:1px solid var(--wa-color-surface-border)}#contents-root wa-drawer .drawer-contents .nav .label{overflow-y:auto}#contents-root wa-drawer .drawer-contents .list{height:100%;overflow:hidden}#contents-root .content{display:grid;grid-template-columns:50px 270px 300px 1fr 1fr;overflow:hidden;height:100%;transition:grid-template-columns .4s ease-in-out}#contents-root .content.thin{grid-template-columns:50px 0 0 1fr 1fr}#contents-root .content.thin .nav,#contents-root .content.thin .list{border-right-color:transparent}#contents-root .content .panel{min-width:0;overflow-y:auto}#contents-root .content .panel.menu{border-right:1px solid var(--wa-color-neutral-50)}#contents-root .content .panel.nav{display:grid;grid-template-rows:auto 1fr;overflow:hidden;border-right:1px solid var(--wa-color-neutral-50);transition:border-color .4s}#contents-root .content .panel.nav .label{overflow-y:auto}#contents-root .content .panel.journal{border-right:0}";var hw=Object.defineProperty,pw=Object.getOwnPropertyDescriptor,Gs=(t,e,n,r)=>{for(var o=r>1?void 0:r?pw(e,n):e,s=t.length-1,l;s>=0;s--)(l=t[s])&&(o=(r?l(e,n,o):l(o))||o);return r&&o&&hw(e,n,o),o};_t("/");let _o=class extends ct{constructor(){super(),this.isThinMode=!1,this._shortcutKey=t=>{t.altKey&&t.shiftKey&&(t.key==="E"||t.key==="e")&&this._toggleExploreNav()},window.addEventListener("keydown",this._shortcutKey)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("keydown",this._shortcutKey)}willUpdate(t){super.willUpdate(t)}render(){return Y`<div id="contents-root">
       <div
         class="content ${this.isThinMode?"thin":""}"
         @id-click=${t=>this._taskSelect(t.detail.id)}
@@ -4364,9 +4364,16 @@ Char: `+_.c,f=new Error(f),_.error=f,W(_,"onerror",f),_}function Ie(_){return(_.
           ></sn-menu>
           <input type="file" id="importFile" @change=${this._importData} />
         </div>
-        <div class="panel nav">${this.isThinMode?"":this._renderNav()}</div>
+        <div class="panel nav">
+          <div class="quick">
+            <sn-nav-section-quick></sn-nav-section-quick>
+          </div>
+          <div class="label">
+            <sn-nav-section-label></sn-nav-section-label>
+          </div>
+        </div>
         <div class="panel list">
-          ${this.isThinMode?"":Y`<sn-list></sn-list>`}
+          <sn-list></sn-list>
         </div>
         <div class="panel task">
           <sn-tab-task></sn-tab-task>
@@ -4385,12 +4392,7 @@ Char: `+_.c,f=new Error(f),_.error=f,W(_,"onerror",f),_}function Ie(_){return(_.
           >Close</wa-button
         >
       </wa-dialog>
-    </div> `}_renderNav(){return Y`<div class="quick">
-        <sn-nav-section-quick></sn-nav-section-quick>
-      </div>
-      <div class="label">
-        <sn-nav-section-label></sn-nav-section-label>
-      </div>`}_toggleExploreNav(){this.isThinMode=!this.isThinMode}_importDataSelect(){this._inputFile.click()}async _importData(){const t=this._inputFile?.files?.[0];t&&(await Ze.importDatabase(t),this._dialogImportCompleat.open=!0)}async _exportData(){await Ze.exportDatabase()}_showConfig(){console.log("Showing configuration...")}async _taskSelect(t){await Ze.selectSingleTask(Number(t),!0)}};_o.styles=ve`
+    </div> `}_toggleExploreNav(){this.isThinMode=!this.isThinMode}_importDataSelect(){this._inputFile.click()}async _importData(){const t=this._inputFile?.files?.[0];t&&(await Ze.importDatabase(t),this._dialogImportCompleat.open=!0)}async _exportData(){await Ze.exportDatabase()}_showConfig(){console.log("Showing configuration...")}async _taskSelect(t){await Ze.selectSingleTask(Number(t),!0)}};_o.styles=ve`
     ${je(dw)}
   `;Gs([Ge()],_o.prototype,"isThinMode",2);Gs([xe("#importFile")],_o.prototype,"_inputFile",2);Gs([xe("#dialog-import-complete-overview")],_o.prototype,"_dialogImportCompleat",2);_o=Gs([qe("step-note-app")],_o);const fw="#contents-root{display:flex;flex-direction:column;gap:var(--wa-space-xs) 0;background:var(--wa-color-neutral-20);height:100%;padding-block:var(--wa-space-2xs);padding-inline-start:var(--wa-space-3xs)}#contents-root .field wa-icon{font-size:var(--wa-font-size-xl);color:var(--wa-color-neutral-60);transition:transform .2s ease-in-out,color .2s}#contents-root .field wa-icon:hover{color:var(--wa-color-neutral-95)}#contents-root .field.active wa-icon{color:var(--wa-color-neutral-95)}#contents-root .field.bottom{margin-block-start:auto}wa-dialog{--width: 70%}wa-dialog::part(dialog){height:90%}",mw=`# Step Note について
 
