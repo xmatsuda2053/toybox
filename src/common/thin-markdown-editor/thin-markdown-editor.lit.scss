@@ -149,47 +149,56 @@
       }
 
       // 箇条書きのマーク位置が下詰めになる。
-      // この問題を解決するため、Flexとすることでデザインを調整する。
-      ul {
-        padding-inline-start: var(--wa-space-m);
+      // この問題を解決するため、デザインを調整する。
+      ul,
+      ol {
+        padding-inline-start: var(--wa-space-xs);
         list-style: none; /* デフォルトのマークを消す */
 
         li {
-          display: flex;
-          align-items: center;
-          margin-block-end: var(--wa-space-2xs);
+          display: block;
+          position: relative;
+          margin-block-end: var(--wa-space-xs);
 
           &::before {
+            position: absolute;
+            left: 0;
+          }
+        }
+      }
+
+      ul {
+        li {
+          padding-inline-start: var(--wa-space-m);
+          &::before {
             content: "";
-            display: inline-block;
+            top: 0.5em; /* 1行目の高さに合わせる */
+
+            border-radius: 50%;
+            background-color: var(--wa-color-neutral-30);
+
             width: var(--wa-space-xs);
             height: var(--wa-space-xs);
-            background-color: var(--wa-color-neutral-30);
-            border-radius: 50%;
-            margin-inline-end: var(--wa-space-xs);
-            flex-shrink: 0; /* 改行してもマークが潰れないように固定 */
+          }
+
+          > ul {
+            li {
+              &::before {
+                background-color: transparent;
+                border: 1px solid var(--wa-color-neutral-30);
+              }
+            }
           }
         }
       }
 
       ol {
-        padding-inline-start: var(--wa-space-m);
-        list-style: none;
         counter-reset: li-count;
-
         li {
-          display: flex;
-          align-items: center;
-          margin-block-end: var(--wa-space-2xs);
           counter-increment: li-count; /* liタグが出るたびにカウンターを 1 ずつ増やす */
-
+          padding-inline-start: var(--wa-space-l);
           &::before {
-            /* 現在のカウンターの値を表示 */
             content: counter(li-count) ".";
-            display: inline-block;
-            margin-inline-end: var(--wa-space-xs);
-            font-weight: bold;
-            flex-shrink: 0;
           }
         }
       }
