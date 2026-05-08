@@ -51,13 +51,7 @@ $search-height: 40px;
     }
 
     .search {
-      display: flex;
-      gap: var(--wa-space-xs);
-      align-items: center;
-
-      ha-search-input {
-        flex: 1;
-      }
+      padding-inline-end: var(--wa-space-s);
     }
 
     .viewer {

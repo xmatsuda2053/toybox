@@ -27,7 +27,6 @@ import { Label } from "@sn/models/Label";
 import { Task } from "@sn/models/Task";
 
 // 5. Internal Shared (Utils)
-import { debounce } from "@/utils/CommonUtils";
 import {
   formatDate,
   getCurrentFiscalYear,
@@ -170,14 +169,6 @@ export class SnList extends LitElement {
   private _dbSubscription?: Subscription;
 
   /**
-   * 検索時ローディング制御
-   *
-   * @private
-   * @memberof SnList
-   */
-  @state() private _loading = false;
-
-  /**
    * 期限切れタスクの有無
    *
    * @private
@@ -304,7 +295,6 @@ export class SnList extends LitElement {
         this._labels = data.labels;
         this._tasks = data.tasks;
         this._activeFiscalYears = data.activeFiscalYears;
-        this._loading = false;
         this._hasOverdue = data.hasOverdue;
         this._hasUpcoming = data.hasUpcoming;
       },
@@ -313,27 +303,16 @@ export class SnList extends LitElement {
   }
 
   /**
-   * 検索処理にデバウンスを設定します。
-   *
-   * @private
-   * @memberof SnList
-   */
-  private _debouncedSearch = debounce(async (keyword: string) => {
-    this._filterKeyword = keyword;
-    this._subscribeLabels();
-  }, 300);
-
-  /**
    * タスク一覧にフィルタをかける。
    *
    * @private
-   * @param {Event} e
+   * @param {CustomEvent} e
    * @memberof SnList
    */
-  private async _filterTasks(e: Event) {
-    const keyword = (e.target as WaInput).value ?? "";
-    if (keyword) this._loading = true;
-    this._debouncedSearch(keyword);
+  private async _filterTasks(e: CustomEvent) {
+    const keyword = e.detail.keyword ?? "";
+    this._filterKeyword = keyword;
+    this._subscribeLabels();
   }
 
   /**
@@ -345,7 +324,6 @@ export class SnList extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this._dbSubscription?.unsubscribe();
-    this._debouncedSearch.cancel();
     window.removeEventListener("keydown", this._shortcutKey);
   }
 
@@ -438,20 +416,7 @@ export class SnList extends LitElement {
           : html``}
       </div>
       <div class="search">
-        <wa-input
-          id="input-search"
-          size="small"
-          placeholder="filter inquiries..."
-          @input=${this._filterTasks}
-          with-clear
-        >
-          ${this._loading ? html`<wa-spinner slot="end"></wa-spinner>` : ""}
-          <wa-icon
-            slot="end"
-            library="my-icons"
-            name="magnifying-glass-solid-full"
-          ></wa-icon>
-        </wa-input>
+        <search-input @input-keyword=${this._filterTasks}></search-input>
       </div>
       <div class="items">
         <lit-virtualizer

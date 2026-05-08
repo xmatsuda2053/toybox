@@ -1,0 +1,9 @@
+wa-spinner {
+  margin-inline-end: calc(var(--wa-space-m) + 1px);
+}
+
+.has-value {
+  &::part(base) {
+    background-color: var(--wa-color-orange-95);
+  }
+}

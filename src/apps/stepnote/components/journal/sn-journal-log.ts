@@ -13,16 +13,15 @@ import { customElement, property, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
 // 3. Third-party UI Components & Utils (WebAwesome)
-import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
-import WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
+import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
+import { SearchInput } from "@/common/search-input/search-input";
 
 // 4. Business Logic & Models
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 
 // 5. Utilities
-import { debounce } from "@/utils/CommonUtils";
 import { formatDate } from "@/utils/DateUtils";
 
 // 6. Styles
@@ -59,14 +58,6 @@ export class SnJournalLog extends LitElement {
   @property({ type: Array }) logs!: Log[];
 
   /**
-   * 検索時ローディング制御
-   *
-   * @private
-   * @memberof SnJournalLog
-   */
-  @state() private _loading = false;
-
-  /**
    * 検索フィルタのキーワード
    *
    * @private
@@ -74,6 +65,14 @@ export class SnJournalLog extends LitElement {
    * @memberof SnJournalLog
    */
   @state() private _filterKeyword: string = "";
+
+  /**
+   * 検索入力欄
+   *
+   * @type {SearchInput}
+   * @memberof SnJournalLog
+   */
+  @query("#search-input") searchInput!: SearchInput;
 
   /**
    * ログ表示エリア
@@ -108,27 +107,15 @@ export class SnJournalLog extends LitElement {
   ];
 
   /**
-   * 検索処理にデバウンスを設定します。
-   *
-   * @private
-   * @memberof SnJournalLog
-   */
-  private _debouncedSearch = debounce(async (keyword: string) => {
-    this._filterKeyword = keyword.toLowerCase();
-    this._loading = false;
-  }, 300);
-
-  /**
    * ログ一覧にフィルタをかける。
    *
    * @private
-   * @param {Event} e
+   * @param {CustomEvent} e
    * @memberof SnJournalLog
    */
-  private async _filterLogs(e: Event) {
-    const keyword = (e.target as WaInput).value ?? "";
-    if (keyword) this._loading = true;
-    this._debouncedSearch(keyword);
+  private async _filterLogs(e: CustomEvent) {
+    const keyword = e.detail.keyword ?? "";
+    this._filterKeyword = keyword.toLowerCase();
   }
 
   /**
@@ -175,12 +162,20 @@ export class SnJournalLog extends LitElement {
   }
 
   /**
-   * フィルタを解除します。
+   * 画面更新後の処理を実行します。
    *
+   * @protected
+   * @param {PropertyValues} changedProperties
    * @memberof SnJournalLog
    */
-  initFilter(): void {
-    this._filterKeyword = "";
+  protected async updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+
+    // taskId が変更された（＝タスクが切り替わった）場合
+    if (changedProperties.has("taskId")) {
+      this._filterKeyword = "";
+      this.searchInput?.init();
+    }
   }
 
   /**
@@ -198,21 +193,10 @@ export class SnJournalLog extends LitElement {
 
     return html`<div id="contents-root">
       <div class="search-area">
-        <wa-input
-          id="search-keyword"
-          size="small"
-          placeholder="filter inquiries..."
-          @input=${this._filterLogs}
-          value=${this._filterKeyword}
-          with-clear
-        >
-          ${this._loading ? html`<wa-spinner slot="end"></wa-spinner>` : ""}
-          <wa-icon
-            slot="end"
-            library="my-icons"
-            name="magnifying-glass-solid-full"
-          ></wa-icon
-        ></wa-input>
+        <search-input
+          id="search-input"
+          @input-keyword=${this._filterLogs}
+        ></search-input>
       </div>
       <div class="log-area">
         ${repeat(
