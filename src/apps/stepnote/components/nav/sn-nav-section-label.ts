@@ -24,7 +24,6 @@ import { snDB } from "@sn/database/SnDB";
 import { Label } from "@sn/models/Label";
 
 // 5. Internal Shared (Utils)
-import { debounce } from "@/utils/CommonUtils";
 
 // 6. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -107,14 +106,6 @@ export class SnNavSectionLabel extends LitElement {
   @state() private _labels: Label[] = [];
 
   /**
-   * 検索時ローディング制御
-   *
-   * @private
-   * @memberof SnNavSectionLabel
-   */
-  @state() private _loading = false;
-
-  /**
    * 検索フィルタのキーワード
    *
    * @private
@@ -175,34 +166,22 @@ export class SnNavSectionLabel extends LitElement {
     this._dbSubscription = observable.subscribe({
       next: (data) => {
         this._labels = data;
-        this._loading = false;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
   }
 
   /**
-   * 検索処理にデバウンスを設定します。
-   *
-   * @private
-   * @memberof SnNavSectionLabel
-   */
-  private _debouncedSearch = debounce(async (keyword: string) => {
-    this._filterKeyword = keyword;
-    this._subscribeLabels();
-  }, 300);
-
-  /**
    * ラベル一覧にフィルタをかける。
    *
    * @private
-   * @param {Event} e
+   * @param {CustomEvent} e
    * @memberof SnNavSectionLabel
    */
-  private async _filterLabels(e: Event) {
-    const keyword = (e.target as WaInput).value ?? "";
-    if (keyword) this._loading = true;
-    this._debouncedSearch(keyword);
+  private async _filterLabels(e: CustomEvent) {
+    const keyword = e.detail.keyword ?? "";
+    this._filterKeyword = keyword;
+    this._subscribeLabels();
   }
 
   /**
@@ -214,7 +193,6 @@ export class SnNavSectionLabel extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this._dbSubscription?.unsubscribe();
-    this._debouncedSearch.cancel();
   }
 
   /**
@@ -256,19 +234,7 @@ export class SnNavSectionLabel extends LitElement {
         ></wa-icon>
       </div>
       <div class="search">
-        <wa-input
-          size="small"
-          placeholder="filter inquiries..."
-          with-clear
-          @input=${this._filterLabels}
-        >
-          ${this._loading ? html`<wa-spinner slot="end"></wa-spinner>` : ""}
-          <wa-icon
-            slot="end"
-            library="my-icons"
-            name="magnifying-glass-solid-full"
-          ></wa-icon>
-        </wa-input>
+        <search-input @input-keyword=${this._filterLabels}></search-input>
       </div>
       <div class="contents">
         ${repeat(

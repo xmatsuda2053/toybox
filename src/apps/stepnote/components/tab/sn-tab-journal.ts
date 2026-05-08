@@ -136,7 +136,6 @@ export class SnTabJournal extends LitElement {
         if (result.task) {
           if (this.selectedTaskId !== result.task.id) {
             this.tabArea?.initTab();
-            this.journalLog.initFilter();
           }
           this.selectedTaskId = result.task.id!;
           this.logs = result.logs;

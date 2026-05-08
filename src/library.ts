@@ -25,6 +25,7 @@ import "@common/thin-markdown-editor/thin-markdown-editor.ts";
 import "@common/flexible-tab-area/flexible-tab-area";
 import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
+import "@common/search-input/search-input";
 
 import "@ap/components/file/ap-file";
 import "@ap/components/app/ap-selector";
@@ -53,6 +54,5 @@ import "@sn/components/journal/sn-journal-log-item";
 import "@ha/hub-address-app";
 import "@ha/components/menu/ha-menu";
 import "@ha/components/uploader/wa-uploader";
-import "@ha/components/search/ha-search-input";
 import "@ha/components/viewer/ha-viewer-staff";
 import "@ha/components/viewer/ha-viewer-div";

@@ -209,10 +209,10 @@ export class HubAddressApp extends LitElement {
       </div>
       <div class="base staff">
         <div class="search">
-          <ha-search-input
+          <search-input
             searchKeyword=${this._keywordStaff}
-            @input-search=${(e: CustomEvent) => this._searchData(e, "staff")}
-          ></ha-search-input>
+            @input-keyword=${(e: CustomEvent) => this._searchData(e, "staff")}
+          ></search-input>
         </div>
         <div class=${viewerStaffClassMap}>
           ${this._renderUploader(this.isEmptyStaff(), "staff", "職員情報")}
@@ -224,10 +224,10 @@ export class HubAddressApp extends LitElement {
       </div>
       <div class="base div">
         <div class="search">
-          <ha-search-input
+          <search-input
             searchKeyword=${this._keywordDiv}
-            @input-search=${(e: CustomEvent) => this._searchData(e, "div")}
-          ></ha-search-input>
+            @input-keyword=${(e: CustomEvent) => this._searchData(e, "div")}
+          ></search-input>
         </div>
         <div class=${viewerSDivClassMap}>
           ${this._renderUploader(this.isEmptyDiv(), "div", "組織情報")}
