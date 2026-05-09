@@ -77,7 +77,7 @@ export class ApSelector extends LitElement {
    * @type {App}
    * @memberof AppContainer
    */
-  @state() selectedApp: AppItem = this.APP_LIST[0];
+  @state() selectedApp: AppItem = this.APP_LIST[2]; // TODO
 
   /**
    * アプリ切り替えイベントを発行します。

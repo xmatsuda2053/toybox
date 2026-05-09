@@ -58,3 +58,7 @@ import "@ha/components/viewer/ha-viewer-staff";
 import "@ha/components/viewer/ha-viewer-div";
 
 import "@fgo/fill-go-app";
+import "@fgo/components/menu/fgo-menu";
+import "@fgo/components/nav/fgo-nav-header";
+import "@fgo/components/nav/fog-nav-item";
+import "@fgo/components/nav/fog-nav";

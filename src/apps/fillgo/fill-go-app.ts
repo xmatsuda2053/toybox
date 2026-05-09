@@ -15,6 +15,7 @@ import { customElement } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Modules (Utils, Database, Models, Shared Components)
+import { NavItem } from "./models/NavItem";
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -63,7 +64,7 @@ export class FillGoApp extends LitElement {
    * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
    *
    * @override
-   * @memberof SnTabTask
+   * @memberof FillGoApp
    */
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -90,13 +91,105 @@ export class FillGoApp extends LitElement {
    * @memberof FillGoApp
    */
   protected render(): HTMLTemplateResult {
+    const dummyH: NavItem[] = [
+      {
+        id: 1,
+        name: "label item1",
+        selected: true,
+      },
+      {
+        id: 2,
+        name: "label item2",
+        selected: false,
+      },
+    ];
+
+    const dummyL: NavItem[] = [
+      {
+        id: 1,
+        name: "list item1 list item1 list item1",
+        selected: true,
+      },
+      {
+        id: 2,
+        name: "list item2",
+        selected: false,
+      },
+    ];
     return html`<div id="contents-root">
       <div class="content">
-        <div class="panel menu"></div>
-        <div class="panel nav"></div>
+        <div class="panel menu">
+          <fgo-menu></fgo-menu>
+        </div>
+        <div class="panel nav">
+          <fgo-nav
+            .items=${dummyH}
+            iconName="tag-solid-full"
+            @add-item=${this._openAddLabel}
+            @click-item=${this._selectLabel}
+          >
+            <fgo-nav-header slot="header" addable expandable open>
+              LABEL
+            </fgo-nav-header>
+          </fgo-nav>
+          <wa-divider></wa-divider>
+          <div class="list">
+            <fgo-nav
+              .items=${dummyL}
+              iconName="rectangle-list-solid-full"
+              scrollable
+              @add-item=${this._openAddItem}
+              @click-item=${this._selectItem}
+            >
+              <fgo-nav-header slot="header" addable open>LIST</fgo-nav-header>
+            </fgo-nav>
+          </div>
+        </div>
         <div class="panel input"></div>
         <div class="panel output"></div>
       </div>
     </div>`;
+  }
+
+  /**
+   * ラベル追加画面を表示します。
+   *
+   * @private
+   * @memberof FillGoApp
+   */
+  private _openAddLabel() {
+    console.log("_openAddLabel"); //TODO
+  }
+
+  /**
+   * クリックしたラベルを選択します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof FillGoApp
+   */
+  private _selectLabel(e: CustomEvent) {
+    console.log("_selectLabel " + e.detail.itemId); //TODO
+  }
+
+  /**
+   * アイテム追加画面を表示します。
+   *
+   * @private
+   * @memberof FillGoApp
+   */
+  private _openAddItem() {
+    console.log("_openAddItem"); //TODO
+  }
+
+  /**
+   * クリックしたアイテムを選択します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof FillGoApp
+   */
+  private _selectItem(e: CustomEvent) {
+    console.log("_selectItem " + e.detail.itemId); //TODO
   }
 }

@@ -1,0 +1,35 @@
+#contents-root {
+  display: flex;
+
+  font-weight: bold;
+  color: #fffffc;
+
+  span {
+    margin-inline-end: auto;
+  }
+
+  .buttons {
+    cursor: pointer;
+    display: flex;
+
+    wa-icon {
+      font-size: var(--wa-font-size-l);
+
+      &:hover {
+        color: var(--wa-color-brand-70);
+      }
+
+      &.toggle-icon {
+        transform: rotate(-90deg); // デフォルト（閉じている状態）
+
+        transition:
+          transform 0.2s ease-in-out,
+          color 0.2s;
+
+        &.open {
+          transform: rotate(0); // 開いた時は回転を戻す
+        }
+      }
+    }
+  }
+}

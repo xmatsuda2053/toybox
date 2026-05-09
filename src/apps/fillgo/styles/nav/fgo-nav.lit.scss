@@ -1,0 +1,76 @@
+@use "../../../_shared/mixins";
+
+:host {
+  display: block;
+}
+
+:host([scrollable]) {
+  height: 100%;
+}
+
+#contents-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  header {
+    padding-inline: var(--wa-space-s);
+    padding-block: var(--wa-space-xs);
+  }
+
+  main {
+    padding-inline-start: var(--wa-space-s);
+    margin-block-end: var(--wa-space-xs);
+
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows 0.3s ease-in-out,
+      visibility 0.3s;
+
+    .inner {
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+
+      scrollbar-gutter: stable;
+      @include mixins.scrollable(
+        var(--wa-color-neutral-90),
+        var(--wa-color-neutral-70),
+        var(--wa-color-neutral-70)
+      );
+
+      &:hover {
+        --sb-thumb-color: var(--wa-color-neutral-90);
+      }
+    }
+  }
+
+  &.open {
+    main {
+      grid-template-rows: 1fr;
+      visibility: visible;
+
+      .inner {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.scrollable {
+    &.open {
+      grid-template-rows: minmax(0, 1fr);
+    }
+
+    main {
+      flex: 1;
+      min-height: 0;
+
+      .inner {
+        overflow-y: auto;
+        height: 100%;
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 $width-menu: 50px;
-$width-nav: 270px;
+$width-nav: 250px;
 
 :host {
   display: block;
@@ -19,19 +19,40 @@ $width-nav: 270px;
 
     .panel {
       overflow-y: auto;
+      height: 100%;
 
       &.menu {
+        height: 100%;
         border-inline-end: 1px solid var(--wa-color-neutral-50);
+
+        background-color: var(--wa-color-brand-40);
       }
 
       &.nav {
+        height: 100%;
         display: grid;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: auto auto 1fr;
         overflow: hidden;
         border-inline-end: 1px solid var(--wa-color-neutral-50);
+
+        background-color: var(--wa-color-brand-40);
+
+        wa-divider {
+          margin-inline: var(--wa-space-xs);
+        }
+
+        .list {
+          min-height: 0;
+          height: 100%;
+
+          fgo-nav {
+            height: 100%;
+          }
+        }
       }
 
       &.input {
+        height: 100%;
         border-inline-end: 1px solid var(--wa-color-neutral-50);
       }
     }

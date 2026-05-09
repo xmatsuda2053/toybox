@@ -1,0 +1,40 @@
+#contents-root {
+  display: flex;
+  gap: var(--wa-space-2xs);
+  align-items: center;
+
+  cursor: pointer;
+
+  color: #fffff6;
+
+  padding-inline: var(--wa-space-2xs);
+  padding-block: var(--wa-space-2xs);
+  border-radius: var(--wa-border-radius-m);
+
+  span {
+    display: block;
+    white-space: nowrap; /* 絶対に改行させない */
+    overflow: hidden; /* はみ出た分を隠す */
+    text-overflow: ellipsis; /* 三点リーダーを表示 */
+
+    flex: 1;
+    min-width: 0;
+
+    font-size: var(--wa-font-size-s);
+  }
+
+  #menu {
+    &:hover {
+      color: var(--wa-color-brand-70);
+    }
+  }
+
+  &:hover {
+    background-color: var(--wa-color-brand-20);
+  }
+
+  &.selected {
+    font-weight: bold;
+    color: var(--wa-color-yellow-80);
+  }
+}
