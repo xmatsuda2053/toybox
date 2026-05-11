@@ -158,11 +158,20 @@
         li {
           display: block;
           position: relative;
-          margin-block-end: var(--wa-space-xs);
+          margin-block-end: var(--wa-space-2xs);
 
           &::before {
             position: absolute;
             left: 0;
+          }
+        }
+
+        ul,
+        ol {
+          margin-block-start: var(--wa-space-3xs);
+
+          li {
+            margin-block-end: var(--wa-space-3xs);
           }
         }
       }
@@ -172,7 +181,7 @@
           padding-inline-start: var(--wa-space-m);
           &::before {
             content: "";
-            top: 0.5em; /* 1行目の高さに合わせる */
+            top: 0.525em; /* 1行目の高さに合わせる */
 
             border-radius: 50%;
             background-color: var(--wa-color-neutral-30);
@@ -184,8 +193,8 @@
           > ul {
             li {
               &::before {
-                background-color: transparent;
-                border: 1px solid var(--wa-color-neutral-30);
+                background-color: #fffffb;
+                border: 2px solid var(--wa-color-neutral-50);
               }
             }
           }
