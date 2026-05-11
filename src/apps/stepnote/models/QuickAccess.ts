@@ -9,6 +9,7 @@ export interface QuickAccess {
   isBookmarkSelected: number;
   isDoneSelected: number;
   isOverdueSelected: number;
+  isAsapSelected: number;
   isUpcomingSelected: number;
   isProgressSelected: number;
   isPendingSelected: number;

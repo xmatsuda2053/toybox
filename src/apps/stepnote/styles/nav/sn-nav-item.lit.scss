@@ -48,15 +48,21 @@ $line-height: 1.8em;
     }
   }
 
+  &.danger {
+    wa-icon {
+      color: var(--wa-color-danger-60);
+    }
+  }
+
   &.warning {
     wa-icon {
       color: var(--wa-color-yellow-60);
     }
   }
 
-  &.danger {
+  &.info {
     wa-icon {
-      color: var(--wa-color-danger-50);
+      color: var(--wa-color-cyan-60);
     }
   }
 

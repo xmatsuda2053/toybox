@@ -76,6 +76,14 @@ export class SnNavItem extends LitElement {
   @property({ type: Boolean }) isWarning: boolean = false;
 
   /**
+   * 情報ラベルであることを示す。
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) isInfo: boolean = false;
+
+  /**
    * 選択状態
    *
    * @type {boolean}
@@ -142,6 +150,7 @@ export class SnNavItem extends LitElement {
     const baseClassMap = classMap({
       danger: this.isDanger,
       warning: this.isWarning,
+      info: this.isInfo,
       selected: this.isSelected,
       viewable: this.isViewable,
     });

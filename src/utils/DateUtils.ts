@@ -69,11 +69,35 @@ export const isOverdue = (isDone: boolean, expiryDate: Date): boolean => {
 };
 
 /**
- * システム日付が基準日から見て1日、2日、3日前のいずれかであるかを判定します。
+ * 指定された基準日が期限当日かどうかを判定します。
+ * * @param {boolean} isDone - 完了済みか否か
+ * * @param {Date} expiryDate - 判定対象となる基準日（有効期限など）
+ * @returns {boolean} 基準日が当日の場合は true、それ以外の場合は false
+ */
+export const isAsap = (isDone: boolean, expiryDate: Date): boolean => {
+  // 完了済みの場合は判定不要なのでfalse
+  if (isDone) {
+    return false;
+  }
+
+  // 比較のために現在の時刻を取得し、時刻部分を切り捨てて「今日」の開始時点（00:00:00）にする
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 基準日も同様に時刻を切り捨てて比較する（日付のみの比較にする場合）
+  const targetDate = new Date(expiryDate.getTime());
+  targetDate.setHours(0, 0, 0, 0);
+
+  // 基準日当日の場合なら、期限当日
+  return targetDate.getTime() === today.getTime();
+};
+
+/**
+ * システム日付が基準日から見て指定日付前（当日除く）であるかを判定します。
  * * @param {boolean} isDone - 完了済みか否か
  * * @param {Date} referenceDate - 判定のベースとなる基準日
  * * @param {number} dayCount - 計算日数
- * @returns {boolean} 当日〜any日前なら true、それ以外は false
+ * @returns {boolean} 当日+1〜any日前なら true、それ以外は false
  */
 export const isWithinAnyDaysBefore = (
   isDone: boolean,
@@ -99,8 +123,8 @@ export const isWithinAnyDaysBefore = (
   const todayBefore = new Date(targetDate.getTime());
   const anyDaysBefore = new Date(targetDate.getTime() - dayCount * oneDayMs);
 
-  // 今日が「基準日のany日前」以上 かつ 「基準日の当日」以下であるかを判定
-  return today >= anyDaysBefore && today <= todayBefore;
+  // 今日が「基準日のany日前」以上 かつ 「基準日の当日+1」以下であるかを判定
+  return today >= anyDaysBefore && today < todayBefore;
 };
 
 /**
