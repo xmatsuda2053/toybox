@@ -22,10 +22,17 @@
       }
     }
   }
-  &.upcoming {
+  &.asap {
     .due {
       wa-icon {
         color: var(--wa-color-yellow-60);
+      }
+    }
+  }
+  &.upcoming {
+    .due {
+      wa-icon {
+        color: var(--wa-color-cyan-60);
       }
     }
   }

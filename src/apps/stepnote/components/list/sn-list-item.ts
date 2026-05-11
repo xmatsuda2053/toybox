@@ -21,7 +21,12 @@ import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
 
 // 5. Internal Shared (Utils)
-import { formatDate, isOverdue, isWithinAnyDaysBefore } from "@utils/DateUtils";
+import {
+  formatDate,
+  isOverdue,
+  isAsap,
+  isWithinAnyDaysBefore,
+} from "@utils/DateUtils";
 
 // 6. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -96,14 +101,22 @@ export class SnListItem extends LitElement {
 
     const dueDate = new Date(this.task.dueDate);
     const dispDue = formatDate(dueDate, "yyyy-MM-dd");
+    const overdue = isOverdue(isDone, dueDate);
+    const asap = isAsap(isDone, dueDate);
+    const upcoming = isWithinAnyDaysBefore(isDone, dueDate, 3);
+
     const baseClassMap = classMap({
-      overdue: isOverdue(isDone, dueDate),
-      upcoming: isWithinAnyDaysBefore(isDone, dueDate, 3),
+      overdue: overdue,
+      asap: asap,
+      upcoming: upcoming,
       selected: this.task.selected,
     });
-    const dueIcon = isOverdue(isDone, dueDate)
-      ? "fire-solid-full"
-      : "calendar-solid-full";
+    let dueIcon = "calendar-solid-full";
+    if (overdue) {
+      dueIcon = "fire-solid-full";
+    } else if (asap) {
+      dueIcon = "triangle-exclamation-solid-full";
+    }
 
     const bookmarkIcon = this.task.bookmark
       ? "bookmark-solid-full"

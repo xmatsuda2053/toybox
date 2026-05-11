@@ -72,6 +72,7 @@ import stop_solid_full from "@assets/icons/stop-solid-full.svg?raw";
 import table_solid_full from "@assets/icons/table-solid-full.svg?raw";
 import tag_solid_full from "@assets/icons/tag-solid-full.svg?raw";
 import trash_solid_full from "@assets/icons/trash-solid-full.svg?raw";
+import triangle_exclamation_solid_full from "@assets/icons/triangle-exclamation-solid-full.svg?raw";
 import upload_solid_full from "@assets/icons/upload-solid-full.svg?raw";
 import xmark_solid_full from "@assets/icons/xmark-solid-full.svg?raw";
 
@@ -150,6 +151,7 @@ export const icons: Record<string, string> = {
   "table-solid-full": table_solid_full,
   "tag-solid-full": tag_solid_full,
   "trash-solid-full": trash_solid_full,
+  "triangle-exclamation-solid-full": triangle_exclamation_solid_full,
   "upload-solid-full": upload_solid_full,
   "xmark-solid-full": xmark_solid_full,
 };

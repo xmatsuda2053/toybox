@@ -21,7 +21,6 @@ import { TaskStatus } from "@sn/code/TaskStatus";
 import { QuickAccess } from "@sn/models/QuickAccess";
 
 // 5. Internal Shared (Utils)
-import { rotateElement } from "@/utils/CommonUtils";
 
 // 6. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -186,9 +185,20 @@ export class SnNavSectionQuick extends LitElement {
             期限切れ
           </sn-nav-item>
           <sn-nav-item
+            icon="triangle-exclamation-solid-full"
+            eventName="click-asap"
+            .isWarning=${true}
+            .isSelected=${this._quickAccess?.isAsapSelected === 1}
+            @click-asap=${() => {
+              this._toggleSelected("isAsapSelected");
+            }}
+          >
+            期限当日
+          </sn-nav-item>
+          <sn-nav-item
             icon="calendar-solid-full"
             eventName="click-upcoming"
-            .isWarning=${true}
+            .isInfo=${true}
             .isSelected=${this._quickAccess?.isUpcomingSelected === 1}
             @click-upcoming=${() => {
               this._toggleSelected("isUpcomingSelected");
@@ -251,7 +261,7 @@ export class SnNavSectionQuick extends LitElement {
 
   /**
    * クイックアクセス項目の選択状態（Boolean）を反転させ、データベースを更新します。
-   * * 指定されたキーの値が真偽値でない場合は、処理を中断します。
+   * * 指定されたキーが存在しない場合は、キーを追加します。
    * 状態を反転させた新しいオブジェクトを生成し、`psDB.putQuickAccess` を介して永続化します。
    *
    * @private
@@ -261,7 +271,7 @@ export class SnNavSectionQuick extends LitElement {
    */
   private _toggleSelected(key: keyof QuickAccess) {
     if (typeof this._quickAccess[key] !== "number") {
-      return;
+      this._quickAccess[key] = 0;
     }
 
     const target: QuickAccess = { ...this._quickAccess };

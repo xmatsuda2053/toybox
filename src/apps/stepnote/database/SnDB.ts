@@ -10,7 +10,7 @@ import { TaskStatus } from "@sn/code/TaskStatus";
 
 import { formatDate } from "@utils/DateUtils";
 
-import { isOverdue, isWithinAnyDaysBefore } from "@utils/DateUtils";
+import { isOverdue, isAsap, isWithinAnyDaysBefore } from "@utils/DateUtils";
 import { importInto } from "dexie-export-import";
 /**
  * データベース
@@ -32,7 +32,7 @@ export class SnDB extends Dexie {
    */
   constructor() {
     super("SnDB");
-    this.version(2).stores({
+    this.version(3).stores({
       labels: "++id, name, fiscalYear, isSelected",
       quickAccesses: "++id",
       tasks: "++id, statusCode, name, dueDate, fiscalYear, selected",
@@ -46,6 +46,7 @@ export class SnDB extends Dexie {
         isBookmarkSelected: 0,
         isDoneSelected: 0,
         isOverdueSelected: 0,
+        isAsapSelected: 0,
         isUpcomingSelected: 0,
         isProgressSelected: 1,
         isPendingSelected: 1,
@@ -186,6 +187,7 @@ export class SnDB extends Dexie {
       isBookmarkSelected: 0,
       isDoneSelected: 1,
       isOverdueSelected: 0,
+      isAsapSelected: 0,
       isUpcomingSelected: 0,
       isProgressSelected: 1,
       isPendingSelected: 1,
@@ -325,6 +327,54 @@ export class SnDB extends Dexie {
           isBookmarkSelected: 0,
           isDoneSelected: 0,
           isOverdueSelected: 1,
+          isAsapSelected: 0,
+          isUpcomingSelected: 0,
+          isProgressSelected: 1,
+          isPendingSelected: 1,
+          isUncategorizedSelected: 0,
+        };
+
+        await this.putQuickAccess(newData);
+      },
+    );
+  }
+
+  /**
+   * 期限当日タスクの有無を判定します。
+   *
+   * @return {*}  {Promise<boolean>}
+   * @memberof SnDB
+   */
+  async hasAsapTasks(): Promise<boolean> {
+    return (
+      (await this.tasks
+        .where("statusCode")
+        .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
+        .filter((task) => isAsap(false, task.dueDate)) // 当日
+        .count()) > 0
+    );
+  }
+
+  /**
+   * 期限当日タスクのみ表示します。
+   *
+   * @memberof SnDB
+   */
+  async viewAsapTasks() {
+    await snDB.transaction(
+      "rw",
+      [this.labels, this.quickAccesses, this.tasks],
+      async () => {
+        await this.resetLabelSelected();
+        await this.resetQuickAccessSelected();
+        await this.resetTaskSelected();
+
+        const newData: QuickAccess = {
+          id: 1,
+          isBookmarkSelected: 0,
+          isDoneSelected: 0,
+          isOverdueSelected: 0,
+          isAsapSelected: 1,
           isUpcomingSelected: 0,
           isProgressSelected: 1,
           isPendingSelected: 1,
@@ -371,6 +421,7 @@ export class SnDB extends Dexie {
           isBookmarkSelected: 0,
           isDoneSelected: 0,
           isOverdueSelected: 0,
+          isAsapSelected: 0,
           isUpcomingSelected: 1,
           isProgressSelected: 1,
           isPendingSelected: 1,
@@ -441,6 +492,7 @@ export class SnDB extends Dexie {
     const isBookmarkOn = quickAccess.isBookmarkSelected === 1;
     const isUncategorizedOn = quickAccess.isUncategorizedSelected === 1;
     const isOverdueOn = quickAccess.isOverdueSelected === 1;
+    const isAsapOn = quickAccess.isAsapSelected === 1;
     const isUpcomingOn = quickAccess.isUpcomingSelected === 1;
 
     result = result.filter((task) => {
@@ -483,6 +535,11 @@ export class SnDB extends Dexie {
           qaMatch = true;
         }
 
+        // 期限当日フィルタ
+        if (!qaMatch && isAsapOn && isAsap(isDone, task.dueDate)) {
+          qaMatch = true;
+        }
+
         // 期限間近フィルタ
         if (
           !qaMatch &&
@@ -495,7 +552,11 @@ export class SnDB extends Dexie {
         // いずれのクイックアクセスにもヒットしない場合、false
         if (
           !qaMatch &&
-          (isBookmarkOn || isUncategorizedOn || isOverdueOn || isUpcomingOn)
+          (isBookmarkOn ||
+            isUncategorizedOn ||
+            isOverdueOn ||
+            isAsapOn ||
+            isUpcomingOn)
         ) {
           return false;
         }

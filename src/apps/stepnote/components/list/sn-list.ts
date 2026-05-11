@@ -177,6 +177,14 @@ export class SnList extends LitElement {
   @state() private _hasOverdue = false;
 
   /**
+   * 期限当日タスクの有無
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _hasAsap = false;
+
+  /**
    * 期限間近タスクの有無
    *
    * @private
@@ -191,6 +199,14 @@ export class SnList extends LitElement {
    * @memberof SnList
    */
   @state() private _overdueAlertStop = false;
+
+  /**
+   * 期限当日のアラートアニメーションを停止する。
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _asapAlertStop = false;
 
   /**
    * 期限間近のアラートアニメーションを停止する。
@@ -270,6 +286,7 @@ export class SnList extends LitElement {
         tasks,
         activeFiscalYears,
         hasOverdue,
+        hasAsap,
         hasUpcoming,
       ] = await Promise.all([
         snDB.getQuickAccess(),
@@ -277,6 +294,7 @@ export class SnList extends LitElement {
         snDB.selectTaskAscSortKey(this._filterKeyword),
         snDB.getActiveFiscalYears(this._filterKeyword),
         snDB.hasOverdueTasks(),
+        snDB.hasAsapTasks(),
         snDB.hasUpcomingTasks(),
       ]);
 
@@ -286,6 +304,7 @@ export class SnList extends LitElement {
         tasks,
         activeFiscalYears,
         hasOverdue,
+        hasAsap,
         hasUpcoming,
       };
     });
@@ -296,6 +315,7 @@ export class SnList extends LitElement {
         this._tasks = data.tasks;
         this._activeFiscalYears = data.activeFiscalYears;
         this._hasOverdue = data.hasOverdue;
+        this._hasAsap = data.hasAsap;
         this._hasUpcoming = data.hasUpcoming;
       },
       error: (err) => console.error("LiveQuery Error:", err),
@@ -385,7 +405,8 @@ export class SnList extends LitElement {
         <span class="end"></span>
         ${this._hasUpcoming
           ? html`<wa-icon
-              id="btn-warning"
+              id="btn-info"
+              class="btn"
               library="my-icons"
               name="calendar-solid-full"
               animation=${ifDefined(
@@ -394,9 +415,20 @@ export class SnList extends LitElement {
               @click=${this._viewUpcomingTasks}
             ></wa-icon>`
           : html``}
+        ${this._hasAsap
+          ? html`<wa-icon
+              id="btn-warning"
+              class="btn"
+              library="my-icons"
+              name="triangle-exclamation-solid-full"
+              animation=${ifDefined(this._asapAlertStop ? undefined : "bounce")}
+              @click=${this._viewAsapTasks}
+            ></wa-icon>`
+          : html``}
         ${this._hasOverdue
           ? html`<wa-icon
               id="btn-alert"
+              class="btn"
               library="my-icons"
               name="fire-solid-full"
               animation=${ifDefined(
@@ -621,6 +653,17 @@ export class SnList extends LitElement {
   private async _viewOverdueTasks() {
     this._overdueAlertStop = true;
     await snDB.viewOverdueTasks();
+  }
+
+  /**
+   * 期限当日タスクを表示します。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _viewAsapTasks() {
+    this._asapAlertStop = true;
+    await snDB.viewAsapTasks();
   }
 
   /**
