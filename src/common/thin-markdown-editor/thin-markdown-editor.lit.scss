@@ -123,13 +123,8 @@
       font-size: 0.95rem;
 
       a {
-        display: flex;
-        gap: var(--wa-space-3xs);
-        align-items: center;
+        display: inline-block;
 
-        .copy-icon {
-          color: transparent;
-        }
         &:hover {
           font-weight: bold;
           .copy-icon {
