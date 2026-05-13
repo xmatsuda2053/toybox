@@ -46,95 +46,140 @@
     color: var(--wa-color-neutral-5);
   }
 
-  .status-icon {
+  .task-area {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    padding-block-start: 2.5px;
-    font-size: var(--wa-font-size-m);
+    gap: var(--wa-space-xs);
 
-    &.pending {
-      color: var(--wa-color-neutral-5);
+    .status-icon {
+      display: flex;
+      padding-block-start: 2.5px;
+      font-size: var(--wa-font-size-m);
+
+      &.pending {
+        color: var(--wa-color-neutral-5);
+      }
+      &.progress {
+        color: var(--wa-color-brand-50);
+      }
+      &.done {
+        color: var(--wa-color-success-50);
+      }
     }
-    &.progress {
-      color: var(--wa-color-brand-50);
-    }
-    &.done {
-      color: var(--wa-color-success-50);
-    }
-  }
 
-  .task-data {
-    display: flex;
+    .task-data {
+      display: flex;
 
-    flex-direction: column;
-    gap: var(--wa-space-2xs);
+      flex-direction: column;
+      gap: var(--wa-space-2xs);
 
-    width: 100%;
-    overflow: hidden;
-
-    font-size: var(--wa-font-size-s);
-
-    .name {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 1;
-      line-clamp: 1;
+      width: 100%;
       overflow: hidden;
 
-      min-height: 25px;
-      min-height: 25px;
-    }
-    .footer {
-      display: flex;
-      align-items: center;
+      font-size: var(--wa-font-size-s);
 
-      width: 100%; /* 親の幅いっぱいに広げる */
-      font-size: var(--wa-font-size-xs);
+      .name {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        overflow: hidden;
 
-      wa-icon {
-        font-size: var(--wa-font-size-m);
-        margin-block-start: var(--wa-space-3xs);
+        min-height: 25px;
+        min-height: 25px;
       }
+      .footer {
+        display: flex;
+        align-items: center;
 
-      .bookmark {
+        width: 100%; /* 親の幅いっぱいに広げる */
+        font-size: var(--wa-font-size-xs);
+
         wa-icon {
-          &:hover {
-            color: var(--wa-color-brand-60);
-          }
+          font-size: var(--wa-font-size-m);
+          margin-block-start: var(--wa-space-3xs);
         }
 
-        &.active {
+        .bookmark {
           wa-icon {
-            color: var(--wa-color-brand-60);
             &:hover {
-              color: var(--wa-color-brand-50);
+              color: var(--wa-color-brand-60);
+            }
+          }
+
+          &.active {
+            wa-icon {
+              color: var(--wa-color-brand-60);
+              &:hover {
+                color: var(--wa-color-brand-50);
+              }
             }
           }
         }
+
+        .due {
+          flex-shrink: 0;
+
+          min-width: 60px;
+          display: flex;
+          align-items: center; /* 垂直中央揃え */
+          gap: var(--wa-space-3xs); /* テキストとアイコンの間隔 */
+          white-space: nowrap; /* テキストの折り返しを禁止 */
+        }
+
+        wa-divider {
+          --spacing: var(--wa-font-size-2xs);
+        }
+
+        .label {
+          display: block;
+          white-space: nowrap; /* 絶対に改行させない */
+          overflow: hidden; /* はみ出た分を隠す */
+          text-overflow: ellipsis; /* 三点リーダーを表示 */
+
+          flex: 1;
+          min-width: 0;
+        }
       }
+    }
+  }
 
-      .due {
-        flex-shrink: 0;
+  .menu-button {
+    display: flex;
+    align-items: center;
 
-        min-width: 60px;
-        display: flex;
-        align-items: center; /* 垂直中央揃え */
-        gap: var(--wa-space-3xs); /* テキストとアイコンの間隔 */
-        white-space: nowrap; /* テキストの折り返しを禁止 */
+    wa-icon {
+      font-size: var(--wa-font-size-s);
+    }
+
+    &:hover {
+      .trigger-button {
+        color: var(--wa-color-brand-60);
       }
+    }
 
-      wa-divider {
-        --spacing: var(--wa-font-size-2xs);
+    wa-dropdown-item {
+      font-size: var(--wa-font-size-s);
+
+      wa-icon {
+        font-size: var(--wa-font-size-m);
       }
+    }
+  }
+}
 
-      .label {
-        display: block;
-        white-space: nowrap; /* 絶対に改行させない */
-        overflow: hidden; /* はみ出た分を隠す */
-        text-overflow: ellipsis; /* 三点リーダーを表示 */
+wa-dropdown {
+  #trigger {
+    display: block;
+    width: 100%;
+    height: 0;
+  }
+  wa-dropdown-item {
+    font-size: var(--wa-font-size-s);
 
-        flex: 1;
-        min-width: 0;
-      }
+    wa-icon {
+      font-size: var(--wa-font-size-m);
     }
   }
 }

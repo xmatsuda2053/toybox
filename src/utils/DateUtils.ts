@@ -2,7 +2,7 @@ import * as kanjidate from "kanjidate";
 
 /**
  * 日付オブジェクトを指定されたフォーマットの文字列に変換します。
- * * 使用可能なトークン: yyyy, MM, dd, HH, mm, ss
+ * * 使用可能なトークン: yyyy, yy, MM, dd, HH, mm, ss
  *
  * @export
  * @param {Date} [date] - 変換対象の日付オブジェクト。
@@ -19,6 +19,7 @@ export const formatDate = (
 
   const values: { [key: string]: string | number } = {
     yyyy: date.getFullYear(),
+    yy: date.getFullYear().toString().slice(-2),
     MM: pad(date.getMonth() + 1),
     dd: pad(date.getDate()),
     HH: pad(date.getHours()),
@@ -27,7 +28,7 @@ export const formatDate = (
   };
 
   // 正規表現でトークンを一括置換
-  return format.replace(/yyyy|MM|dd|HH|mm|ss/g, (matched) =>
+  return format.replace(/yyyy|yy|MM|dd|HH|mm|ss/g, (matched) =>
     values[matched].toString(),
   );
 };

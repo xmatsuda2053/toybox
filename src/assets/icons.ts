@@ -68,6 +68,7 @@ import phone_solid_full from "@assets/icons/phone-solid-full.svg?raw";
 import play_solid_full from "@assets/icons/play-solid-full.svg?raw";
 import plus_solid_full from "@assets/icons/plus-solid-full.svg?raw";
 import question_solid_full from "@assets/icons/question-solid-full.svg?raw";
+import sliders_solid_full from "@assets/icons/sliders-solid-full.svg?raw";
 import stop_solid_full from "@assets/icons/stop-solid-full.svg?raw";
 import table_solid_full from "@assets/icons/table-solid-full.svg?raw";
 import tag_solid_full from "@assets/icons/tag-solid-full.svg?raw";
@@ -147,6 +148,7 @@ export const icons: Record<string, string> = {
   "play-solid-full": play_solid_full,
   "plus-solid-full": plus_solid_full,
   "question-solid-full": question_solid_full,
+  "sliders-solid-full": sliders_solid_full,
   "stop-solid-full": stop_solid_full,
   "table-solid-full": table_solid_full,
   "tag-solid-full": tag_solid_full,
