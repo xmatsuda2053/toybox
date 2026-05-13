@@ -35,6 +35,18 @@ $header-color: var(--wa-color-neutral-20);
           color: var(--wa-color-neutral-80);
         }
       }
+
+      wa-dropdown-item {
+        font-size: var(--wa-font-size-s);
+
+        wa-icon {
+          font-size: var(--wa-font-size-m);
+        }
+
+        &.danger {
+          color: var(--wa-color-danger-50);
+        }
+      }
     }
   }
 

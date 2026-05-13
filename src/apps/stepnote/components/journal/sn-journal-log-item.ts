@@ -154,7 +154,14 @@ export class SnJournalLogItem extends LitElement {
             slot="trigger"
             class="end"
           ></wa-icon>
-          <wa-dropdown-item @click=${this._deleteLog}>削除</wa-dropdown-item>
+          <wa-dropdown-item @click=${this._deleteLog} class="danger">
+            <wa-icon
+              slot="icon"
+              library="my-icons"
+              name="trash-solid-full"
+            ></wa-icon>
+            削除
+          </wa-dropdown-item>
         </wa-dropdown>
       </div>
       <div class="contents">

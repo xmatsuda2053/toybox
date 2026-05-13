@@ -9,7 +9,7 @@ import {
 } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 // 3. Third-party UI & SDKs
@@ -100,7 +100,7 @@ export class SnListItem extends LitElement {
     const isDone: boolean = taskStatus.isDone();
 
     const dueDate = new Date(this.task.dueDate);
-    const dispDue = formatDate(dueDate, "yyyy-MM-dd");
+    const dispDue = formatDate(dueDate, "yy-MM-dd");
     const overdue = isOverdue(isDone, dueDate);
     const asap = isAsap(isDone, dueDate);
     const upcoming = isWithinAnyDaysBefore(isDone, dueDate, 3);
@@ -126,40 +126,58 @@ export class SnListItem extends LitElement {
       active: this.task.bookmark,
     });
 
-    return html`<div
-      id="contents-root"
-      class="${baseClassMap}"
-      @click=${this._selected}
-    >
-      <div class="status-icon ${taskStatus.name}">
-        <wa-icon library="my-icons" name=${taskStatus.iconNameSub}></wa-icon>
-      </div>
-      <div class="task-data">
-        <div class="name">
-          ${this.task.selected
-            ? html` <wa-icon
+    return html`<div id="contents-root" class="${baseClassMap}">
+      <div class="task-area" @click=${this._selected}>
+        <div class="status-icon ${taskStatus.name}">
+          <wa-icon library="my-icons" name=${taskStatus.iconNameSub}></wa-icon>
+        </div>
+        <div class="task-data">
+          <div class="name">
+            ${this.task.selected
+              ? html` <wa-icon
+                  library="my-icons"
+                  name="caret-right-solid-full"
+                ></wa-icon>`
+              : ``}
+            ${this.task.name}
+          </div>
+
+          <div class="footer">
+            <div class=${bookmarkClasses}>
+              <wa-icon
                 library="my-icons"
-                name="caret-right-solid-full"
-              ></wa-icon>`
-            : ``}
-          ${this.task.name}
+                name=${bookmarkIcon}
+                @click=${this._toggleBookmark}
+              ></wa-icon>
+            </div>
+            <wa-divider orientation="vertical"></wa-divider>
+            <div class="due">
+              ${dispDue}
+              <wa-icon library="my-icons" name=${dueIcon}></wa-icon>
+            </div>
+            <wa-divider orientation="vertical"></wa-divider>
+            <div class="label">${this.labelName}</div>
+          </div>
         </div>
-        <div class="footer">
-          <div class=${bookmarkClasses}>
+      </div>
+
+      <div class="menu-button">
+        <wa-dropdown>
+          <wa-icon
+            library="my-icons"
+            name="bars-solid-full"
+            slot="trigger"
+            class="trigger-button"
+          ></wa-icon>
+          <wa-dropdown-item @click=${this._taskCopy}>
             <wa-icon
+              slot="icon"
               library="my-icons"
-              name=${bookmarkIcon}
-              @click=${this._toggleBookmark}
+              name="copy-regular-full"
             ></wa-icon>
-          </div>
-          <wa-divider orientation="vertical"></wa-divider>
-          <div class="due">
-            ${dispDue}
-            <wa-icon library="my-icons" name=${dueIcon}></wa-icon>
-          </div>
-          <wa-divider orientation="vertical"></wa-divider>
-          <div class="label">${this.labelName}</div>
-        </div>
+            コピー
+          </wa-dropdown-item>
+        </wa-dropdown>
       </div>
     </div>`;
   }
@@ -173,6 +191,7 @@ export class SnListItem extends LitElement {
   private async _selected() {
     await snDB.selectSingleTask(this.task.id);
   }
+
   /**
    * 指定したタスクのブックマーク状態をトグル（反転）させます。
    *
@@ -181,5 +200,16 @@ export class SnListItem extends LitElement {
    */
   private async _toggleBookmark() {
     await snDB.toggleBookmark(this.task);
+  }
+
+  /**
+   * タスクをコピーします。
+   *
+   * @private
+   * @memberof SnListItem
+   */
+  private async _taskCopy() {
+    if (!this.task.id) return;
+    await snDB.copyTask(this.task.id);
   }
 }
