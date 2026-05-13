@@ -143,68 +143,90 @@
         }
       }
 
-      // 箇条書きのマーク位置が下詰めになる。
-      // この問題を解決するため、デザインを調整する。
+      /* 共通設定 */
       ul,
       ol {
-        padding-inline-start: var(--wa-space-xs);
-        list-style: none; /* デフォルトのマークを消す */
+        padding-inline-start: 0; /* paddingをリセットし、li側で制御 */
+        list-style: none;
+        margin-block: var(--wa-space-xs);
 
-        li {
-          display: block;
-          position: relative;
-          margin-block-end: var(--wa-space-2xs);
-
-          &::before {
-            position: absolute;
-            left: 0;
-          }
-        }
-
+        /* 入れ子の場合の余白 */
         ul,
         ol {
           margin-block-start: var(--wa-space-3xs);
+          margin-inline-start: var(--wa-space-xs); /* 深さを出す */
+        }
 
-          li {
-            margin-block-end: var(--wa-space-3xs);
+        li {
+          position: relative;
+          display: block;
+          margin-block-end: var(--wa-space-2xs);
+
+          /* マークの共通設定 */
+          &::before {
+            position: absolute;
+            left: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* 1行目の高さ(line-height)の中央に配置するための調整 */
+            top: 0;
+            height: 1.5em; /* テキストのline-heightに合わせる */
           }
         }
       }
 
+      /* --- ul: 箇条書き（ドット） --- */
       ul {
-        li {
+        > li {
           padding-inline-start: var(--wa-space-m);
+
           &::before {
             content: "";
-            top: 0.525em; /* 1行目の高さに合わせる */
-
-            border-radius: 50%;
-            background-color: var(--wa-color-neutral-30);
-
             width: var(--wa-space-xs);
             height: var(--wa-space-xs);
+            top: 0.55em; /* 1行目の中央に来るよう微調整 */
+            border-radius: 50%;
+            background-color: var(--wa-color-neutral-30);
           }
 
-          > ul {
-            li {
-              &::before {
-                background-color: #fffffb;
-                border: 2px solid var(--wa-color-neutral-50);
-              }
-            }
+          /* 2階層目以降のul */
+          ul > li::before {
+            background-color: transparent;
+            border: 1px solid var(--wa-color-neutral-50);
+            width: calc(var(--wa-space-xs) - 2px);
+            height: calc(var(--wa-space-xs) - 2px);
           }
         }
       }
 
+      /* --- ol: 番号付きリスト --- */
       ol {
         counter-reset: li-count;
-        li {
-          counter-increment: li-count; /* liタグが出るたびにカウンターを 1 ずつ増やす */
+
+        > li {
+          counter-increment: li-count;
           padding-inline-start: var(--wa-space-l);
+
           &::before {
             content: counter(li-count) ".";
+            width: var(--wa-space-l); /* 数字の幅を確保 */
+            justify-content: flex-start; /* 数字を左寄せ */
+            font-variant-numeric: tabular-nums;
+            /* 数字のベースラインを整えるため top 調整 */
+            top: 0;
           }
         }
+      }
+
+      /* 混在時のリセット処理: ol の中に ul が入った場合、ドットに戻るように明示 */
+      ol ul > li::before {
+        content: "";
+      }
+
+      /* 混在時のリセット処理: ul の中に ol が入った場合、数字を出すように明示 */
+      ul ol > li::before {
+        content: counter(li-count) ".";
       }
     }
   }
