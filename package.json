@@ -8,6 +8,7 @@
     "build": "cross-env APP_TARGET=toybox vite build",
     "build-sn": "cross-env APP_TARGET=stepnote vite build",
     "build-ha": "cross-env APP_TARGET=hubaddress vite build",
+    "build-all": "node build.js",
     "preview": "vite preview"
   },
   "dependencies": {
