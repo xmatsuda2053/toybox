@@ -31,6 +31,7 @@ import circle_user_solid_full from "@assets/icons/circle-user-solid-full.svg?raw
 import code_commit_solid_full from "@assets/icons/code-commit-solid-full.svg?raw";
 import code_solid_full from "@assets/icons/code-solid-full.svg?raw";
 import copy_regular_full from "@assets/icons/copy-regular-full.svg?raw";
+import cubes_solid_full from "@assets/icons/cubes-solid-full.svg?raw";
 import cubes_stacked_solid_full from "@assets/icons/cubes-stacked-solid-full.svg?raw";
 import dice_one_solid_full from "@assets/icons/dice-one-solid-full.svg?raw";
 import download_solid_full from "@assets/icons/download-solid-full.svg?raw";
@@ -111,6 +112,7 @@ export const icons: Record<string, string> = {
   "code-commit-solid-full": code_commit_solid_full,
   "code-solid-full": code_solid_full,
   "copy-regular-full": copy_regular_full,
+  "cubes-solid-full": cubes_solid_full,
   "cubes-stacked-solid-full": cubes_stacked_solid_full,
   "dice-one-solid-full": dice_one_solid_full,
   "download-solid-full": download_solid_full,

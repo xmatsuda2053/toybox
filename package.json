@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "cross-env APP_TARGET=toybox vite build",
+    "build-sn": "cross-env APP_TARGET=stepnote vite build",
     "build-ha": "cross-env APP_TARGET=hubaddress vite build",
     "preview": "vite preview"
   },
@@ -18,8 +19,7 @@
     "github-markdown-css": "^5.9.0",
     "lit": "^3.2.1",
     "marked": "^17.0.4",
-    "papaparse": "^5.5.3",
-    "uuidv7": "^1.2.1"
+    "papaparse": "^5.5.3"
   },
   "devDependencies": {
     "@types/papaparse": "^5.5.2",
