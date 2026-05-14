@@ -180,16 +180,17 @@ export class SnTaskSummary extends LitElement {
         </div>
       </div>
       <div class="task-item">
-        <div class="has-label">
+        <div class="has-label has-weekday">
           <div class="label">期限日</div>
           <wa-input
             id="due-date"
-            class="item"
+            class="item asap"
             size="small"
             type="date"
             .value=${formatDate(this.task.dueDate, "yyyy-MM-dd")}
           >
           </wa-input>
+          <span class="weekday">${formatDate(this.task.dueDate, "(EEE)")}</span>
         </div>
       </div>
       <div class="task-item">
@@ -216,14 +217,23 @@ export class SnTaskSummary extends LitElement {
    * 入力のイベントを発生させる。
    *
    * @private
+   * @param {Event} e
    * @memberof SnTaskSummary
    */
-  private _inputData() {
+  private _inputData(e: Event) {
     this.task.name = this.taskName.value!;
     this.task.dueDate = new Date(this.dueDate.value!);
     this.task.contacts = [this.taskContact.contact];
     this.task.description = this.taskDescription.value;
-    emit(this, "input");
+
+    const target = e.target as HTMLInputElement;
+    const isAsap = target.classList.contains("asap");
+
+    if (isAsap) {
+      emit(this, "input-asap");
+    } else {
+      emit(this, "input");
+    }
   }
 
   /**
