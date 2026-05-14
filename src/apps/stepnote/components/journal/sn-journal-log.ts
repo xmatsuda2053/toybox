@@ -347,7 +347,7 @@ export class SnJournalLog extends LitElement {
    * @memberof SnJournalLog
    */
   private _OpenDeleteDialog(log: Log) {
-    this._deleteDialog.label = `Delete Log "${formatDate(log.createdAt, "yyyy-MM-dd HH:mm")}" ?`;
+    this._deleteDialog.label = `Delete Log "${formatDate(log.createdAt, "yyyy-MM-dd (EEE) HH:mm")}" ?`;
     this._deleteDialog.dataset.logId = log.id?.toString() || "";
     this._deleteDialog.open = true;
   }

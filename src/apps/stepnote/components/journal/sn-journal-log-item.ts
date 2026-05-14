@@ -141,7 +141,7 @@ export class SnJournalLogItem extends LitElement {
       <div class="header">
         <wa-icon library="my-icons" name="code-commit-solid-full"></wa-icon>
         <div class="text log-date">
-          ${formatDate(this.log.createdAt, "yyyy-MM-dd HH:mm")}
+          ${formatDate(this.log.createdAt, "yyyy-MM-dd (EEE) HH:mm")}
         </div>
         <wa-relative-time
           .date=${this.log.createdAt!}
