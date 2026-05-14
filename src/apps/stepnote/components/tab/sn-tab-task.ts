@@ -107,6 +107,16 @@ export class SnTabTask extends LitElement {
    * @memberof SnTabTask
    */
   private _debounceInput = debounce(async () => {
+    await this._saveTask();
+  }, 800);
+
+  /**
+   * タスク編集内容を保存します。
+   *
+   * @private
+   * @memberof SnTabTask
+   */
+  private async _saveTask() {
     const summary = this.taskSummary.task;
     const property = this.taskProperty.task;
     const updateTask: Task = {
@@ -119,7 +129,7 @@ export class SnTabTask extends LitElement {
       labelId: property.labelId,
     };
     await snDB.putTask(updateTask);
-  }, 800);
+  }
 
   /**
    * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
@@ -186,6 +196,7 @@ export class SnTabTask extends LitElement {
       id="tab-area"
       .tabs=${TASKS}
       @input=${this._updateTask}
+      @input-asap=${this._updateTaskAsap}
     >
       TASK
       <sn-task-button
@@ -235,5 +246,15 @@ export class SnTabTask extends LitElement {
    */
   private _updateTask() {
     this._debounceInput();
+  }
+
+  /**
+   * 入力内容でDBの値を更新する（即時）
+   *
+   * @private
+   * @memberof SnTabTask
+   */
+  private _updateTaskAsap() {
+    this._saveTask();
   }
 }
