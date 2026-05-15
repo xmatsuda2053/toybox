@@ -22,6 +22,7 @@ import type WaTextarea from "@awesome.me/webawesome/dist/components/textarea/tex
 
 // 4. Internal Shared (Extensions & Utils)
 import { IdTagExtension, formatMarkdown } from "./extension/id-tag";
+import { ColorTagExtension } from "./extension/color-tag";
 import { emit } from "@utils/EventUtils";
 
 // 5. Styles
@@ -209,7 +210,7 @@ export class ThinMarkdownEditor extends LitElement {
           return false; // 通常のリンクでない場合は標準処理に任せる
         },
       },
-      extensions: [IdTagExtension],
+      extensions: [IdTagExtension, ColorTagExtension],
     });
   }
 
@@ -532,20 +533,19 @@ export class ThinMarkdownEditor extends LitElement {
     const selectedText = oldText.substring(start, end);
 
     // 新しい文字列を作成
-    const spanStart = '<span style="color:red;">';
-    const spanEnd = "</span>";
+    const startTag = "/red:";
+    const endTag = "/";
     const newText =
       oldText.substring(0, start) +
-      spanStart +
+      startTag +
       selectedText +
-      spanEnd +
+      endTag +
       oldText.substring(end);
     nativeTextarea.value = newText;
 
-    // カーソル位置を </span> の直後に設定
-    // start + <span>(6) + 選択テキスト長 + </span>(7)
+    // カーソル位置を endTag の直後に設定
     const newCursorPos =
-      start + spanStart.length + selectedText.length + spanEnd.length;
+      start + startTag.length + selectedText.length + endTag.length;
     nativeTextarea.selectionStart = nativeTextarea.selectionEnd = newCursorPos;
 
     // 内容の変更を通知
