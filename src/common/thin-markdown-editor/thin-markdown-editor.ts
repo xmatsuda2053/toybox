@@ -19,10 +19,18 @@ import "@github/markdown-toolbar-element";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import type WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
 import type WaTextarea from "@awesome.me/webawesome/dist/components/textarea/textarea.js";
+import type WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // 4. Internal Shared (Extensions & Utils)
-import { IdTagExtension, formatMarkdown } from "./extension/id-tag";
-import { ColorTagExtension } from "./extension/color-tag";
+import { IdTagExtension } from "./extension/id-tag";
+import {
+  ColorTagExtension,
+  formatMarkdown as formatColorMarkdown,
+} from "./extension/color-tag";
+import {
+  CalloutTagExtension,
+  formatMarkdown as formatCalloutMarkdown,
+} from "./extension/callout-tag";
 import { emit } from "@utils/EventUtils";
 
 // 5. Styles
@@ -120,6 +128,14 @@ export class ThinMarkdownEditor extends LitElement {
   };
 
   /**
+   * テーブル追加用ダイアログ
+   *
+   * @type {HTMLElement}
+   * @memberof ThinMarkdownEditor
+   */
+  @query("#table-dialog") tableDialog!: WaDialog;
+
+  /**
    * 作成するテーブルの行
    *
    * @type {WaInput}
@@ -210,7 +226,7 @@ export class ThinMarkdownEditor extends LitElement {
           return false; // 通常のリンクでない場合は標準処理に任せる
         },
       },
-      extensions: [IdTagExtension, ColorTagExtension],
+      extensions: [IdTagExtension, ColorTagExtension, CalloutTagExtension],
     });
   }
 
@@ -304,6 +320,7 @@ export class ThinMarkdownEditor extends LitElement {
         ${this.label ? html`<div class="label">${this.label}</div>` : null}
         <div class="header">
           <div class="md-tab-group">
+            <!--プレビューボタン-->
             <div class=${previewClasses}>
               <wa-button
                 size="small"
@@ -317,6 +334,7 @@ export class ThinMarkdownEditor extends LitElement {
                 ></wa-icon>
               </wa-button>
             </div>
+            <!--編集ボタン-->
             <div class=${editClasses}>
               <wa-button
                 size="small"
@@ -331,6 +349,7 @@ export class ThinMarkdownEditor extends LitElement {
               </wa-button>
             </div>
           </div>
+          <!--Markdown Menu-->
           <div class="md-menu ${this.isEditMode ? "" : "hidden"}">
             <markdown-toolbar for="markdown-editor">
               ${Buttons.map((key) => {
@@ -344,16 +363,68 @@ export class ThinMarkdownEditor extends LitElement {
                               </${unsafeStatic(config.tag)}>
                           `;
               })}
-              <wa-button
-                size="small"
-                appearance="plain"
-                variant="neutral"
-                title="Task ID"
-                @click=${this._addIdLink}
-              >
-                <wa-icon library="my-icons" name="hashtag-solid-full"></wa-icon>
-              </wa-button>
+              <!--コールアウト追加-->
+              <wa-dropdown size="small">
+                <wa-button
+                  size="small"
+                  appearance="plain"
+                  variant="neutral"
+                  title="Callout"
+                  slot="trigger"
+                >
+                  <wa-icon
+                    library="my-icons"
+                    name="sign-hanging-solid-full"
+                  ></wa-icon>
+                </wa-button>
+                <wa-dropdown-item @click=${() => this._addCallout("info")}>
+                  <wa-icon
+                    class="info"
+                    library="my-icons"
+                    name="circle-info-solid-full"
+                    slot="icon"
+                  ></wa-icon>
+                  Info
+                </wa-dropdown-item>
+                <wa-dropdown-item @click=${() => this._addCallout("check")}>
+                  <wa-icon
+                    class="check"
+                    library="my-icons"
+                    name="circle-check-solid-full"
+                    slot="icon"
+                  ></wa-icon>
+                  Check
+                </wa-dropdown-item>
+                <wa-dropdown-item @click=${() => this._addCallout("gear")}>
+                  <wa-icon
+                    class="gear"
+                    library="my-icons"
+                    name="gear-solid-full"
+                    slot="icon"
+                  ></wa-icon>
+                  Gear
+                </wa-dropdown-item>
+                <wa-dropdown-item @click=${() => this._addCallout("warn")}>
+                  <wa-icon
+                    class="warn"
+                    library="my-icons"
+                    name="triangle-exclamation-solid-full"
+                    slot="icon"
+                  ></wa-icon>
+                  Warning
+                </wa-dropdown-item>
+                <wa-dropdown-item @click=${() => this._addCallout("alert")}>
+                  <wa-icon
+                    class="alert"
+                    library="my-icons"
+                    name="circle-exclamation-solid-full"
+                    slot="icon"
+                  ></wa-icon>
+                  Alert
+                </wa-dropdown-item>
+              </wa-dropdown>
 
+              <!--カラー設定ボタン-->
               <wa-button
                 size="small"
                 appearance="plain"
@@ -363,55 +434,17 @@ export class ThinMarkdownEditor extends LitElement {
               >
                 <wa-icon library="my-icons" name="palette-solid-full"></wa-icon>
               </wa-button>
-              <wa-dropdown size="small">
-                <wa-button
-                  data-md-button
-                  size="small"
-                  appearance="plain"
-                  variant="neutral"
-                  title="Table"
-                  slot="trigger"
-                >
-                  <wa-icon library="my-icons" name="table-solid-full"></wa-icon>
-                </wa-button>
-                <wa-dropdown-item>
-                  <div class="inner-item">
-                    <wa-input
-                      id="table-row"
-                      size="small"
-                      type="number"
-                      min="1"
-                      max="5"
-                      value="2"
-                      label="Row"
-                      @click=${this._stopPropagation}
-                    ></wa-input>
-                    <wa-icon
-                      library="my-icons"
-                      name="xmark-solid-full"
-                      class="symbol"
-                    ></wa-icon>
-                    <wa-input
-                      id="table-col"
-                      size="small"
-                      type="number"
-                      min="1"
-                      max="5"
-                      value="3"
-                      label="Col"
-                      @click=${this._stopPropagation}
-                    ></wa-input>
-                    <wa-button
-                      size="small"
-                      appearance="accent"
-                      variant="brand"
-                      @click=${this._addTable}
-                    >
-                      作成
-                    </wa-button>
-                  </div>
-                </wa-dropdown-item>
-              </wa-dropdown>
+              <!--テーブル追加ボタン-->
+              <wa-button
+                data-md-button
+                size="small"
+                appearance="plain"
+                variant="neutral"
+                title="Table"
+                @click=${this._openTableDialog}
+              >
+                <wa-icon library="my-icons" name="table-solid-full"></wa-icon>
+              </wa-button>
             </markdown-toolbar>
           </div>
         </div>
@@ -433,6 +466,39 @@ export class ThinMarkdownEditor extends LitElement {
           @click=${this._handleClick}
         ></div>
       </div>
+      <!--テーブル追加用ダイアログ-->
+      <wa-dialog label="Table" id="table-dialog">
+        <div class="inner-item">
+          <wa-input
+            id="table-row"
+            size="small"
+            type="number"
+            min="1"
+            max="5"
+            value="2"
+            label="Row"
+            @click=${this._stopPropagation}
+          ></wa-input>
+          <wa-icon
+            library="my-icons"
+            name="xmark-solid-full"
+            class="symbol"
+          ></wa-icon>
+          <wa-input
+            id="table-col"
+            size="small"
+            type="number"
+            min="1"
+            max="5"
+            value="3"
+            label="Col"
+            @click=${this._stopPropagation}
+          ></wa-input>
+        </div>
+        <wa-button slot="footer" variant="brand" @click=${this._addTable}>
+          Add
+        </wa-button>
+      </wa-dialog>
     </div>`;
   }
 
@@ -495,18 +561,22 @@ export class ThinMarkdownEditor extends LitElement {
   }
 
   /**
-   * タスクIDリンクを追加する。
+   * コールアウトタグを追加する。
    *
    * @private
+   * @param {("info" | "check" | "gear" | "warn" | "alert")} type
+   * @return {*}
    * @memberof ThinMarkdownEditor
    */
-  private _addIdLink() {
+  private _addCallout(
+    type: "info" | "check" | "gear" | "warn" | "alert",
+  ): void {
     const nativeTextarea = this.toolbar.field;
     if (!nativeTextarea) return;
 
     nativeTextarea.focus();
 
-    formatMarkdown(nativeTextarea);
+    formatCalloutMarkdown(nativeTextarea, type);
 
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
   }
@@ -523,33 +593,20 @@ export class ThinMarkdownEditor extends LitElement {
     if (!nativeTextarea) return;
 
     nativeTextarea.focus();
-
-    // 選択範囲の位置情報を取得
-    const start = nativeTextarea.selectionStart;
-    const end = nativeTextarea.selectionEnd;
-    const oldText = nativeTextarea.value;
-
-    // 選択されたテキストを抽出
-    const selectedText = oldText.substring(start, end);
-
-    // 新しい文字列を作成
-    const startTag = "/red:";
-    const endTag = "/";
-    const newText =
-      oldText.substring(0, start) +
-      startTag +
-      selectedText +
-      endTag +
-      oldText.substring(end);
-    nativeTextarea.value = newText;
-
-    // カーソル位置を endTag の直後に設定
-    const newCursorPos =
-      start + startTag.length + selectedText.length + endTag.length;
-    nativeTextarea.selectionStart = nativeTextarea.selectionEnd = newCursorPos;
+    formatColorMarkdown(nativeTextarea);
 
     // 内容の変更を通知
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /**
+   * テーブル追加ダイアログを表示する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _openTableDialog() {
+    this.tableDialog.open = true;
   }
 
   /**
@@ -591,6 +648,8 @@ ${Array(row).fill(record).join("\n")}\n`;
 
     // 内容の変更を通知
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+
+    this.tableDialog.open = false;
   }
 
   /**
