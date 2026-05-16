@@ -1,4 +1,5 @@
 import angle_down_solid_full from "@assets/icons/angle-down-solid-full.svg?raw";
+import angle_left_solid_full from "@assets/icons/angle-left-solid-full.svg?raw";
 import angle_right_solid_full from "@assets/icons/angle-right-solid-full.svg?raw";
 import angle_up_solid_full from "@assets/icons/angle-up-solid-full.svg?raw";
 import angles_right_solid_full from "@assets/icons/angles-right-solid-full.svg?raw";
@@ -82,6 +83,7 @@ import xmark_solid_full from "@assets/icons/xmark-solid-full.svg?raw";
 
 export const icons: Record<string, string> = {
   "angle-down-solid-full": angle_down_solid_full,
+  "angle-left-solid-full": angle_left_solid_full,
   "angle-right-solid-full": angle_right_solid_full,
   "angle-up-solid-full": angle_up_solid_full,
   "angles-right-solid-full": angles_right_solid_full,

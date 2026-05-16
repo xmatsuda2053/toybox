@@ -25,6 +25,7 @@ import { snDB } from "@sn/database/SnDB";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { Label } from "@sn/models/Label";
 import { Task } from "@sn/models/Task";
+import { DatePickerInput } from "@/common/input-datepicker/datepicker-input";
 
 // 5. Internal Shared (Utils)
 import {
@@ -130,7 +131,7 @@ export class SnList extends LitElement {
    * @type {WaInput}
    * @memberof SnList
    */
-  @query("#task-due-date") private taskDueDate!: WaInput;
+  @query("#task-due-date") private taskDueDate!: DatePickerInput;
 
   /**
    * 新規タスク年度
@@ -491,17 +492,13 @@ export class SnList extends LitElement {
 
           <div class="dialog-item">
             <div class="label">期限日</div>
-            <wa-input
+            <datepicker-input
               id="task-due-date"
-              name="taskDueDate"
               class="item"
               size="small"
-              type="text"
-              onfocus="this.type='date'"
-              onblur="this.type='text'"
-              value=${formatDate(new Date(), "yyyy-MM-dd")}
+              .value=${formatDate(new Date(), "yyyy-MM-dd")}
             >
-            </wa-input>
+            </datepicker-input>
           </div>
 
           <div class="dialog-item">

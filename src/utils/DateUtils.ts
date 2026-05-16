@@ -2,7 +2,7 @@ import * as kanjidate from "kanjidate";
 
 /**
  * 日付オブジェクトを指定されたフォーマットの文字列に変換します。
- * * 使用可能なトークン: yyyy, yy, MM, dd, HH, mm, ss, EEE
+ * * 使用可能なトークン: yyyy, yy, MM, M, dd, d, HH, mm, ss, EEE
  *
  * @export
  * @param {Date} [date] - 変換対象の日付オブジェクト。
@@ -22,7 +22,9 @@ export const formatDate = (
     yyyy: date.getFullYear(),
     yy: date.getFullYear().toString().slice(-2),
     MM: pad(date.getMonth() + 1),
+    M: date.getMonth() + 1,
     dd: pad(date.getDate()),
+    d: date.getDate(),
     HH: pad(date.getHours()),
     mm: pad(date.getMinutes()),
     ss: pad(date.getSeconds()),
@@ -30,7 +32,7 @@ export const formatDate = (
   };
 
   // 正規表現でトークンを一括置換
-  return format.replace(/yyyy|yy|MM|dd|HH|mm|ss|EEE/g, (matched) =>
+  return format.replace(/yyyy|yy|MM|M|dd|d|HH|mm|ss|EEE/g, (matched) =>
     values[matched].toString(),
   );
 };
@@ -321,4 +323,47 @@ export const convertJpToAd = (jpDateStr: string): Date | null => {
   } catch (e) {
     return null;
   }
+};
+
+/**
+ * 引数の日付を起点として、カレンダーの開始日を取得する。
+ *
+ * @param {Date} date
+ * @return {*}  {Date}
+ */
+export const getStartDay = (date: Date): Date => {
+  const startDay = new Date(date);
+  startDay.setDate(1);
+  startDay.setDate(1 - startDay.getDay());
+
+  return startDay;
+};
+
+/**
+ * 引数の日付が基準日と一致するか確認する。
+ *
+ * @param {Date} dateTarget
+ * @param {Date} dateCurrent
+ * @return {*}  {boolean}
+ */
+export const isMatchYM = (dateTarget: Date, dateCurrent: Date): boolean => {
+  return (
+    dateTarget.getFullYear() === dateCurrent.getFullYear() &&
+    dateTarget.getMonth() === dateCurrent.getMonth()
+  );
+};
+
+/**
+ * 引数の日付に、指定した日数を加算する。
+ *
+ * @private
+ * @param {Date} date
+ * @param {number} days
+ * @return {*}  {Date}
+ * @memberof DatePickerInput
+ */
+export const addDays = (date: Date, days: number): Date => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + days);
+  return newDate;
 };
