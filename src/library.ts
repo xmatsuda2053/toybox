@@ -10,6 +10,8 @@ import "@awesome.me/webawesome/dist/components/dropdown/dropdown.js";
 import "@awesome.me/webawesome/dist/components/format-bytes/format-bytes.js";
 import "@awesome.me/webawesome/dist/components/input/input.js";
 import "@awesome.me/webawesome/dist/components/option/option.js";
+import "@awesome.me/webawesome/dist/components/popover/popover.js";
+import "@awesome.me/webawesome/dist/components/progress-bar/progress-bar.js";
 import "@awesome.me/webawesome/dist/components/relative-time/relative-time.js";
 import "@awesome.me/webawesome/dist/components/resize-observer/resize-observer.js";
 import "@awesome.me/webawesome/dist/components/select/select.js";
@@ -27,6 +29,7 @@ import "@common/flexible-tab-area/flexible-tab-area";
 import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
 import "@common/search-input/search-input";
+import "@/common/input-datepicker/datepicker-input";
 
 import "@ap/components/file/ap-file";
 import "@ap/components/app/ap-selector";

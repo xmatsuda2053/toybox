@@ -21,6 +21,7 @@ import { ThinMarkdownEditor } from "@common/thin-markdown-editor/thin-markdown-e
 import { SnTaskContact } from "@sn/components/task/sn-task-contact.ts";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
+import { DatePickerInput } from "@/common/input-datepicker/datepicker-input";
 
 // 5. Internal Shared (Utils)
 import { formatDate } from "@/utils/DateUtils";
@@ -65,10 +66,10 @@ export class SnTaskSummary extends LitElement {
    * 期限日
    *
    * @private
-   * @type {WaInput}
+   * @type {DatePickerInput}
    * @memberof SnTaskSummary
    */
-  @query("#due-date") private dueDate!: WaInput;
+  @query("#due-date") private dueDate!: DatePickerInput;
 
   /**
    * 関係者
@@ -182,15 +183,13 @@ export class SnTaskSummary extends LitElement {
       <div class="task-item">
         <div class="has-label has-weekday">
           <div class="label">期限日</div>
-          <wa-input
+          <datepicker-input
             id="due-date"
-            class="item asap"
+            class="asap"
             size="small"
-            type="date"
             .value=${formatDate(this.task.dueDate, "yyyy-MM-dd")}
           >
-          </wa-input>
-          <span class="weekday">${formatDate(this.task.dueDate, "(EEE)")}</span>
+          </datepicker-input>
         </div>
       </div>
       <div class="task-item">
@@ -221,6 +220,7 @@ export class SnTaskSummary extends LitElement {
    * @memberof SnTaskSummary
    */
   private _inputData(e: Event) {
+    console.log(this.dueDate.value);
     this.task.name = this.taskName.value!;
     this.task.dueDate = new Date(this.dueDate.value!);
     this.task.contacts = [this.taskContact.contact];

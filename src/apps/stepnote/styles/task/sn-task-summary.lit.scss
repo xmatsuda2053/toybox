@@ -65,16 +65,6 @@
       }
     }
 
-    .has-weekday {
-      position: relative;
-
-      .weekday {
-        position: absolute;
-        left: 170px;
-        font-size: var(--wa-font-size-s);
-      }
-    }
-
     wa-input {
       wa-icon {
         font-size: var(--wa-font-size-m);
