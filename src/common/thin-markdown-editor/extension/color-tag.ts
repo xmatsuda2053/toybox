@@ -48,3 +48,33 @@ export const ColorTagExtension: TokenizerAndRendererExtension = {
     return `<span style="color:${t.color}">${this.parser.parseInline(t.tokens || [])}</span>`;
   },
 };
+
+/**
+ * markdown用のフォーマットを適用する
+ * @param textarea
+ */
+export const formatMarkdown = (textarea: HTMLTextAreaElement): void => {
+  // 選択範囲の位置情報を取得
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const oldText = textarea.value;
+
+  // 選択されたテキストを抽出
+  const selectedText = oldText.substring(start, end);
+
+  // 新しい文字列を作成
+  const startTag = "/red:";
+  const endTag = "/";
+  const newText =
+    oldText.substring(0, start) +
+    startTag +
+    selectedText +
+    endTag +
+    oldText.substring(end);
+  textarea.value = newText;
+
+  // カーソル位置を endTag の直後に設定
+  const newCursorPos =
+    start + startTag.length + selectedText.length + endTag.length;
+  textarea.selectionStart = textarea.selectionEnd = newCursorPos;
+};
