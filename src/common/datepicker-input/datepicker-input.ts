@@ -249,6 +249,7 @@ export class DatePickerInput extends LitElement {
     this.value = formatDate(date, "yyyy-MM-dd");
     this.calenderPopover.open = false;
     emit(this, "input");
+    emit(this, "change");
   }
 
   /**

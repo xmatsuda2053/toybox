@@ -21,7 +21,7 @@ import { ThinMarkdownEditor } from "@common/thin-markdown-editor/thin-markdown-e
 import { SnTaskContact } from "@sn/components/task/sn-task-contact.ts";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
-import { DatePickerInput } from "@/common/input-datepicker/datepicker-input";
+import { DatePickerInput } from "@/common/datepicker-input/datepicker-input";
 
 // 5. Internal Shared (Utils)
 import { formatDate } from "@/utils/DateUtils";
