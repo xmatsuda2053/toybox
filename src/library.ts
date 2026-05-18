@@ -29,7 +29,7 @@ import "@common/flexible-tab-area/flexible-tab-area";
 import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
 import "@common/search-input/search-input";
-import "@/common/input-datepicker/datepicker-input";
+import "@/common/datepicker-input/datepicker-input";
 
 import "@ap/components/file/ap-file";
 import "@ap/components/app/ap-selector";

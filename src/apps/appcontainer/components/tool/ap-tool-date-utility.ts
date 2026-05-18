@@ -106,20 +106,21 @@ export class ApToolDateUtility extends LitElement {
         </div>
         <div class="row body">
           <div class="col">
-            <wa-input
+            <datepicker-input
               id="base-date"
-              type="date"
+              class="date-type"
               size="small"
               .value=${formatDate(this.baseDate, "yyyy-MM-dd")}
               @change=${this.changeBaseDate}
-            ></wa-input>
+            >
+            </datepicker-input>
           </div>
           <div class="col">
             <wa-input
               size="small"
               placeholder="元号y年m月d日"
               .value=${jpBaseDate}
-              class=${this.isErrorJpBaseDate ? "error" : ""}
+              class="date-type ${this.isErrorJpBaseDate ? "error" : ""}"
               @change=${this.changeJpBaseDate}
             ></wa-input>
           </div>
