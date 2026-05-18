@@ -11,6 +11,7 @@ import {
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, state, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { keyed } from "lit/directives/keyed.js";
 
 // 3. Third-party UI & SDKs (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -153,6 +154,7 @@ export class DatePickerInput extends LitElement {
     const dateValue = new Date(this.value);
     const dateCurrent = new Date(this.currentMY);
 
+    const dateCurrentStr = formatDate(dateCurrent, "yyyy年M月");
     const jpMatch =
       convertToJapaneseCalendar(dateCurrent).match(/^(.+?[年].+?[月])/);
     const jpDateCurrent = jpMatch ? jpMatch[1] : "";
@@ -180,61 +182,102 @@ export class DatePickerInput extends LitElement {
         placement="bottom-start"
       >
         <div class="controller">
-          <div class="ym">${this.currentMY} (${jpDateCurrent})</div>
+          <div class="ym">${dateCurrentStr}(${jpDateCurrent})</div>
           <div class="btn">
+            <wa-tooltip for="btn-last-year">前年</wa-tooltip>
             <wa-icon
+              id="btn-last-year"
               library="my-icons"
-              name="caret-left-solid-full"
+              name="angles-left-solid-full"
+              @click=${() => {
+                this._calcYear(-1);
+              }}
+            ></wa-icon>
+          </div>
+          <div class="btn">
+            <wa-tooltip for="btn-last-month">前月</wa-tooltip>
+            <wa-icon
+              id="btn-last-month"
+              library="my-icons"
+              name="angle-left-solid-full"
               @click=${() => {
                 this._calcMonth(-1);
               }}
             ></wa-icon>
           </div>
           <div class="btn">
+            <wa-tooltip for="btn-today">当日</wa-tooltip>
             <wa-icon
+              id="btn-today"
               library="my-icons"
-              name="caret-right-solid-full"
+              name="location-dot-solid-full"
+              @click=${() => {
+                this._setToday();
+              }}
+            ></wa-icon>
+          </div>
+          <div class="btn">
+            <wa-tooltip for="btn-next-month">翌月</wa-tooltip>
+            <wa-icon
+              id="btn-next-month"
+              library="my-icons"
+              name="angle-right-solid-full"
               @click=${() => {
                 this._calcMonth(1);
               }}
             ></wa-icon>
           </div>
-        </div>
-        <div class="container">
-          <!--曜日名を出力-->
-          ${weekConfig.map((w) => {
-            const baseClassMap = classMap({
-              cell: true,
-              week: true,
-              holiday: w.isHoliday,
-            });
-            return html`<div class=${baseClassMap}>${w.name}</div>`;
-          })}
-          <!--日付を出力-->
-          ${additionalDays.map((d) => {
-            const date = addDays(startDay, d);
-            const day = formatDate(date, "d");
-
-            const isSysYm = isMatchYM(date, dateCurrent);
-            const isCurrent = formatDate(date, "yyyy-MM-dd") === this.value;
-
-            const baseClassMap = classMap({
-              cell: true,
-              day: true,
-              current: isCurrent,
-              notSysYm: !isSysYm,
-            });
-
-            return html`<div
-              class=${baseClassMap}
+          <wa-tooltip for="btn-next-year">翌年</wa-tooltip>
+          <div class="btn">
+            <wa-icon
+              id="btn-next-year"
+              library="my-icons"
+              name="angles-right-solid-full"
               @click=${() => {
-                this._updateValue(date);
+                this._calcYear(1);
               }}
-            >
-              ${day}
-            </div>`;
-          })}
+            ></wa-icon>
+          </div>
         </div>
+        ${keyed(
+          this.currentMY,
+          html` <div class="container">
+            <!--曜日名を出力-->
+            ${weekConfig.map((w) => {
+              const baseClassMap = classMap({
+                cell: true,
+                week: true,
+                holiday: w.isHoliday,
+              });
+              return html`<div class=${baseClassMap}>${w.name}</div>`;
+            })}
+            <!--日付を出力-->
+            ${additionalDays.map((d) => {
+              const date = addDays(startDay, d);
+              const day = formatDate(date, "d");
+
+              const isSysYm = isMatchYM(date, dateCurrent);
+              const isCurrent = formatDate(date, "yyyy-MM-dd") === this.value;
+
+              const baseClassMap = classMap({
+                cell: true,
+                day: true,
+                current: isCurrent,
+                notSysYm: !isSysYm,
+                holiday: weekConfig[date.getDay()].isHoliday,
+              });
+
+              return html`<div
+                class=${baseClassMap}
+                @click=${() => {
+                  this._updateValue(date);
+                }}
+              >
+                ${day}
+              </div>`;
+            })}
+          </div>`,
+        )}
       </wa-popover>`;
   }
 
@@ -253,7 +296,7 @@ export class DatePickerInput extends LitElement {
   }
 
   /**
-   * 選択中の年月を加減算します。
+   * 選択中の年月の月を加減算します。
    *
    * @private
    * @param {number} addMonth
@@ -262,6 +305,31 @@ export class DatePickerInput extends LitElement {
   private _calcMonth(addMonth: number) {
     const date = new Date(this.currentMY);
     date.setMonth(date.getMonth() + addMonth);
+    this.currentMY = formatDate(date, "yyyy-MM");
+  }
+
+  /**
+   * 選択中の年月の年を加減算します。
+   *
+   * @private
+   * @param {number} addYear
+   * @memberof DatePickerInput
+   */
+  private _calcYear(addYear: number) {
+    const date = new Date(this.currentMY);
+    date.setFullYear(date.getFullYear() + addYear);
+    this.currentMY = formatDate(date, "yyyy-MM");
+  }
+
+  /**
+   * 当日を選択します。
+   *
+   * @private
+   * @memberof DatePickerInput
+   */
+  private _setToday() {
+    const date = new Date();
+    this.value = formatDate(date, "yyyy-MM-dd");
     this.currentMY = formatDate(date, "yyyy-MM");
   }
 }

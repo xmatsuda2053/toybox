@@ -16,22 +16,22 @@ wa-input {
 
 .controller {
   display: flex;
-  gap: var(--wa-space-3xs) var(--wa-space-s);
+  gap: var(--wa-space-2xs);
   align-items: center;
 
-  margin-block-end: var(--wa-space-3xs);
+  margin-block-end: var(--wa-space-2xs);
 
   .ym {
     font-weight: bold;
     font-size: var(--wa-font-size-s);
 
-    margin-inline-start: var(--wa-space-xs);
+    margin-inline-start: var(--wa-space-3xs);
     margin-inline-end: auto;
   }
 
   .btn {
     cursor: pointer;
-    font-size: var(--wa-font-size-l);
+    font-size: var(--wa-font-size-m);
 
     &:hover {
       color: var(--wa-color-neutral-50);
@@ -43,7 +43,6 @@ wa-input {
   display: grid;
   gap: var(--wa-space-3xs) var(--wa-space-s);
   grid-template-columns: repeat(7, 1fr);
-
   font-size: var(--wa-font-size-s);
 
   .cell {
@@ -53,7 +52,7 @@ wa-input {
 
     border-radius: 50%;
     aspect-ratio: 1 / 1;
-    min-width: 30px;
+    min-width: 35px;
 
     &.holiday {
       color: var(--wa-color-pink-50);
@@ -74,5 +73,18 @@ wa-input {
     &.notSysYm {
       color: var(--wa-color-neutral-60);
     }
+  }
+
+  animation: zoomIn 0.7s cubic-bezier(0.6, 1, 0.75, 1) forwards;
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
