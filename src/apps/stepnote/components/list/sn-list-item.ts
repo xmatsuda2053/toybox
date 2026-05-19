@@ -9,7 +9,7 @@ import {
 } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 // 3. Third-party UI & SDKs
@@ -19,6 +19,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { snDB } from "@sn/database/SnDB";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
+import { emit } from "@/utils/EventUtils";
 
 // 5. Internal Shared (Utils)
 import {
@@ -208,12 +209,7 @@ export class SnListItem extends LitElement {
    * @private
    * @memberof SnListItem
    */
-  private async _taskCopy() {
-    if (!this.task.id) return;
-    const copiedId = await snDB.copyTask(this.task.id);
-    await snDB.putLog({
-      taskId: copiedId,
-      value: `#### Copied From\n- #{${this.task.id}}{${this.task.name}}`,
-    });
+  private _taskCopy() {
+    emit(this, "copy-task", { detail: { task: this.task } });
   }
 }
