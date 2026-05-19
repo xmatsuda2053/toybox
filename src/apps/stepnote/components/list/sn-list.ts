@@ -107,15 +107,6 @@ export class SnList extends LitElement {
   @query("#task-dialog-overview") private _editDialog!: WaDialog;
 
   /**
-   * 編集フォーム
-   *
-   * @private
-   * @type {HTMLFormElement}
-   * @memberof SnList
-   */
-  @query("#task-form") private taskForm!: HTMLFormElement;
-
-  /**
    * 新規タスク名
    *
    * @private
