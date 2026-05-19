@@ -293,24 +293,27 @@ export class SnDB extends Dexie {
    * 指定したIDのタスクをコピーする
    *
    * @param {number} id
-   * @return {*}  {Promise<void>}
+   * @return {*}  {Promise<number>}
    * @memberof SnDB
    */
-  async copyTask(id: number): Promise<void> {
+  async copyTask(id: number): Promise<number> {
     try {
       const task = await this.tasks.get(id);
-      if (!task) return;
+      if (!task) return -1;
 
-      const copyTask = { ...task };
-      copyTask.id = undefined;
-      copyTask.name = "copied-" + copyTask.name;
-      copyTask.createdAt = new Date();
-      copyTask.updatedAt = new Date();
+      const copied = { ...task };
+      copied.id = undefined;
+      copied.name = "copied-" + copied.name;
+      copied.createdAt = new Date();
+      copied.updatedAt = new Date();
 
-      const copyId = await this.putTask(copyTask);
+      const copyId = await this.putTask(copied);
       await this.selectSingleTask(copyId, true);
+
+      return copyId;
     } catch (error) {
       console.error("Failed to copy task:", error);
+      return -1;
     }
   }
 
