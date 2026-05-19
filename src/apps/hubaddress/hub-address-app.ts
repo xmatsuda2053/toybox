@@ -10,7 +10,7 @@ import {
 import { liveQuery, type Subscription } from "dexie";
 
 // 2. Decorators & Directives
-import { customElement, state } from "lit/decorators.js";
+import { customElement, state, query } from "lit/decorators.js";
 import "@lit-labs/virtualizer";
 
 // 3. Third-party Components & Utils
@@ -24,6 +24,7 @@ import { FileData, Category } from "@ha/models/FileData";
 import { haDB } from "@ha/database/HaDB";
 import { Staff } from "@ha/models/Staff";
 import { Division } from "./models/Division";
+import { SearchInput } from "@/common/search-input/search-input";
 
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -81,6 +82,22 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   @state() _keywordDiv: string = "";
+
+  /**
+   * 職員検索欄
+   *
+   * @type {SearchInput}
+   * @memberof HubAddressApp
+   */
+  @query("#keyword-staff") keywordStaff!: SearchInput;
+
+  /**
+   * 組織検索欄
+   *
+   * @type {SearchInput}
+   * @memberof HubAddressApp
+   */
+  @query("#keyword-div") keywordDiv!: SearchInput;
 
   /**
    * テーブルの更新を検知する
@@ -210,7 +227,8 @@ export class HubAddressApp extends LitElement {
       <div class="base staff">
         <div class="search">
           <search-input
-            searchKeyword=${this._keywordStaff}
+            id="keyword-staff"
+            .searchKeyword=${this._keywordStaff}
             @input-keyword=${(e: CustomEvent) => this._searchData(e, "staff")}
           ></search-input>
         </div>
@@ -225,7 +243,8 @@ export class HubAddressApp extends LitElement {
       <div class="base div">
         <div class="search">
           <search-input
-            searchKeyword=${this._keywordDiv}
+            id="keyword-div"
+            .searchKeyword=${this._keywordDiv}
             @input-keyword=${(e: CustomEvent) => this._searchData(e, "div")}
           ></search-input>
         </div>
@@ -431,6 +450,8 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private async clearKeyword() {
+    this.keywordStaff.init();
+    this.keywordDiv.init();
     await haDB.clearSearchKeyword();
   }
 
