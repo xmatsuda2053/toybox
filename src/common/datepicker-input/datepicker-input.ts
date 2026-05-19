@@ -11,7 +11,6 @@ import {
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, state, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { keyed } from "lit/directives/keyed.js";
 
 // 3. Third-party UI & SDKs (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -239,45 +238,42 @@ export class DatePickerInput extends LitElement {
             ></wa-icon>
           </div>
         </div>
-        ${keyed(
-          this.currentMY,
-          html` <div class="container">
-            <!--曜日名を出力-->
-            ${weekConfig.map((w) => {
-              const baseClassMap = classMap({
-                cell: true,
-                week: true,
-                holiday: w.isHoliday,
-              });
-              return html`<div class=${baseClassMap}>${w.name}</div>`;
-            })}
-            <!--日付を出力-->
-            ${additionalDays.map((d) => {
-              const date = addDays(startDay, d);
-              const day = formatDate(date, "d");
+        <div class="container">
+          <!--曜日名を出力-->
+          ${weekConfig.map((w) => {
+            const baseClassMap = classMap({
+              cell: true,
+              week: true,
+              holiday: w.isHoliday,
+            });
+            return html`<div class=${baseClassMap}>${w.name}</div>`;
+          })}
+          <!--日付を出力-->
+          ${additionalDays.map((d) => {
+            const date = addDays(startDay, d);
+            const day = formatDate(date, "d");
 
-              const isSysYm = isMatchYM(date, dateCurrent);
-              const isCurrent = formatDate(date, "yyyy-MM-dd") === this.value;
+            const isSysYm = isMatchYM(date, dateCurrent);
+            const isCurrent = formatDate(date, "yyyy-MM-dd") === this.value;
 
-              const baseClassMap = classMap({
-                cell: true,
-                day: true,
-                current: isCurrent,
-                notSysYm: !isSysYm,
-                holiday: weekConfig[date.getDay()].isHoliday,
-              });
+            const baseClassMap = classMap({
+              cell: true,
+              day: true,
+              current: isCurrent,
+              notSysYm: !isSysYm,
+              holiday: weekConfig[date.getDay()].isHoliday,
+            });
 
-              return html`<div
-                class=${baseClassMap}
-                @click=${() => {
-                  this._updateValue(date);
-                }}
-              >
-                ${day}
-              </div>`;
-            })}
-          </div>`,
-        )}
+            return html`<div
+              class=${baseClassMap}
+              @click=${() => {
+                this._updateValue(date);
+              }}
+            >
+              ${day}
+            </div>`;
+          })}
+        </div>
       </wa-popover>`;
   }
 

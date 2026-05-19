@@ -74,17 +74,4 @@ wa-input {
       color: var(--wa-color-neutral-60);
     }
   }
-
-  animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
