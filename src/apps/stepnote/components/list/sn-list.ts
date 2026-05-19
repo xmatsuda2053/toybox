@@ -98,13 +98,13 @@ export class SnList extends LitElement {
   @query("#input-search") private _inputSearch!: HTMLInputElement;
 
   /**
-   * 新規タスクダイアログ
+   * タスク編集ダイアログ
    *
    * @private
    * @type {WaDialog}
    * @memberof SnList
    */
-  @query("#task-dialog-overview") private _addDialog!: WaDialog;
+  @query("#task-dialog-overview") private _editDialog!: WaDialog;
 
   /**
    * 編集フォーム
@@ -159,6 +159,24 @@ export class SnList extends LitElement {
    * @memberof SnList
    */
   @state() private _filterKeyword: string = "";
+
+  /**
+   * 編集ダイアログの状態を管理する。
+   *
+   * @private
+   * @type {("add" | "copy")}
+   * @memberof SnList
+   */
+  @state() _dialogMode: "Add" | "Copy" = "Add";
+
+  /**
+   * コピー元のタスク情報
+   *
+   * @private
+   * @type {Task}
+   * @memberof SnList
+   */
+  private _sourceTask!: Task | undefined;
 
   /**
    * テーブルの更新を検知する
@@ -451,7 +469,7 @@ export class SnList extends LitElement {
       <div class="search">
         <search-input @input-keyword=${this._filterTasks}></search-input>
       </div>
-      <div class="items">
+      <div class="items" @copy-task=${this._openCopyTaskEditor}>
         <lit-virtualizer
           .items=${this._getRenderItems}
           .renderItem=${((item: RenderItem) => {
@@ -471,8 +489,8 @@ export class SnList extends LitElement {
         >
         </lit-virtualizer>
       </div>
-      <wa-dialog label="Add Task" id="task-dialog-overview">
-        <form id="task-form" @submit=${this._addTask}>
+      <wa-dialog label="${this._dialogMode} Task" id="task-dialog-overview">
+        <form id="task-form" @submit=${this._saveTask}>
           <div class="dialog-item">
             <div class="label">タスク名</div>
             <wa-input
@@ -550,7 +568,7 @@ export class SnList extends LitElement {
           type="submit"
           form="task-form"
         >
-          追加
+          Save
         </wa-button>
       </wa-dialog>
     </div>`;
@@ -570,17 +588,35 @@ export class SnList extends LitElement {
   }
 
   /**
+   * エディタの状態をリセットする
+   *
+   * @private
+   * @memberof SnList
+   */
+  private _resetEditor() {
+    this.taskName.value = "";
+    this.taskDueDate.value = formatDate(new Date(), "yyyy-MM-dd");
+    this.taskFiscalYear.value = String(currentFiscalYear);
+    this.taskLabelId.value =
+      this._labels.length !== 0
+        ? String(this._labels.find((label) => label.isSelected)?.id)
+        : "";
+  }
+
+  /**
    * タスク追加エディタを起動する。
    *
    * @private
    * @memberof SnList
    */
   private _openAddTaskEditor() {
-    this.taskForm.reset();
-    this._addDialog.open = true;
+    this._resetEditor();
+    this._dialogMode = "Add";
+    this._sourceTask = undefined;
+    this._editDialog.open = true;
 
     // 表示アニメーションが終わるのを待ってからフォーカスを当てる
-    this._addDialog.addEventListener(
+    this._editDialog.addEventListener(
       "wa-after-show",
       () => this.taskName.focus(),
       { once: true },
@@ -588,15 +624,58 @@ export class SnList extends LitElement {
   }
 
   /**
-   * タスクを新規追加する。
+   * タスク複製エディタを起動する。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnList
+   */
+  private _openCopyTaskEditor(e: CustomEvent) {
+    this._resetEditor();
+    this._dialogMode = "Copy";
+    this._sourceTask = e.detail.task;
+
+    if (!this._sourceTask) return;
+
+    // コピー元タスクの情報をエディタに反映する（年度以外）
+    this.taskName.value = this._sourceTask.name;
+    this.taskDueDate.value = formatDate(this._sourceTask.dueDate, "yyyy-MM-dd");
+    this.taskLabelId.value = String(this._sourceTask.labelId);
+
+    this._editDialog.open = true;
+
+    // 表示アニメーションが終わるのを待ってからフォーカスを当てる
+    this._editDialog.addEventListener(
+      "wa-after-show",
+      () => this.taskName.focus(),
+      { once: true },
+    );
+  }
+
+  /**
+   * タスクを保存する。
    *
    * @private
    * @param {Event} e
    * @memberof SnList
    */
-  private async _addTask(e: Event) {
+  private async _saveTask(e: Event) {
     e.preventDefault();
 
+    if (this._dialogMode === "Add") {
+      await this._addTask();
+    } else {
+      await this._copyTask();
+    }
+  }
+
+  /**
+   * タスクを新規追加する。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _addTask() {
     const name = this.taskName.value as string;
     const dueDate = new Date(this.taskDueDate.value as string);
     const fiscalYear = Number(this.taskFiscalYear.value);
@@ -627,8 +706,51 @@ export class SnList extends LitElement {
     await snDB.selectSingleTask(id);
     await snDB.updateLabelSelection(labelId, 1);
 
-    this._addDialog.open = false;
-    this.taskForm.reset();
+    this._editDialog.open = false;
+    this._resetEditor();
+  }
+
+  /**
+   * タスクをコピーする
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _copyTask() {
+    if (!this._sourceTask) return;
+
+    const name = this.taskName.value as string;
+    const dueDate = new Date(this.taskDueDate.value as string);
+    const fiscalYear = Number(this.taskFiscalYear.value);
+    const labelId = Number(this.taskLabelId.value);
+
+    const task: Task = {
+      statusCode: TaskStatus.PENDING.code,
+      name: name,
+      dueDate: dueDate,
+      contacts: this._sourceTask.contacts ?? [{ div: "", name: "", tel: "" }],
+      description: this._sourceTask.description ?? "",
+      fiscalYear: fiscalYear,
+      labelId: labelId,
+      bookmark: 0,
+      selected: 0,
+    };
+
+    const id = await snDB.putTask(task);
+    await snDB.putLog({
+      taskId: id,
+      value: `#### Copied From\n- #{${this._sourceTask.id}}{${this._sourceTask.name}}`,
+    });
+    await snDB.putNote({
+      taskId: id,
+      value: "",
+    });
+
+    await snDB.selectSingleTask(id);
+    await snDB.updateLabelSelection(labelId, 1);
+
+    this._editDialog.open = false;
+    this._resetEditor();
   }
 
   /**
