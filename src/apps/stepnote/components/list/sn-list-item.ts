@@ -210,6 +210,10 @@ export class SnListItem extends LitElement {
    */
   private async _taskCopy() {
     if (!this.task.id) return;
-    await snDB.copyTask(this.task.id);
+    const copiedId = await snDB.copyTask(this.task.id);
+    await snDB.putLog({
+      taskId: copiedId,
+      value: `#### Copied From\n- #{${this.task.id}}{${this.task.name}}`,
+    });
   }
 }
