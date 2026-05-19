@@ -235,7 +235,11 @@
       /* コールアウト */
       wa-callout {
         font-size: var(--wa-font-size-s);
-        margin-block-end: var(--wa-space-s);
+        margin-block: var(--wa-space-s);
+
+        wa-icon {
+          font-size: var(--wa-font-size-l);
+        }
 
         p {
           margin: 0;
