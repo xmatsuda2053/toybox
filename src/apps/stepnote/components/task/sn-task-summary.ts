@@ -220,7 +220,6 @@ export class SnTaskSummary extends LitElement {
    * @memberof SnTaskSummary
    */
   private _inputData(e: Event) {
-    console.log(this.dueDate.value);
     this.task.name = this.taskName.value!;
     this.task.dueDate = new Date(this.dueDate.value!);
     this.task.contacts = [this.taskContact.contact];
