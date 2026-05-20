@@ -206,7 +206,7 @@ export class SnTaskSummary extends LitElement {
       <div class="task-item grow-item">
         <thin-markdown-editor
           id="task-description"
-          .value=${this.task.description || "### タスク説明"}
+          .value=${this.task.description || "## タスク説明\n\n### 概要"}
         ></thin-markdown-editor>
       </div>
     </div>`;
