@@ -351,7 +351,7 @@ export class ThinMarkdownEditor extends LitElement {
           </div>
           <!-----Markdown Preview Menu-->
           <div class="md-menu ${!this.isEditMode ? "" : "hidden"}">
-            <markdown-toolbar>
+            <div class="toolbar-root">
               <wa-button
                 size="small"
                 appearance="plain"
@@ -361,11 +361,11 @@ export class ThinMarkdownEditor extends LitElement {
               >
                 <wa-icon library="my-icons" name="copy-regular-full"></wa-icon>
               </wa-button>
-            </markdown-toolbar>
+            </div>
           </div>
           <!--Markdown Menu-->
           <div class="md-menu ${this.isEditMode ? "" : "hidden"}">
-            <markdown-toolbar for="markdown-editor">
+            <markdown-toolbar for="markdown-editor" class="toolbar-root">
               ${Buttons.map((key) => {
                 const config = TOOLBAR_MASTER[key];
                 if (!config) return null;
