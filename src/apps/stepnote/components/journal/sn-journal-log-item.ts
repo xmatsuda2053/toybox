@@ -160,7 +160,7 @@ export class SnJournalLogItem extends LitElement {
               library="my-icons"
               name="trash-solid-full"
             ></wa-icon>
-            削除
+            Delete
           </wa-dropdown-item>
         </wa-dropdown>
       </div>

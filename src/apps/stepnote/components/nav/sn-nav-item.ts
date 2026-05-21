@@ -223,7 +223,7 @@ export class SnNavItem extends LitElement {
             library="my-icons"
             name="sliders-solid-full"
           ></wa-icon>
-          プロパティ
+          Property
         </wa-dropdown-item>
         <wa-dropdown-item
           @click=${() => emit(this, "click-delete")}
@@ -234,7 +234,7 @@ export class SnNavItem extends LitElement {
             library="my-icons"
             name="trash-solid-full"
           ></wa-icon>
-          削除
+          Delete
         </wa-dropdown-item>
       </wa-dropdown>
     `;
