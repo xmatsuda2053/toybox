@@ -349,6 +349,20 @@ export class ThinMarkdownEditor extends LitElement {
               </wa-button>
             </div>
           </div>
+          <!-----Markdown Preview Menu-->
+          <div class="md-menu ${!this.isEditMode ? "" : "hidden"}">
+            <markdown-toolbar>
+              <wa-button
+                size="small"
+                appearance="plain"
+                variant="neutral"
+                title="clipboard"
+                @click=${this._copyMarkdownToClipboard}
+              >
+                <wa-icon library="my-icons" name="copy-regular-full"></wa-icon>
+              </wa-button>
+            </markdown-toolbar>
+          </div>
           <!--Markdown Menu-->
           <div class="md-menu ${this.isEditMode ? "" : "hidden"}">
             <markdown-toolbar for="markdown-editor">
@@ -650,6 +664,23 @@ ${Array(row).fill(record).join("\n")}\n`;
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
 
     this.tableDialog.open = false;
+  }
+
+  /**
+   * Markdownの値をクリップボードにコピーする。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof ThinMarkdownEditor
+   */
+  private async _copyMarkdownToClipboard(e: Event) {
+    e.preventDefault();
+    try {
+      const raw = this.value;
+      await navigator.clipboard.writeText(raw);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
   }
 
   /**
