@@ -31,6 +31,7 @@ import circle_question_regular_full from "@assets/icons/circle-question-regular-
 import circle_solid_full from "@assets/icons/circle-solid-full.svg?raw";
 import circle_stop_solid_full from "@assets/icons/circle-stop-solid-full.svg?raw";
 import circle_user_solid_full from "@assets/icons/circle-user-solid-full.svg?raw";
+import clone_regular_full from "@assets/icons/clone-regular-full.svg?raw";
 import code_commit_solid_full from "@assets/icons/code-commit-solid-full.svg?raw";
 import code_solid_full from "@assets/icons/code-solid-full.svg?raw";
 import copy_regular_full from "@assets/icons/copy-regular-full.svg?raw";
@@ -116,6 +117,7 @@ export const icons: Record<string, string> = {
   "circle-solid-full": circle_solid_full,
   "circle-stop-solid-full": circle_stop_solid_full,
   "circle-user-solid-full": circle_user_solid_full,
+  "clone-regular-full": clone_regular_full,
   "code-commit-solid-full": code_commit_solid_full,
   "code-solid-full": code_solid_full,
   "copy-regular-full": copy_regular_full,
