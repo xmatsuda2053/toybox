@@ -170,13 +170,22 @@ export class SnListItem extends LitElement {
             slot="trigger"
             class="trigger-button"
           ></wa-icon>
-          <wa-dropdown-item @click=${this._taskCopy}>
+          <wa-dropdown-item @click=${this._duplicate}>
             <wa-icon
               slot="icon"
               library="my-icons"
-              name="copy-regular-full"
+              name="clone-regular-full"
             ></wa-icon>
-            コピー
+            Duplicate
+          </wa-dropdown-item>
+          <wa-divider></wa-divider>
+          <wa-dropdown-item @click=${this._copyTaskId}>
+            <wa-icon
+              slot="icon"
+              library="my-icons"
+              name="hashtag-solid-full"
+            ></wa-icon>
+            Copy Task ID
           </wa-dropdown-item>
         </wa-dropdown>
       </div>
@@ -209,7 +218,22 @@ export class SnListItem extends LitElement {
    * @private
    * @memberof SnListItem
    */
-  private _taskCopy() {
+  private _duplicate() {
     emit(this, "copy-task", { detail: { task: this.task } });
+  }
+
+  /**
+   * タスクIDをクリップボードにコピーします。
+   *
+   * @private
+   * @memberof SnListItem
+   */
+  private async _copyTaskId() {
+    try {
+      const raw = `#{${this.task.id}}{${this.task.name}}`;
+      await navigator.clipboard.writeText(raw);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
   }
 }
