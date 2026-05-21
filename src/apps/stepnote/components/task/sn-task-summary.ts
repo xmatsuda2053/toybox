@@ -160,7 +160,12 @@ export class SnTaskSummary extends LitElement {
       <div class="task-item">
         <div class="has-label">
           <div class="label">タスク名</div>
-          <wa-input id="name" class="item" size="small" value=${this.task.name}>
+          <wa-input
+            id="name"
+            class="item"
+            size="small"
+            .value=${this.task.name}
+          >
             <wa-icon
               library="my-icons"
               name=${status.iconNameSub}
