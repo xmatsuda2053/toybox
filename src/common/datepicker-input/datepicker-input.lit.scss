@@ -23,10 +23,15 @@ wa-input {
 
   .ym {
     font-weight: bold;
-    font-size: var(--wa-font-size-s);
+    font-size: var(--wa-font-size-m);
 
     margin-inline-start: var(--wa-space-3xs);
     margin-inline-end: auto;
+
+    span {
+      font-size: var(--wa-font-size-s);
+      margin-inline-start: var(--wa-space-3xs);
+    }
   }
 
   .btn {
@@ -37,6 +42,10 @@ wa-input {
       color: var(--wa-color-neutral-50);
     }
   }
+}
+
+wa-divider {
+  --spacing: var(--wa-space-2xs);
 }
 
 .container {

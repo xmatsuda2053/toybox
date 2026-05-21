@@ -154,8 +154,7 @@ export class DatePickerInput extends LitElement {
     const dateCurrent = new Date(this.currentMY);
 
     const dateCurrentStr = formatDate(dateCurrent, "yyyy年M月");
-    const jpMatch =
-      convertToJapaneseCalendar(dateCurrent).match(/^(.+?[年].+?[月])/);
+    const jpMatch = convertToJapaneseCalendar(dateCurrent).match(/^(.+?[年])/);
     const jpDateCurrent = jpMatch ? jpMatch[1] : "";
 
     const formattedDate = formatDate(dateValue, "yyyy-MM-dd (EEE)");
@@ -181,7 +180,7 @@ export class DatePickerInput extends LitElement {
         placement="bottom-start"
       >
         <div class="controller">
-          <div class="ym">${dateCurrentStr}(${jpDateCurrent})</div>
+          <div class="ym">${dateCurrentStr}<span>(${jpDateCurrent})</span></div>
           <div class="btn">
             <wa-tooltip for="btn-last-year">前年</wa-tooltip>
             <wa-icon
@@ -238,6 +237,7 @@ export class DatePickerInput extends LitElement {
             ></wa-icon>
           </div>
         </div>
+        <wa-divider></wa-divider>
         <div class="container">
           <!--曜日名を出力-->
           ${weekConfig.map((w) => {
