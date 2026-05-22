@@ -13,8 +13,6 @@ import { customElement } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 3. Internal Assets & Logic
-import { snDB } from "@sn/database/SnDB";
-import { ScheduledTime, ScheduleUtils } from "@/utils/ScheduleUtils";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -22,13 +20,6 @@ import styles from "@ap/styles/_header-item.lit.scss?inline";
 
 // 5. Initializations (Side Effects)
 setBasePath("/");
-
-const backupSchedule: ScheduledTime[] = [
-  { hour: 8, minute: 30 },
-  { hour: 12, minute: 0 },
-  { hour: 17, minute: 15 },
-  { hour: 20, minute: 0 },
-];
 
 /**
  * アプリケーションコンテナー
@@ -58,33 +49,12 @@ export class ApFile extends LitElement {
   }
 
   /**
-   * データをエクスポートする
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private async _exportData() {
-    await snDB.exportDatabase();
-  }
-
-  /**
-   * スケジュール管理用のインスタンスを準備
-   *
-   * @private
-   * @memberof SnMenu
-   */
-  private _exportScheduler = new ScheduleUtils(backupSchedule, () =>
-    this._exportData(),
-  );
-
-  /**
    * コンポーネント追加時
    *
    * @memberof ApFile
    */
   connectedCallback() {
     super.connectedCallback();
-    this._exportScheduler.start();
   }
 
   /**
@@ -94,7 +64,6 @@ export class ApFile extends LitElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this._exportScheduler.stop();
   }
 
   /**
