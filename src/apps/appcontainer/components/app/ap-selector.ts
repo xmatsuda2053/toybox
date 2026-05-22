@@ -53,12 +53,14 @@ export class ApSelector extends LitElement {
   APP_LIST: AppItem[] = [
     {
       code: "step-note",
+      icon: "cubes-solid-full",
       label: "Step-Note",
       tag: html`<step-note-app class="app"></step-note-app>`,
       key: "F1",
     },
     {
       code: "hub-address",
+      icon: "icon-hub-address",
       label: "Hub-Address",
       tag: html`<hub-address-app class="app"></hub-address-app>`,
       key: "F2",
@@ -177,6 +179,7 @@ export class ApSelector extends LitElement {
           type="checkbox"
           ?checked=${live(this.selectedApp.code === app.code)}
         >
+          <wa-icon slot="icon" library="my-icons" name=${app.icon}></wa-icon>
           ${app.label}
           <span slot="details">Shit + ${app.key}</span>
         </wa-dropdown-item>`;
