@@ -14,8 +14,10 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // 3. Internal Assets & Logic
 import "@/library";
+import { snDB } from "@sn/database/SnDB";
 import { registerIcons } from "@/utils/CommonUtils";
 import { AppItem } from "@ap/models/AppItem";
+import { ScheduledTime } from "@/utils/ScheduleUtils";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -23,6 +25,13 @@ import styles from "@apps/app-container.lit.scss?inline";
 
 // 5. Initializations (Side Effects)
 setBasePath("/");
+
+const exportSchedule: ScheduledTime[] = [
+  { hour: 8, minute: 30 },
+  { hour: 12, minute: 0 },
+  { hour: 17, minute: 15 },
+  { hour: 20, minute: 0 },
+];
 
 /**
  * アプリケーションコンテナー
@@ -51,6 +60,7 @@ export class AppContainer extends LitElement {
    */
   @state() selectedApp: AppItem = {
     code: "",
+    icon: "",
     label: "",
     tag: html``,
     key: "F1",
@@ -124,6 +134,12 @@ export class AppContainer extends LitElement {
         <div class="footer"></div>
         <div class="footer"></div>
       </footer>
+      <!--データのバックアップ-->
+      <data-exporter
+        .exportSchedule=${exportSchedule}
+        .onExport=${async () => await snDB.exportDatabase()}
+      >
+      </data-exporter>
     </div>`;
   }
 
