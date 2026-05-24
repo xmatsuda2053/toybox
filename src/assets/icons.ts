@@ -13,6 +13,7 @@ import bold_solid_full from "@assets/icons/bold-solid-full.svg?raw";
 import bookmark_regular_full from "@assets/icons/bookmark-regular-full.svg?raw";
 import bookmark_solid_full from "@assets/icons/bookmark-solid-full.svg?raw";
 import border_none_solid_full from "@assets/icons/border-none-solid-full.svg?raw";
+import box_archive_solid_full from "@assets/icons/box-archive-solid-full.svg?raw";
 import building_solid_full from "@assets/icons/building-solid-full.svg?raw";
 import calendar_day_solid_full from "@assets/icons/calendar-day-solid-full.svg?raw";
 import calendar_days_solid_full from "@assets/icons/calendar-days-solid-full.svg?raw";
@@ -99,6 +100,7 @@ export const icons: Record<string, string> = {
   "bookmark-regular-full": bookmark_regular_full,
   "bookmark-solid-full": bookmark_solid_full,
   "border-none-solid-full": border_none_solid_full,
+  "box-archive-solid-full": box_archive_solid_full,
   "building-solid-full": building_solid_full,
   "calendar-day-solid-full": calendar_day_solid_full,
   "calendar-days-solid-full": calendar_days_solid_full,

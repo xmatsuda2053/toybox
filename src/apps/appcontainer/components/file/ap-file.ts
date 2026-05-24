@@ -9,10 +9,12 @@ import {
 } from "lit";
 
 // 2. Library Extensions & Third-party
-import { customElement } from "lit/decorators.js";
+import { customElement, query } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 3. Internal Assets & Logic
+import { snDB } from "@/apps/stepnote/database/SnDB";
+import { DataExporter } from "@/common/data-exporter/data-exporter";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -39,6 +41,14 @@ export class ApFile extends LitElement {
   static styles = css`
     ${unsafeCSS(styles)}
   `;
+
+  /**
+   * SnDBのバックアップ
+   *
+   * @type {DataExporter}
+   * @memberof ApFile
+   */
+  @query("#data-exporter-sndb") dataExporterSnDB!: DataExporter;
 
   /**
    * Creates an instance of ApFile.
@@ -98,11 +108,26 @@ export class ApFile extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<wa-dropdown>
-      <div class="menu-header" slot="trigger">
-        <span>File(F)</span>
-        <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
-      </div>
-      <wa-dropdown-item>設定</wa-dropdown-item>
-    </wa-dropdown>`;
+        <div class="menu-header" slot="trigger">
+          <span>File(F)</span>
+          <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
+        </div>
+        <wa-dropdown-item>
+          バックアップ
+          <wa-dropdown-item
+            slot="submenu"
+            @click=${() => (this.dataExporterSnDB.open = true)}
+          >
+            Step-Note
+          </wa-dropdown-item>
+        </wa-dropdown-item>
+      </wa-dropdown>
+      <!--データのバックアップ-->
+      <data-exporter
+        id="data-exporter-sndb"
+        storageKey="sndb"
+        .onExport=${async () => await snDB.exportDatabase()}
+      >
+      </data-exporter>`;
   }
 }
