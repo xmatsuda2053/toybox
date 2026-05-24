@@ -1,0 +1,5 @@
+.container {
+  display: grid;
+  gap: var(--wa-space-xs) var(--wa-space-s);
+  grid-template-columns: repeat(5, 1fr);
+}

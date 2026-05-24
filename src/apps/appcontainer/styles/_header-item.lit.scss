@@ -19,7 +19,11 @@
 wa-dropdown-item {
   &::part(label),
   &::part(details) {
-    font-size: var(--wa-font-size-s);
+    font-size: var(--wa-font-size-xs);
+  }
+
+  span {
+    font-size: var(--wa-font-size-xs);
   }
 }
 

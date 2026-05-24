@@ -184,6 +184,6 @@ export class SnMenu extends LitElement {
       <!--ヘルプダイアログ-->
       <wa-dialog light-dismiss label="HOW TO USE" id="dialog-help">
         <help-viewer .helpItems=${helpItems}></help-viewer>
-      </wa-dialog>`;
+      </wa-dialog> `;
   }
 }
