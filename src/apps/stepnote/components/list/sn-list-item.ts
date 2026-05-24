@@ -176,7 +176,7 @@ export class SnListItem extends LitElement {
               library="my-icons"
               name="clone-regular-full"
             ></wa-icon>
-            Duplicate
+            Copy Task
           </wa-dropdown-item>
           <wa-divider></wa-divider>
           <wa-dropdown-item @click=${this._copyTaskId}>
