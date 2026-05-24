@@ -125,6 +125,7 @@ export class ApFile extends LitElement {
       <!--データのバックアップ-->
       <data-exporter
         id="data-exporter-sndb"
+        label="Step-Note"
         storageKey="sndb"
         .onExport=${async () => await snDB.exportDatabase()}
       >
