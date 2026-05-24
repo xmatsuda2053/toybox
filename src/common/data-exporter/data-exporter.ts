@@ -172,6 +172,14 @@ export class DataExporter extends LitElement {
   @state() exportSchedule: ScheduleConfig[] = [];
 
   /**
+   * ダイアログに表示するラベル名
+   *
+   * @type {string}
+   * @memberof DataExporter
+   */
+  @property({ type: String }) label: string = "";
+
+  /**
    * バックアップ設定保存用のKEY
    *
    * @type {string}
@@ -335,7 +343,7 @@ export class DataExporter extends LitElement {
 
     return html` <wa-dialog
       light-dismiss
-      label="BACKUP CONFIG"
+      label="BACKUP CONFIG (${this.label})"
       id="dialog-config"
       .open=${this.open}
       @wa-hide=${() => (this.open = false)}
