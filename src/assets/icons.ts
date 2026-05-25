@@ -1,3 +1,4 @@
+import algolia_brands_solid_full from "@assets/icons/algolia-brands-solid-full.svg?raw";
 import angle_down_solid_full from "@assets/icons/angle-down-solid-full.svg?raw";
 import angle_left_solid_full from "@assets/icons/angle-left-solid-full.svg?raw";
 import angle_right_solid_full from "@assets/icons/angle-right-solid-full.svg?raw";
@@ -25,6 +26,7 @@ import caret_right_solid_full from "@assets/icons/caret-right-solid-full.svg?raw
 import check_solid_full from "@assets/icons/check-solid-full.svg?raw";
 import circle_check_regular_full from "@assets/icons/circle-check-regular-full.svg?raw";
 import circle_check_solid_full from "@assets/icons/circle-check-solid-full.svg?raw";
+import circle_dot_regular_full from "@assets/icons/circle-dot-regular-full.svg?raw";
 import circle_exclamation_solid_full from "@assets/icons/circle-exclamation-solid-full.svg?raw";
 import circle_info_solid_full from "@assets/icons/circle-info-solid-full.svg?raw";
 import circle_play_solid_full from "@assets/icons/circle-play-solid-full.svg?raw";
@@ -58,6 +60,7 @@ import hashtag_solid_full from "@assets/icons/hashtag-solid-full.svg?raw";
 import heading_solid_full from "@assets/icons/heading-solid-full.svg?raw";
 import html5_brands_solid_full from "@assets/icons/html5-brands-solid-full.svg?raw";
 import icon_hub_address from "@assets/icons/icon-hub-address.svg?raw";
+import inbox_solid_full from "@assets/icons/inbox-solid-full.svg?raw";
 import italic_solid_full from "@assets/icons/italic-solid-full.svg?raw";
 import link_solid_full from "@assets/icons/link-solid-full.svg?raw";
 import list_check_solid_full from "@assets/icons/list-check-solid-full.svg?raw";
@@ -85,6 +88,7 @@ import upload_solid_full from "@assets/icons/upload-solid-full.svg?raw";
 import xmark_solid_full from "@assets/icons/xmark-solid-full.svg?raw";
 
 export const icons: Record<string, string> = {
+  "algolia-brands-solid-full": algolia_brands_solid_full,
   "angle-down-solid-full": angle_down_solid_full,
   "angle-left-solid-full": angle_left_solid_full,
   "angle-right-solid-full": angle_right_solid_full,
@@ -112,6 +116,7 @@ export const icons: Record<string, string> = {
   "check-solid-full": check_solid_full,
   "circle-check-regular-full": circle_check_regular_full,
   "circle-check-solid-full": circle_check_solid_full,
+  "circle-dot-regular-full": circle_dot_regular_full,
   "circle-exclamation-solid-full": circle_exclamation_solid_full,
   "circle-info-solid-full": circle_info_solid_full,
   "circle-play-solid-full": circle_play_solid_full,
@@ -145,6 +150,7 @@ export const icons: Record<string, string> = {
   "heading-solid-full": heading_solid_full,
   "html5-brands-solid-full": html5_brands_solid_full,
   "icon-hub-address": icon_hub_address,
+  "inbox-solid-full": inbox_solid_full,
   "italic-solid-full": italic_solid_full,
   "link-solid-full": link_solid_full,
   "list-check-solid-full": list_check_solid_full,

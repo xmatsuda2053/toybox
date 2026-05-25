@@ -179,53 +179,6 @@ export class SnList extends LitElement {
   private _dbSubscription?: Subscription;
 
   /**
-   * 期限切れタスクの有無
-   *
-   * @private
-   * @memberof SnList
-   */
-  @state() private _hasOverdue = false;
-
-  /**
-   * 期限当日タスクの有無
-   *
-   * @private
-   * @memberof SnList
-   */
-  @state() private _hasAsap = false;
-
-  /**
-   * 期限間近タスクの有無
-   *
-   * @private
-   * @memberof SnList
-   */
-  @state() private _hasUpcoming = false;
-
-  /**
-   * 期限切れのアラートアニメーションを停止する。
-   *
-   * @private
-   * @memberof SnList
-   */
-  @state() private _overdueAlertStop = false;
-
-  /**
-   * 期限当日のアラートアニメーションを停止する。
-   *
-   * @private
-   * @memberof SnList
-   */
-  @state() private _asapAlertStop = false;
-
-  /**
-   * 期限間近のアラートアニメーションを停止する。
-   *
-   * @private
-   */
-  @state() private _upcomingAlertStop = false;
-
-  /**
    * スタイルシートを適用
    *
    * @static
@@ -252,12 +205,33 @@ export class SnList extends LitElement {
       this._openAddTaskEditor();
     }
     if (e.altKey && e.shiftKey && (e.key === "F" || e.key === "f")) {
-      await snDB.resetQuickAccessSelected();
-      await snDB.resetLabelSelected();
-      await this.updateComplete;
-      this._inputSearch.focus();
+      this._setAllSearchMode();
     }
   };
+
+  /**
+   * 全検索モード切替
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _setAllSearchMode() {
+    await snDB.resetQuickAccessSelected();
+    await snDB.resetLabelSelected();
+    await this.updateComplete;
+    this._inputSearch.focus();
+  }
+
+  /**
+   * 実行中タスクのみ表示します。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private async _showInProgress() {
+    await snDB.showInProgress();
+    await snDB.resetLabelSelected();
+  }
 
   /**
    * Creates an instance of SnList.
@@ -290,32 +264,20 @@ export class SnList extends LitElement {
     this._dbSubscription?.unsubscribe();
 
     const observable = liveQuery(async () => {
-      const [
-        quickAccess,
-        labels,
-        tasks,
-        activeFiscalYears,
-        hasOverdue,
-        hasAsap,
-        hasUpcoming,
-      ] = await Promise.all([
-        snDB.getQuickAccess(),
-        snDB.selectLabelsAscName(),
-        snDB.selectTaskAscSortKey(this._filterKeyword),
-        snDB.getActiveFiscalYears(this._filterKeyword),
-        snDB.hasOverdueTasks(),
-        snDB.hasAsapTasks(),
-        snDB.hasUpcomingTasks(),
-      ]);
+      const [quickAccess, labels, tasks, activeFiscalYears] = await Promise.all(
+        [
+          snDB.getQuickAccess(),
+          snDB.selectLabelsAscName(),
+          snDB.selectTaskAscSortKey(this._filterKeyword),
+          snDB.getActiveFiscalYears(this._filterKeyword),
+        ],
+      );
 
       return {
         quickAccess,
         labels,
         tasks,
         activeFiscalYears,
-        hasOverdue,
-        hasAsap,
-        hasUpcoming,
       };
     });
 
@@ -324,9 +286,6 @@ export class SnList extends LitElement {
         this._labels = data.labels;
         this._tasks = data.tasks;
         this._activeFiscalYears = data.activeFiscalYears;
-        this._hasOverdue = data.hasOverdue;
-        this._hasAsap = data.hasAsap;
-        this._hasUpcoming = data.hasUpcoming;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -413,42 +372,26 @@ export class SnList extends LitElement {
       <div class="header">
         LIST
         <span class="end"></span>
-        ${this._hasUpcoming
-          ? html`<wa-icon
-              id="btn-info"
-              class="btn"
-              library="my-icons"
-              name="calendar-solid-full"
-              animation=${ifDefined(
-                this._upcomingAlertStop ? undefined : "bounce",
-              )}
-              @click=${this._viewUpcomingTasks}
-            ></wa-icon>`
-          : html``}
-        ${this._hasAsap
-          ? html`<wa-icon
-              id="btn-warning"
-              class="btn"
-              library="my-icons"
-              name="triangle-exclamation-solid-full"
-              animation=${ifDefined(this._asapAlertStop ? undefined : "bounce")}
-              @click=${this._viewAsapTasks}
-            ></wa-icon>`
-          : html``}
-        ${this._hasOverdue
-          ? html`<wa-icon
-              id="btn-alert"
-              class="btn"
-              library="my-icons"
-              name="fire-solid-full"
-              animation=${ifDefined(
-                this._overdueAlertStop ? undefined : "bounce",
-              )}
-              @click=${this._viewOverdueTasks}
-            ></wa-icon>`
-          : html``}
         ${hasLabel
-          ? html` <wa-tooltip for="btn-add" placement="top">Add</wa-tooltip>
+          ? html` <wa-tooltip for="btn-incomplete-task" placement="top">
+                Show In Progress
+              </wa-tooltip>
+              <wa-icon
+                id="btn-incomplete-task"
+                library="my-icons"
+                name="inbox-solid-full"
+                @click=${this._showInProgress}
+              ></wa-icon>
+              <wa-tooltip for="btn-search-all-mode" placement="top">
+                Find All Mode
+              </wa-tooltip>
+              <wa-icon
+                id="btn-search-all-mode"
+                library="my-icons"
+                name="algolia-brands-solid-full"
+                @click=${this._setAllSearchMode}
+              ></wa-icon>
+              <wa-tooltip for="btn-add" placement="top">Add</wa-tooltip>
               <wa-icon
                 id="btn-add"
                 library="my-icons"
@@ -752,38 +695,5 @@ export class SnList extends LitElement {
    */
   private _filterTasksByFiscalYear(targetYear: number): Task[] {
     return this._tasks.filter((task) => task.fiscalYear === targetYear);
-  }
-
-  /**
-   * 期限切れタスクを表示します。
-   *
-   * @private
-   * @memberof SnList
-   */
-  private async _viewOverdueTasks() {
-    this._overdueAlertStop = true;
-    await snDB.viewOverdueTasks();
-  }
-
-  /**
-   * 期限当日タスクを表示します。
-   *
-   * @private
-   * @memberof SnList
-   */
-  private async _viewAsapTasks() {
-    this._asapAlertStop = true;
-    await snDB.viewAsapTasks();
-  }
-
-  /**
-   * 期限間近タスクを表示します。
-   *
-   * @private
-   * @memberof SnList
-   */
-  private async _viewUpcomingTasks() {
-    this._upcomingAlertStop = true;
-    await snDB.viewUpcomingTasks();
   }
 }
