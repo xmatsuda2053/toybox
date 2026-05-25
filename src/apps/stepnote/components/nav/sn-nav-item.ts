@@ -9,7 +9,7 @@ import {
 } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 // 3. Third-party UI & SDKs
@@ -100,6 +100,14 @@ export class SnNavItem extends LitElement {
   @property({ type: Boolean }) isViewable: boolean = false;
 
   /**
+   * 条件に該当するタスクを持つことを示す。
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) hasTargetTask: boolean = false;
+
+  /**
    * アイテムの種類
    *
    * @type {string}
@@ -111,6 +119,14 @@ export class SnNavItem extends LitElement {
     | "neutral"
     | "success"
     | "warning" = "neutral";
+
+  /**
+   * アニメーションの状態を制御する
+   *
+   * @private
+   * @memberof SnNavItem
+   */
+  @state() private _animation = true;
 
   /**
    * スタイルシートを適用
@@ -155,17 +171,54 @@ export class SnNavItem extends LitElement {
       viewable: this.isViewable,
     });
     return html`<div id="contents-root" class=${baseClassMap}>
-      <div class="button-area" @click=${() => emit(this, this.eventName)}>
+      <div class="button-area" @click=${this._handleClick}>
         <div class="icon">
-          <wa-icon library="my-icons" name="${this.icon}"></wa-icon>
+          <wa-icon
+            class="start-icon"
+            library="my-icons"
+            name="${this.icon}"
+            .animation=${this._animation && this.hasTargetTask
+              ? "bounce"
+              : undefined}
+          ></wa-icon>
         </div>
         <div class="label">
           ${this._getSelectedIcon()}
           <slot></slot>
         </div>
       </div>
-      <div class="end">${this._getViewableIcon()}${this._renderDropdown()}</div>
+      <div class="end">
+        ${this._getTargetIcon()} ${this._getViewableIcon()}
+        ${this._renderDropdown()}
+      </div>
     </div>`;
+  }
+
+  /**
+   * クリックイベント
+   *
+   * @private
+   * @memberof SnNavItem
+   */
+  private _handleClick() {
+    this._animation = false;
+    emit(this, this.eventName);
+  }
+
+  /**
+   * 該当タスクありのアイコンを返します。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnNavItem
+   */
+  private _getTargetIcon(): HTMLTemplateResult {
+    if (!this.hasTargetTask) return html``;
+    return html` <wa-icon
+      class="target-task-dot"
+      library="my-icons"
+      name="circle-dot-regular-full"
+    ></wa-icon>`;
   }
 
   /**

@@ -59,6 +59,30 @@ export class SnNavSectionQuick extends LitElement {
   @state() private _quickAccess!: QuickAccess;
 
   /**
+   * 期限切れタスクの有無
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _hasOverdue = false;
+
+  /**
+   * 期限当日タスクの有無
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _hasAsap = false;
+
+  /**
+   * 期限間近タスクの有無
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _hasUpcoming = false;
+
+  /**
    * Labelテーブルの更新を検知する
    *
    * @private
@@ -91,10 +115,30 @@ export class SnNavSectionQuick extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
-    const observable = liveQuery(() => snDB.quickAccesses.toArray());
+    const observable = liveQuery(async () => {
+      const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
+        [
+          snDB.getQuickAccess(),
+          snDB.hasOverdueTasks(),
+          snDB.hasAsapTasks(),
+          snDB.hasUpcomingTasks(),
+        ],
+      );
+
+      return {
+        quickAccess,
+        hasOverdue,
+        hasAsap,
+        hasUpcoming,
+      };
+    });
+
     this._dbSubscription = observable.subscribe({
-      next: async () => {
-        this._quickAccess = await snDB.getQuickAccess();
+      next: async (data) => {
+        this._quickAccess = data.quickAccess;
+        this._hasOverdue = data.hasOverdue;
+        this._hasAsap = data.hasAsap;
+        this._hasUpcoming = data.hasUpcoming;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -178,7 +222,8 @@ export class SnNavSectionQuick extends LitElement {
             eventName="click-overdue"
             .isDanger=${true}
             .isSelected=${this._quickAccess?.isOverdueSelected === 1}
-            @click-overdue=${() => {
+            .hasTargetTask=${this._hasOverdue}
+            @click-overdue=${async () => {
               this._toggleSelected("isOverdueSelected");
             }}
           >
@@ -189,6 +234,7 @@ export class SnNavSectionQuick extends LitElement {
             eventName="click-asap"
             .isWarning=${true}
             .isSelected=${this._quickAccess?.isAsapSelected === 1}
+            .hasTargetTask=${this._hasAsap}
             @click-asap=${() => {
               this._toggleSelected("isAsapSelected");
             }}
@@ -200,6 +246,7 @@ export class SnNavSectionQuick extends LitElement {
             eventName="click-upcoming"
             .isInfo=${true}
             .isSelected=${this._quickAccess?.isUpcomingSelected === 1}
+            .hasTargetTask=${this._hasUpcoming}
             @click-upcoming=${() => {
               this._toggleSelected("isUpcomingSelected");
             }}
@@ -269,7 +316,7 @@ export class SnNavSectionQuick extends LitElement {
    * @return {void}
    * @memberof SnNavSectionQuick
    */
-  private _toggleSelected(key: keyof QuickAccess) {
+  private async _toggleSelected(key: keyof QuickAccess): Promise<void> {
     if (typeof this._quickAccess[key] !== "number") {
       this._quickAccess[key] = 0;
     }
@@ -277,6 +324,6 @@ export class SnNavSectionQuick extends LitElement {
     const target: QuickAccess = { ...this._quickAccess };
     target[key] = !target[key] ? 1 : 0;
 
-    snDB.putQuickAccess(target);
+    await snDB.putQuickAccess(target);
   }
 }

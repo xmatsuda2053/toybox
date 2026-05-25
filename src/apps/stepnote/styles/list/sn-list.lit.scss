@@ -32,23 +32,6 @@
         transform 0.2s ease-in-out,
         color 0.2s;
 
-      &.btn {
-        --animation-duration: 2s;
-        --fade-opacity: 0.6;
-
-        &#btn-alert {
-          color: var(--wa-color-danger-60);
-        }
-
-        &#btn-warning {
-          color: var(--wa-color-yellow-60);
-        }
-
-        &#btn-info {
-          color: var(--wa-color-cyan-60);
-        }
-      }
-
       &:hover {
         color: var(--wa-color-neutral-70);
       }

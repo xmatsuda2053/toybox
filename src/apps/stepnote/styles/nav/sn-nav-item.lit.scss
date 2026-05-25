@@ -38,11 +38,18 @@ $line-height: 1.8em;
     .icon {
       font-size: var(--wa-font-size-m);
       flex-shrink: 0;
+
+      --animation-duration: 2s;
+      --fade-opacity: 0.6;
     }
   }
 
   .end {
     margin-inline-start: auto;
+
+    .target-task-dot {
+      color: var(--wa-color-green-60);
+    }
 
     wa-dropdown {
       wa-dropdown-item {
@@ -66,19 +73,19 @@ $line-height: 1.8em;
   }
 
   &.danger {
-    wa-icon {
+    .start-icon {
       color: var(--wa-color-danger-60);
     }
   }
 
   &.warning {
-    wa-icon {
+    .start-icon {
       color: var(--wa-color-yellow-60);
     }
   }
 
   &.info {
-    wa-icon {
+    .start-icon {
       color: var(--wa-color-cyan-60);
     }
   }
