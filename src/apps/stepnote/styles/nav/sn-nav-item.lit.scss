@@ -90,6 +90,24 @@ $line-height: 1.8em;
     }
   }
 
+  &.pending {
+    .start-icon {
+      color: var(--wa-color-neutral-95);
+    }
+  }
+
+  &.progress {
+    .start-icon {
+      color: var(--wa-color-brand-60);
+    }
+  }
+
+  &.done {
+    .start-icon {
+      color: var(--wa-color-success-60);
+    }
+  }
+
   &.viewable:not(.selected) {
     .label,
     .end {
