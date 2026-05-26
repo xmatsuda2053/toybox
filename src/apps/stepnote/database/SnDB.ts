@@ -202,17 +202,12 @@ export class SnDB extends Dexie {
    * @memberof SnDB
    */
   async showInProgress() {
-    const newData: QuickAccess = {
-      id: 1,
-      isBookmarkSelected: 0,
-      isDoneSelected: 0,
-      isOverdueSelected: 0,
-      isAsapSelected: 0,
-      isUpcomingSelected: 0,
-      isProgressSelected: 1,
-      isPendingSelected: 1,
-      isUncategorizedSelected: 0,
-    };
+    const newData = await this.getQuickAccess();
+
+    newData.isDoneSelected = 0;
+    newData.isProgressSelected = 1;
+    newData.isPendingSelected = 1;
+
     await this.putQuickAccess(newData);
   }
 

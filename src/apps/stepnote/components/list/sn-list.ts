@@ -11,7 +11,6 @@ import { liveQuery, type Subscription } from "dexie";
 
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, query, state } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined.js";
 import "@lit-labs/virtualizer";
 
 // 3. Third-party UI & SDKs (WebAwesome)
@@ -219,7 +218,6 @@ export class SnList extends LitElement {
     await snDB.resetQuickAccessSelected();
     await snDB.resetLabelSelected();
     await this.updateComplete;
-    this._inputSearch.focus();
   }
 
   /**
