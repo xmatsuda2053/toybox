@@ -196,6 +196,7 @@ export class SnNavSectionQuick extends LitElement {
       <div class="contents ${this.isExpanded ? "open" : ""}">
         <div class="contents-inner">
           <wa-divider></wa-divider>
+          <!--お気に入り-->
           <sn-nav-item
             icon="bookmark-regular-full"
             eventName="click-bookmark"
@@ -206,6 +207,7 @@ export class SnNavSectionQuick extends LitElement {
           >
             お気に入り
           </sn-nav-item>
+          <!--未分類-->
           <sn-nav-item
             icon="question-solid-full"
             eventName="click-uncategorized"
@@ -217,6 +219,7 @@ export class SnNavSectionQuick extends LitElement {
             未分類
           </sn-nav-item>
           <wa-divider></wa-divider>
+          <!--期限切れ-->
           <sn-nav-item
             icon="fire-solid-full"
             eventName="click-overdue"
@@ -229,6 +232,7 @@ export class SnNavSectionQuick extends LitElement {
           >
             期限切れ
           </sn-nav-item>
+          <!--期限当日-->
           <sn-nav-item
             icon="triangle-exclamation-solid-full"
             eventName="click-asap"
@@ -241,6 +245,7 @@ export class SnNavSectionQuick extends LitElement {
           >
             期限当日
           </sn-nav-item>
+          <!--期限間近-->
           <sn-nav-item
             icon="calendar-solid-full"
             eventName="click-upcoming"
@@ -254,9 +259,11 @@ export class SnNavSectionQuick extends LitElement {
             期限間近
           </sn-nav-item>
           <wa-divider></wa-divider>
+          <!--完了-->
           <sn-nav-item
             icon=${DONE.iconName}
             eventName="click-done"
+            .isDone=${true}
             .isSelected=${this._quickAccess?.isDoneSelected === 1}
             .isViewable=${true}
             @click-done=${() => {
@@ -265,9 +272,11 @@ export class SnNavSectionQuick extends LitElement {
           >
             ${DONE.label}
           </sn-nav-item>
+          <!--対応中-->
           <sn-nav-item
             icon=${PROGRESS.iconName}
             eventName="click-progress"
+            .isProgress=${true}
             .isSelected=${this._quickAccess?.isProgressSelected === 1}
             .isViewable=${true}
             @click-progress=${() => {
@@ -276,9 +285,11 @@ export class SnNavSectionQuick extends LitElement {
           >
             ${PROGRESS.label}
           </sn-nav-item>
+          <!--開始待ち-->
           <sn-nav-item
             icon=${PENDING.iconName}
             eventName="click-pending"
+            .isPending=${true}
             .isSelected=${this._quickAccess?.isPendingSelected === 1}
             .isViewable=${true}
             @click-pending=${() => {

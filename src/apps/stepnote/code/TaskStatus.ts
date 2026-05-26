@@ -2,9 +2,9 @@ export type TaskStatusCode = "0" | "5" | "9";
 export type TaskStatusName = "pending" | "progress" | "done";
 export type TaskStatusLabel = "開始待ち" | "対応中" | "完了";
 export type TaskIconName =
-  | "stop-solid-full"
-  | "play-solid-full"
-  | "check-solid-full";
+  | "circle-stop-solid-full"
+  | "circle-play-solid-full"
+  | "circle-check-solid-full";
 export type TaskIconNameSub =
   | "circle-stop-solid-full"
   | "circle-play-solid-full"
@@ -15,21 +15,21 @@ export class TaskStatus {
     "0",
     "pending",
     "開始待ち",
-    "stop-solid-full",
+    "circle-stop-solid-full",
     "circle-stop-solid-full",
   );
   static readonly PROGRESS = new TaskStatus(
     "5",
     "progress",
     "対応中",
-    "play-solid-full",
+    "circle-play-solid-full",
     "circle-play-solid-full",
   );
   static readonly DONE = new TaskStatus(
     "9",
     "done",
     "完了",
-    "check-solid-full",
+    "circle-check-solid-full",
     "circle-check-solid-full",
   );
 

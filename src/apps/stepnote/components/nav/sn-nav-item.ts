@@ -84,6 +84,30 @@ export class SnNavItem extends LitElement {
   @property({ type: Boolean }) isInfo: boolean = false;
 
   /**
+   * 開始待ちラベルであることを示す。
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) isPending: boolean = false;
+
+  /**
+   * 対応中ラベルであることを示す。
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) isProgress: boolean = false;
+
+  /**
+   * 完了ラベルであることを示す。
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) isDone: boolean = false;
+
+  /**
    * 選択状態
    *
    * @type {boolean}
@@ -167,6 +191,9 @@ export class SnNavItem extends LitElement {
       danger: this.isDanger,
       warning: this.isWarning,
       info: this.isInfo,
+      pending: this.isPending,
+      progress: this.isProgress,
+      done: this.isDone,
       selected: this.isSelected,
       viewable: this.isViewable,
     });
