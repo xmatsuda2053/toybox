@@ -31,6 +31,7 @@ import {
   CalloutTagExtension,
   formatMarkdown as formatCalloutMarkdown,
 } from "./extension/callout-tag";
+import { addTimeStamp } from "./extension/timestamp";
 import { emit } from "@utils/EventUtils";
 
 // 5. Styles
@@ -392,7 +393,7 @@ export class ThinMarkdownEditor extends LitElement {
                   ></wa-icon>
                 </wa-button>
                 ${this._renderCalloutButton()} ${this._renderColorButton()}
-                ${this._renderTableButton()}
+                ${this._renderTableButton()} ${this._renderTimeStampButton()}
               </wa-dropdown>
             </markdown-toolbar>
           </div>
@@ -548,6 +549,20 @@ export class ThinMarkdownEditor extends LitElement {
   }
 
   /**
+   * タイムスタンプを挿入するためのドロップダウンアイテムをレンダリングします。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTimeStampButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._addTimeStamp}>
+      <wa-icon library="my-icons" name="clock-regular-full"></wa-icon>
+      <span>TimeStamp</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
    * エディタの入力イベントを処理する。
    *
    * @private
@@ -695,6 +710,25 @@ ${Array(row).fill(record).join("\n")}\n`;
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
 
     this.tableDialog.open = false;
+  }
+
+  /**
+   * カーソル位置にタイムスタンプを挿入する。
+   *
+   * @private
+   * @return {*}
+   * @memberof ThinMarkdownEditor
+   */
+  private _addTimeStamp() {
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    addTimeStamp(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
   /**
