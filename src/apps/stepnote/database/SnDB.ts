@@ -204,6 +204,9 @@ export class SnDB extends Dexie {
   async showInProgress() {
     const newData = await this.getQuickAccess();
 
+    newData.isOverdueSelected = 0;
+    newData.isAsapSelected = 0;
+    newData.isUpcomingSelected = 0;
     newData.isDoneSelected = 0;
     newData.isProgressSelected = 1;
     newData.isPendingSelected = 1;
