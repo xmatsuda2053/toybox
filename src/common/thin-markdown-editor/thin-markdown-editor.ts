@@ -356,7 +356,7 @@ export class ThinMarkdownEditor extends LitElement {
                 size="small"
                 appearance="plain"
                 variant="neutral"
-                title="clipboard"
+                title="Copy Raw"
                 @click=${this._copyMarkdownToClipboard}
               >
                 <wa-icon library="my-icons" name="copy-regular-full"></wa-icon>
@@ -377,88 +377,23 @@ export class ThinMarkdownEditor extends LitElement {
                               </${unsafeStatic(config.tag)}>
                           `;
               })}
-              <!--コールアウト追加-->
+              <!--拡張機能-->
               <wa-dropdown size="small">
                 <wa-button
                   size="small"
                   appearance="plain"
                   variant="neutral"
-                  title="Callout"
+                  title="Extensions"
                   slot="trigger"
                 >
                   <wa-icon
                     library="my-icons"
-                    name="sign-hanging-solid-full"
+                    name="ellipsis-solid-full"
                   ></wa-icon>
                 </wa-button>
-                <wa-dropdown-item @click=${() => this._addCallout("info")}>
-                  <wa-icon
-                    class="info"
-                    library="my-icons"
-                    name="circle-info-solid-full"
-                    slot="icon"
-                  ></wa-icon>
-                  Info
-                </wa-dropdown-item>
-                <wa-dropdown-item @click=${() => this._addCallout("check")}>
-                  <wa-icon
-                    class="check"
-                    library="my-icons"
-                    name="circle-check-solid-full"
-                    slot="icon"
-                  ></wa-icon>
-                  Check
-                </wa-dropdown-item>
-                <wa-dropdown-item @click=${() => this._addCallout("gear")}>
-                  <wa-icon
-                    class="gear"
-                    library="my-icons"
-                    name="gear-solid-full"
-                    slot="icon"
-                  ></wa-icon>
-                  Gear
-                </wa-dropdown-item>
-                <wa-dropdown-item @click=${() => this._addCallout("warn")}>
-                  <wa-icon
-                    class="warn"
-                    library="my-icons"
-                    name="triangle-exclamation-solid-full"
-                    slot="icon"
-                  ></wa-icon>
-                  Warning
-                </wa-dropdown-item>
-                <wa-dropdown-item @click=${() => this._addCallout("alert")}>
-                  <wa-icon
-                    class="alert"
-                    library="my-icons"
-                    name="circle-exclamation-solid-full"
-                    slot="icon"
-                  ></wa-icon>
-                  Alert
-                </wa-dropdown-item>
+                ${this._renderCalloutButton()} ${this._renderColorButton()}
+                ${this._renderTableButton()}
               </wa-dropdown>
-
-              <!--カラー設定ボタン-->
-              <wa-button
-                size="small"
-                appearance="plain"
-                variant="neutral"
-                title="Color"
-                @click=${this._addColorText}
-              >
-                <wa-icon library="my-icons" name="palette-solid-full"></wa-icon>
-              </wa-button>
-              <!--テーブル追加ボタン-->
-              <wa-button
-                data-md-button
-                size="small"
-                appearance="plain"
-                variant="neutral"
-                title="Table"
-                @click=${this._openTableDialog}
-              >
-                <wa-icon library="my-icons" name="table-solid-full"></wa-icon>
-              </wa-button>
             </markdown-toolbar>
           </div>
         </div>
@@ -514,6 +449,102 @@ export class ThinMarkdownEditor extends LitElement {
         </wa-button>
       </wa-dialog>
     </div>`;
+  }
+
+  /**
+   * コールアウト（補足説明）の選択サブメニューを持つドロップダウンアイテムをレンダリングします。
+   * * 「Info」「Check」「Gear」「Warning」「Alert」の5つのスタイルに対応した
+   * アイコンとラベルのリストを展開し、クリック時にそれぞれのスタイルに応じた
+   * コールアウト挿入処理（`_addCallout`）を呼び出します。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderCalloutButton(): HTMLTemplateResult {
+    interface ParamItem {
+      class: "info" | "check" | "gear" | "warn" | "alert";
+      name: string;
+      label: string;
+    }
+    const params: ParamItem[] = [
+      {
+        class: "info",
+        name: "sign-hanging-solid-full",
+        label: "Info",
+      },
+      {
+        class: "check",
+        name: "circle-check-solid-full",
+        label: "Check",
+      },
+      {
+        class: "gear",
+        name: "gear-solid-full",
+        label: "Gear",
+      },
+      {
+        class: "warn",
+        name: "triangle-exclamation-solid-full",
+        label: "Warning",
+      },
+      {
+        class: "alert",
+        name: "circle-exclamation-solid-full",
+        label: "Alert",
+      },
+    ] as const;
+
+    return html` <wa-dropdown-item>
+      <wa-icon library="my-icons" name="sign-hanging-solid-full"></wa-icon>
+      <span>Callout</span>
+      ${params.map(
+        (p) =>
+          html` <wa-dropdown-item
+            slot="submenu"
+            @click=${() => this._addCallout(p.class)}
+          >
+            <wa-icon
+              class=${p.class}
+              library="my-icons"
+              name=${p.name}
+              slot="icon"
+            ></wa-icon>
+            ${p.label}
+          </wa-dropdown-item>`,
+      )}
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * テキストの配色を変更するためのドロップダウンアイテムをレンダリングします。
+   * * クリック時にテキストの色付け処理（`_addColorText`）を呼び出します。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderColorButton(): HTMLTemplateResult {
+    return html` <wa-dropdown-item @click=${this._addColorText}>
+      <wa-icon library="my-icons" name="palette-solid-full"></wa-icon>
+      <span>Color</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * テーブル（表）を挿入するためのドロップダウンアイテムをレンダリングします。
+   * * テーブルのアイコンを表示し、エディタ内に表を挿入・生成するための
+   * トリガーとして機能します。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTableButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._openTableDialog}>
+      <wa-icon library="my-icons" name="table-solid-full"></wa-icon>
+      <span>Table</span>
+    </wa-dropdown-item>`;
   }
 
   /**
