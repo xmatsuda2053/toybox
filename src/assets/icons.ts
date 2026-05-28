@@ -42,6 +42,7 @@ import cubes_solid_full from "@assets/icons/cubes-solid-full.svg?raw";
 import cubes_stacked_solid_full from "@assets/icons/cubes-stacked-solid-full.svg?raw";
 import dice_one_solid_full from "@assets/icons/dice-one-solid-full.svg?raw";
 import download_solid_full from "@assets/icons/download-solid-full.svg?raw";
+import ellipsis_solid_full from "@assets/icons/ellipsis-solid-full.svg?raw";
 import envelope_regular_full from "@assets/icons/envelope-regular-full.svg?raw";
 import envelope_solid_full from "@assets/icons/envelope-solid-full.svg?raw";
 import eraser_solid_full from "@assets/icons/eraser-solid-full.svg?raw";
@@ -132,6 +133,7 @@ export const icons: Record<string, string> = {
   "cubes-stacked-solid-full": cubes_stacked_solid_full,
   "dice-one-solid-full": dice_one_solid_full,
   "download-solid-full": download_solid_full,
+  "ellipsis-solid-full": ellipsis_solid_full,
   "envelope-regular-full": envelope_regular_full,
   "envelope-solid-full": envelope_solid_full,
   "eraser-solid-full": eraser_solid_full,
