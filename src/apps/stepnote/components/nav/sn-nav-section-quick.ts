@@ -333,8 +333,26 @@ export class SnNavSectionQuick extends LitElement {
     }
 
     const target: QuickAccess = { ...this._quickAccess };
-    target[key] = !target[key] ? 1 : 0;
+    const selected = !target[key] ? 1 : 0;
 
+    if (selected) {
+      if (
+        key === "isOverdueSelected" ||
+        key === "isAsapSelected" ||
+        key === "isUpcomingSelected"
+      ) {
+        await snDB.resetLabelSelected();
+
+        target.isOverdueSelected = 0;
+        target.isAsapSelected = 0;
+        target.isUpcomingSelected = 0;
+        target.isDoneSelected = 0;
+        target.isProgressSelected = 1;
+        target.isPendingSelected = 1;
+      }
+    }
+
+    target[key] = selected;
     await snDB.putQuickAccess(target);
   }
 }
