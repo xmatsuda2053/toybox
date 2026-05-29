@@ -1,15 +1,14 @@
 // 1. Core Libraries
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  nothing,
 } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 // 3. Third-party UI & SDKs
@@ -60,52 +59,23 @@ export class SnNavItem extends LitElement {
   @property({ type: Boolean }) editable: boolean = false;
 
   /**
-   * 警告ラベルであることを示す。
+   * アイコンカラー
    *
-   * @type {boolean}
+   * @type {("neutral"
+   *     | "danger"
+   *     | "warning"
+   *     | "info"
+   *     | "success"
+   *     | "brand")}
    * @memberof SnNavItem
    */
-  @property({ type: Boolean }) isDanger: boolean = false;
-
-  /**
-   * 注意ラベルであることを示す。
-   *
-   * @type {boolean}
-   * @memberof SnNavItem
-   */
-  @property({ type: Boolean }) isWarning: boolean = false;
-
-  /**
-   * 情報ラベルであることを示す。
-   *
-   * @type {boolean}
-   * @memberof SnNavItem
-   */
-  @property({ type: Boolean }) isInfo: boolean = false;
-
-  /**
-   * 開始待ちラベルであることを示す。
-   *
-   * @type {boolean}
-   * @memberof SnNavItem
-   */
-  @property({ type: Boolean }) isPending: boolean = false;
-
-  /**
-   * 対応中ラベルであることを示す。
-   *
-   * @type {boolean}
-   * @memberof SnNavItem
-   */
-  @property({ type: Boolean }) isProgress: boolean = false;
-
-  /**
-   * 完了ラベルであることを示す。
-   *
-   * @type {boolean}
-   * @memberof SnNavItem
-   */
-  @property({ type: Boolean }) isDone: boolean = false;
+  @property({ type: String }) variants:
+    | "neutral"
+    | "danger"
+    | "warning"
+    | "info"
+    | "success"
+    | "brand" = "neutral";
 
   /**
    * 選択状態
@@ -113,7 +83,15 @@ export class SnNavItem extends LitElement {
    * @type {boolean}
    * @memberof SnNavItem
    */
-  @property({ type: Boolean }) isSelected: boolean = false;
+  @property({ type: Boolean }) selected: boolean = false;
+
+  /**
+   * ドット表示有無
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) dot: boolean = false;
 
   /**
    * 要素の表示非表示制御であることを示す。
@@ -121,36 +99,15 @@ export class SnNavItem extends LitElement {
    * @type {boolean}
    * @memberof SnNavItem
    */
-  @property({ type: Boolean }) isViewable: boolean = false;
+  @property({ type: Boolean }) viewable: boolean = false;
 
   /**
-   * 条件に該当するタスクを持つことを示す。
+   * アニメーションの実行有無を制御する。
    *
    * @type {boolean}
    * @memberof SnNavItem
    */
-  @property({ type: Boolean }) hasTargetTask: boolean = false;
-
-  /**
-   * アイテムの種類
-   *
-   * @type {string}
-   * @memberof SnNavItem
-   */
-  @property({ type: String }) type:
-    | "danger"
-    | "brand"
-    | "neutral"
-    | "success"
-    | "warning" = "neutral";
-
-  /**
-   * アニメーションの状態を制御する
-   *
-   * @private
-   * @memberof SnNavItem
-   */
-  @state() private _animation = true;
+  @property({ type: Boolean }) animation: boolean = false;
 
   /**
    * スタイルシートを適用
@@ -158,25 +115,7 @@ export class SnNavItem extends LitElement {
    * @static
    * @memberof SnNavItem
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
-
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SnNavItem
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
   /**
    * ナビゲーションのアイテムをレンダリングします。
@@ -188,135 +127,152 @@ export class SnNavItem extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     const baseClassMap = classMap({
-      danger: this.isDanger,
-      warning: this.isWarning,
-      info: this.isInfo,
-      pending: this.isPending,
-      progress: this.isProgress,
-      done: this.isDone,
-      selected: this.isSelected,
-      viewable: this.isViewable,
+      [this.variants]: true,
+      selected: this.selected,
+      viewable: this.viewable,
     });
+
     return html`<div id="contents-root" class=${baseClassMap}>
-      <div class="button-area" @click=${this._handleClick}>
-        <div class="icon">
-          <wa-icon
-            class="start-icon"
-            library="my-icons"
-            name="${this.icon}"
-            .animation=${this._animation && this.hasTargetTask
-              ? "bounce"
-              : undefined}
-          ></wa-icon>
-        </div>
-        <div class="label">
-          ${this._getSelectedIcon()}
-          <slot></slot>
-        </div>
+      <div class="button-area" @click=${this._handleItemClick}>
+        <div class="icon">${this._renderIcon()}</div>
+        <div class="label">${this._renderCaret()}<slot></slot></div>
       </div>
-      <div class="end">
-        ${this._getTargetIcon()} ${this._getViewableIcon()}
-        ${this._renderDropdown()}
-      </div>
+      <div class="end">${this._renderDot()} ${this._renderEyeIcon()}</div>
+      ${this._renderMenu()}
     </div>`;
   }
 
   /**
-   * クリックイベント
-   *
-   * @private
-   * @memberof SnNavItem
-   */
-  private _handleClick() {
-    this._animation = false;
-    emit(this, this.eventName);
-  }
-
-  /**
-   * 該当タスクありのアイコンを返します。
+   * アイコンをレンダリングします。
    *
    * @private
    * @return {*}  {HTMLTemplateResult}
    * @memberof SnNavItem
    */
-  private _getTargetIcon(): HTMLTemplateResult {
-    if (!this.hasTargetTask) return html``;
-    return html` <wa-icon
-      class="target-task-dot"
+  private _renderIcon(): HTMLTemplateResult {
+    const animation = !this.selected && this.animation ? "bounce" : undefined;
+    return html`<wa-icon
+      class="start-icon"
       library="my-icons"
-      name="circle-dot-regular-full"
+      .name=${this.icon}
+      .animation=${animation}
     ></wa-icon>`;
   }
 
   /**
-   * 項目表示制御のアイコンを返します。
+   * キャレットアイコンをレンダリングします。
    *
    * @private
-   * @return {*}  {HTMLTemplateResult}
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
    * @memberof SnNavItem
    */
-  private _getViewableIcon(): HTMLTemplateResult {
-    if (!this.isViewable) return html``;
-
-    const iconName = this.isSelected
-      ? "eye-solid-full"
-      : "eye-slash-solid-full";
-
-    return html` <wa-icon library="my-icons" name=${iconName}></wa-icon>`;
-  }
-
-  /**
-   * 選択中の場合に表示するアイコンを返します。
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof SnNavItem
-   */
-  private _getSelectedIcon(): HTMLTemplateResult {
-    if (!this.isSelected) return html``;
-
-    return html` <wa-icon
-      library="my-icons"
-      name="caret-right-solid-full"
-    ></wa-icon>`;
-  }
-
-  /**
-   * ドロップダウンメニューを作成する
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof SnNavItem
-   */
-  private _renderDropdown(): HTMLTemplateResult {
-    if (!this.editable) return html``;
+  private _renderCaret(): HTMLTemplateResult | typeof nothing {
+    if (!this.selected) return nothing;
     return html`
-      <wa-dropdown>
-        <wa-icon
-          library="my-icons"
-          name="bars-solid-full"
-          slot="trigger"
-        ></wa-icon>
-        <wa-dropdown-item @click=${() => emit(this, "click-property")}>
-          <wa-icon
-            slot="icon"
-            library="my-icons"
-            name="sliders-solid-full"
-          ></wa-icon>
-          Property
-        </wa-dropdown-item>
-        <wa-dropdown-item
-          @click=${() => emit(this, "click-delete")}
-          class="danger"
-        >
-          <wa-icon
-            slot="icon"
-            library="my-icons"
-            name="trash-solid-full"
-          ></wa-icon>
-          Delete
-        </wa-dropdown-item>
-      </wa-dropdown>
+      <wa-icon library="my-icons" name="caret-right-solid-full"></wa-icon>
     `;
   }
+
+  /**
+   * ドットアイコンをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof SnNavItem
+   */
+  private _renderDot(): HTMLTemplateResult | typeof nothing {
+    if (!this.dot) return nothing;
+    return html`
+      <wa-icon
+        class="target-task-dot"
+        library="my-icons"
+        name="circle-dot-regular-full"
+      ></wa-icon>
+    `;
+  }
+
+  /**
+   * 表示／非表示アイコンをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof SnNavItem
+   */
+  private _renderEyeIcon(): HTMLTemplateResult | typeof nothing {
+    if (!this.viewable) return nothing;
+    return html`
+      <wa-icon
+        library="my-icons"
+        name=${this.selected ? "eye-solid-full" : "eye-slash-solid-full"}
+      ></wa-icon>
+    `;
+  }
+
+  /**
+   * ドロップダウンメニューをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof SnNavItem
+   */
+  private _renderMenu(): HTMLTemplateResult | typeof nothing {
+    if (!this.editable) return nothing;
+    return html` <wa-dropdown>
+      <wa-icon
+        library="my-icons"
+        name="bars-solid-full"
+        slot="trigger"
+      ></wa-icon>
+      <wa-dropdown-item @click=${this._handlePropertyClick}>
+        <wa-icon
+          slot="icon"
+          library="my-icons"
+          name="sliders-solid-full"
+        ></wa-icon>
+        Property
+      </wa-dropdown-item>
+      <wa-dropdown-item @click=${this._handleDeleteClick} class="danger">
+        <wa-icon
+          slot="icon"
+          library="my-icons"
+          name="trash-solid-full"
+        ></wa-icon>
+        Delete
+      </wa-dropdown-item>
+    </wa-dropdown>`;
+  }
+
+  /**
+   * アイテムクリックのイベントを制御します。
+   *
+   * @private
+   * @memberof SnNavItem
+   */
+  private _handleItemClick = (): void => {
+    emit(this, this.eventName);
+  };
+
+  /**
+   * プロパティクリックのイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnNavItem
+   */
+  private _handlePropertyClick = (e: Event): void => {
+    e.stopPropagation();
+    emit(this, "click-property");
+  };
+
+  /**
+   * 削除クリックのイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnNavItem
+   */
+  private _handleDeleteClick = (e: Event): void => {
+    e.stopPropagation();
+    emit(this, "click-delete");
+  };
 }

@@ -200,7 +200,7 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon="bookmark-regular-full"
             eventName="click-bookmark"
-            .isSelected=${this._quickAccess?.isBookmarkSelected === 1}
+            ?selected=${this._quickAccess?.isBookmarkSelected === 1}
             @click-bookmark=${() => {
               this._toggleSelected("isBookmarkSelected");
             }}
@@ -211,7 +211,7 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon="question-solid-full"
             eventName="click-uncategorized"
-            .isSelected=${this._quickAccess?.isUncategorizedSelected === 1}
+            ?selected=${this._quickAccess?.isUncategorizedSelected === 1}
             @click-uncategorized=${() => {
               this._toggleSelected("isUncategorizedSelected");
             }}
@@ -223,9 +223,10 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon="fire-solid-full"
             eventName="click-overdue"
-            .isDanger=${true}
-            .isSelected=${this._quickAccess?.isOverdueSelected === 1}
-            .hasTargetTask=${this._hasOverdue}
+            variants="danger"
+            ?selected=${this._quickAccess?.isOverdueSelected === 1}
+            ?animation=${this._hasOverdue}
+            ?dot=${this._hasOverdue}
             @click-overdue=${async () => {
               this._toggleSelected("isOverdueSelected");
             }}
@@ -236,9 +237,10 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon="triangle-exclamation-solid-full"
             eventName="click-asap"
-            .isWarning=${true}
-            .isSelected=${this._quickAccess?.isAsapSelected === 1}
-            .hasTargetTask=${this._hasAsap}
+            variants="warning"
+            ?selected=${this._quickAccess?.isAsapSelected === 1}
+            ?animation=${this._hasAsap}
+            ?dot=${this._hasAsap}
             @click-asap=${() => {
               this._toggleSelected("isAsapSelected");
             }}
@@ -249,9 +251,10 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon="calendar-solid-full"
             eventName="click-upcoming"
-            .isInfo=${true}
-            .isSelected=${this._quickAccess?.isUpcomingSelected === 1}
-            .hasTargetTask=${this._hasUpcoming}
+            variants="info"
+            ?selected=${this._quickAccess?.isUpcomingSelected === 1}
+            ?animation=${this._hasUpcoming}
+            ?dot=${this._hasUpcoming}
             @click-upcoming=${() => {
               this._toggleSelected("isUpcomingSelected");
             }}
@@ -263,9 +266,10 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon=${DONE.iconName}
             eventName="click-done"
+            variants="success"
             .isDone=${true}
-            .isSelected=${this._quickAccess?.isDoneSelected === 1}
-            .isViewable=${true}
+            ?selected=${this._quickAccess?.isDoneSelected === 1}
+            ?viewable=${true}
             @click-done=${() => {
               this._toggleSelected("isDoneSelected");
             }}
@@ -276,9 +280,9 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon=${PROGRESS.iconName}
             eventName="click-progress"
-            .isProgress=${true}
-            .isSelected=${this._quickAccess?.isProgressSelected === 1}
-            .isViewable=${true}
+            variants="brand"
+            ?selected=${this._quickAccess?.isProgressSelected === 1}
+            ?viewable=${true}
             @click-progress=${() => {
               this._toggleSelected("isProgressSelected");
             }}
@@ -289,9 +293,8 @@ export class SnNavSectionQuick extends LitElement {
           <sn-nav-item
             icon=${PENDING.iconName}
             eventName="click-pending"
-            .isPending=${true}
-            .isSelected=${this._quickAccess?.isPendingSelected === 1}
-            .isViewable=${true}
+            ?selected=${this._quickAccess?.isPendingSelected === 1}
+            ?viewable=${true}
             @click-pending=${() => {
               this._toggleSelected("isPendingSelected");
             }}

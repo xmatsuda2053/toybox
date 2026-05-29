@@ -243,7 +243,7 @@ export class SnNavSectionLabel extends LitElement {
           (label) =>
             html`<sn-nav-item
               .editable=${true}
-              .isSelected=${label.isSelected === 1}
+              ?selected=${label.isSelected === 1}
               @click-nav-item=${() => this._handleClickLabel(label)}
               @click-property=${() => this._showLabelProperties(label)}
               @click-delete=${() => this._OpenDeleteDialog(label)}
