@@ -117,6 +117,48 @@ export class SnNavItem extends LitElement {
    */
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
+  /**
+   * アイテムクリックのイベントを制御します。
+   *
+   * @private
+   * @memberof SnNavItem
+   */
+  private _handleItemClick = (): void => {
+    emit(this, this.eventName);
+  };
+
+  /**
+   * プロパティクリックのイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnNavItem
+   */
+  private _handlePropertyClick = (e: Event): void => {
+    e.stopPropagation();
+    emit(this, "click-property");
+  };
+
+  /**
+   * 削除クリックのイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnNavItem
+   */
+  private _handleDeleteClick = (e: Event): void => {
+    e.stopPropagation();
+    emit(this, "click-delete");
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
+
   /**
    * ナビゲーションのアイテムをレンダリングします。
    *
@@ -241,38 +283,4 @@ export class SnNavItem extends LitElement {
       </wa-dropdown-item>
     </wa-dropdown>`;
   }
-
-  /**
-   * アイテムクリックのイベントを制御します。
-   *
-   * @private
-   * @memberof SnNavItem
-   */
-  private _handleItemClick = (): void => {
-    emit(this, this.eventName);
-  };
-
-  /**
-   * プロパティクリックのイベントを制御します。
-   *
-   * @private
-   * @param {Event} e
-   * @memberof SnNavItem
-   */
-  private _handlePropertyClick = (e: Event): void => {
-    e.stopPropagation();
-    emit(this, "click-property");
-  };
-
-  /**
-   * 削除クリックのイベントを制御します。
-   *
-   * @private
-   * @param {Event} e
-   * @memberof SnNavItem
-   */
-  private _handleDeleteClick = (e: Event): void => {
-    e.stopPropagation();
-    emit(this, "click-delete");
-  };
 }
