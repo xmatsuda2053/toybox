@@ -168,7 +168,7 @@ export class SnTaskSummary extends LitElement {
           >
             <wa-icon
               library="my-icons"
-              name=${status.iconNameSub}
+              name=${status.iconName}
               class="status-icon"
               slot="start"
             ></wa-icon>

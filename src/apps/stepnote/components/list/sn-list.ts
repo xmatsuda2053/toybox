@@ -413,7 +413,7 @@ export class SnList extends LitElement {
             } else {
               return html`<sn-list-item
                 .task=${item.task}
-                .labelName=${this._getLabelName(item.labelId)}
+                .label=${this._getLabelName(item.labelId)}
                 slot="item"
               ></sn-list-item>`;
             }

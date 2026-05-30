@@ -1,39 +1,44 @@
+// ==========================================
+// 1. 定数・マップの定義
+// ==========================================
+$due-icon-colors: (
+  overdue: var(--wa-color-danger-60),
+  asap: var(--wa-color-yellow-60),
+  upcoming: var(--wa-color-cyan-60),
+);
+
+$status-icon-colors: (
+  pending: var(--wa-color-neutral-5),
+  progress: var(--wa-color-brand-50),
+  done: var(--wa-color-success-50),
+);
+
+// ==========================================
+// 2. メインコンポーネント
+// ==========================================
 #contents-root {
-  cursor: pointer;
   display: flex;
   gap: var(--wa-space-xs);
-
-  position: relative;
-
-  background: var(--wa-color-neutral-20);
-  color: var(--wa-color-neutral-95);
-
   padding-block: var(--wa-space-xs);
   padding-inline: var(--wa-space-xs);
   margin-block-end: var(--wa-space-xs);
 
+  position: relative;
+
+  cursor: pointer;
+  background: var(--wa-color-neutral-20);
+  color: var(--wa-color-neutral-95);
   border-radius: var(--wa-border-radius-m);
   border: 1px solid var(--wa-color-neutral-50);
 
-  &.overdue {
-    .due {
-      wa-icon {
-        color: var(--wa-color-danger-60);
-      }
-    }
+  &:hover {
+    background: var(--wa-color-neutral-90);
+    color: var(--wa-color-neutral-5);
   }
-  &.asap {
-    .due {
-      wa-icon {
-        color: var(--wa-color-yellow-60);
-      }
-    }
-  }
-  &.upcoming {
-    .due {
-      wa-icon {
-        color: var(--wa-color-cyan-60);
-      }
+
+  @each $due, $color in $due-icon-colors {
+    &.#{$due} .due wa-icon {
+      color: $color;
     }
   }
 
@@ -41,59 +46,51 @@
     background: var(--wa-color-neutral-80);
     color: var(--wa-color-neutral-5);
   }
-  &:hover {
-    background: var(--wa-color-neutral-90);
-    color: var(--wa-color-neutral-5);
-  }
 
   .task-area {
     flex: 1;
-    min-width: 0;
     display: flex;
     gap: var(--wa-space-xs);
+    min-width: 0;
 
     .status-icon {
       display: flex;
       padding-block-start: 2.5px;
+
       font-size: var(--wa-font-size-m);
 
-      &.pending {
-        color: var(--wa-color-neutral-5);
-      }
-      &.progress {
-        color: var(--wa-color-brand-50);
-      }
-      &.done {
-        color: var(--wa-color-success-50);
+      @each $status, $color in $status-icon-colors {
+        &.#{$status} {
+          color: $color;
+        }
       }
     }
 
     .task-data {
       display: flex;
-
       flex-direction: column;
       gap: var(--wa-space-2xs);
-
       width: 100%;
-      overflow: hidden;
 
+      overflow: hidden;
       font-size: var(--wa-font-size-s);
 
       .name {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 1;
-        line-clamp: 1;
-        overflow: hidden;
+        min-height: 25px;
+        min-height: 25px;
 
-        min-height: 25px;
-        min-height: 25px;
+        overflow: hidden;
+        line-clamp: 1;
       }
+
       .footer {
         display: flex;
         align-items: center;
-
         width: 100%; /* 親の幅いっぱいに広げる */
+
         font-size: var(--wa-font-size-xs);
 
         wa-icon {
@@ -120,7 +117,6 @@
 
         .due {
           flex-shrink: 0;
-
           min-width: 60px;
           display: flex;
           align-items: center; /* 垂直中央揃え */
@@ -133,13 +129,13 @@
         }
 
         .label {
+          flex: 1;
           display: block;
+          min-width: 0;
+
           white-space: nowrap; /* 絶対に改行させない */
           overflow: hidden; /* はみ出た分を隠す */
           text-overflow: ellipsis; /* 三点リーダーを表示 */
-
-          flex: 1;
-          min-width: 0;
         }
       }
     }

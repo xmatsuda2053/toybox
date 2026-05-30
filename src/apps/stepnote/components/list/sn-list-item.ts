@@ -1,27 +1,22 @@
-// 1. Core Libraries
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+// Core Libraries
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
+import { when } from "lit/directives/when.js";
+import { choose } from "lit/directives/choose.js";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Database, Models, Codes)
+// Internal Shared (Database, Models, Codes)
 import { snDB } from "@sn/database/SnDB";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
 import { emit } from "@/utils/EventUtils";
 
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import {
   formatDate,
   isOverdue,
@@ -29,12 +24,12 @@ import {
   isWithinAnyDaysBefore,
 } from "@utils/DateUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/list/sn-list-item.lit.scss?inline";
 
-// 7. Initializations
+// Initializations
 setBasePath("/");
 
 /**
@@ -60,7 +55,7 @@ export class SnListItem extends LitElement {
    * @type {String}
    * @memberof SnListItem
    */
-  @property({ type: String }) labelName: String = "";
+  @property({ type: String }) label: String = "";
 
   /**
    * スタイルシートを適用
@@ -68,25 +63,91 @@ export class SnListItem extends LitElement {
    * @static
    * @memberof SnListItem
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // メンバ
+  // -------------------------------------------------------------
 
   /**
-   * render直前に実行されます。
+   * タスクの状態を取得する。
    *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @readonly
+   * @type {TaskStatus}
    * @memberof SnListItem
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
+  get taskStatus(): TaskStatus {
+    return TaskStatus.fromCode(this.task.statusCode);
   }
+
+  /**
+   * 期限状態を取得する。
+   *
+   * @readonly
+   * @type {("overdue" | "asap" | "upcoming" | "none")}
+   * @memberof SnListItem
+   */
+  get dueStatus(): "overdue" | "asap" | "upcoming" | "normal" {
+    const isDone: boolean = this.taskStatus.isDone();
+    const dueDate = new Date(this.task.dueDate);
+
+    if (isOverdue(isDone, dueDate)) return "overdue";
+    if (isAsap(isDone, dueDate)) return "asap";
+    if (isWithinAnyDaysBefore(isDone, dueDate, 3)) return "upcoming";
+    return "normal";
+  }
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
+  /**
+   * 指定したタスクを選択状態にします。
+   *
+   * @private
+   * @memberof SnListItem
+   */
+  private _handleTaskClick = async () => {
+    await snDB.selectSingleTask(this.task.id);
+  };
+
+  /**
+   * 指定したタスクのブックマーク状態を反転させます。
+   * @param e
+   */
+  private _handleBookmarkClick = async (e: Event) => {
+    e.stopPropagation();
+    await snDB.toggleBookmark(this.task);
+  };
+
+  /**
+   * タスクの複製イベントを発行します。
+   *
+   * @private
+   * @memberof SnListItem
+   */
+  private _handleTaskCopy = () => {
+    emit(this, "copy-task", { detail: { task: this.task } });
+  };
+
+  /**
+   * タスクIDをクリップボードにコピーします。
+   *
+   * @private
+   * @memberof SnListItem
+   */
+  private _handleTaskIdCopyToClipboard = async () => {
+    try {
+      const raw = `#{${this.task.id}}{${this.task.name}}`;
+      await navigator.clipboard.writeText(raw);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * タスクアイテムをレンダリングします。
@@ -97,67 +158,22 @@ export class SnListItem extends LitElement {
    * @memberof SnListItem
    */
   protected render(): HTMLTemplateResult {
-    const taskStatus = TaskStatus.fromCode(this.task.statusCode);
-    const isDone: boolean = taskStatus.isDone();
-
-    const dueDate = new Date(this.task.dueDate);
-    const dispDue = formatDate(dueDate, "yy-MM-dd");
-    const overdue = isOverdue(isDone, dueDate);
-    const asap = isAsap(isDone, dueDate);
-    const upcoming = isWithinAnyDaysBefore(isDone, dueDate, 3);
-
     const baseClassMap = classMap({
-      overdue: overdue,
-      asap: asap,
-      upcoming: upcoming,
+      [this.dueStatus]: true,
       selected: this.task.selected,
-    });
-    let dueIcon = "calendar-solid-full";
-    if (overdue) {
-      dueIcon = "fire-solid-full";
-    } else if (asap) {
-      dueIcon = "triangle-exclamation-solid-full";
-    }
-
-    const bookmarkIcon = this.task.bookmark
-      ? "bookmark-solid-full"
-      : "bookmark-regular-full";
-    const bookmarkClasses = classMap({
-      bookmark: true,
-      active: this.task.bookmark,
     });
 
     return html`<div id="contents-root" class="${baseClassMap}">
-      <div class="task-area" @click=${this._selected}>
-        <div class="status-icon ${taskStatus.name}">
-          <wa-icon library="my-icons" name=${taskStatus.iconNameSub}></wa-icon>
-        </div>
+      <div class="task-area" @click=${this._handleTaskClick}>
+        ${this._renderStatusIcon()}
         <div class="task-data">
-          <div class="name">
-            ${this.task.selected
-              ? html` <wa-icon
-                  library="my-icons"
-                  name="caret-right-solid-full"
-                ></wa-icon>`
-              : ``}
-            ${this.task.name}
-          </div>
-
+          ${this._renderTaskName()}
           <div class="footer">
-            <div class=${bookmarkClasses}>
-              <wa-icon
-                library="my-icons"
-                name=${bookmarkIcon}
-                @click=${this._toggleBookmark}
-              ></wa-icon>
-            </div>
+            ${this._renderTaskBookmark()}
             <wa-divider orientation="vertical"></wa-divider>
-            <div class="due">
-              ${dispDue}
-              <wa-icon library="my-icons" name=${dueIcon}></wa-icon>
-            </div>
+            ${this._renderDueDate()}
             <wa-divider orientation="vertical"></wa-divider>
-            <div class="label">${this.labelName}</div>
+            <div class="label">${this.label}</div>
           </div>
         </div>
       </div>
@@ -170,7 +186,7 @@ export class SnListItem extends LitElement {
             slot="trigger"
             class="trigger-button"
           ></wa-icon>
-          <wa-dropdown-item @click=${this._duplicate}>
+          <wa-dropdown-item @click=${this._handleTaskCopy}>
             <wa-icon
               slot="icon"
               library="my-icons"
@@ -179,7 +195,7 @@ export class SnListItem extends LitElement {
             Copy Task
           </wa-dropdown-item>
           <wa-divider></wa-divider>
-          <wa-dropdown-item @click=${this._copyTaskId}>
+          <wa-dropdown-item @click=${this._handleTaskIdCopyToClipboard}>
             <wa-icon
               slot="icon"
               library="my-icons"
@@ -193,47 +209,87 @@ export class SnListItem extends LitElement {
   }
 
   /**
-   * 指定したタスクを選択状態にします。
+   * ステータスアイコンをレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnListItem
    */
-  private async _selected() {
-    await snDB.selectSingleTask(this.task.id);
+  private _renderStatusIcon(): HTMLTemplateResult {
+    const status = this.taskStatus;
+    return html` <div class="status-icon ${status.name}">
+      <wa-icon library="my-icons" name=${status.iconName}></wa-icon>
+    </div>`;
   }
 
   /**
-   * 指定したタスクのブックマーク状態をトグル（反転）させます。
+   * タスク名をレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnListItem
    */
-  private async _toggleBookmark() {
-    await snDB.toggleBookmark(this.task);
+  private _renderTaskName(): HTMLTemplateResult {
+    return html` <div class="name">
+      ${when(
+        this.task.selected,
+        () =>
+          html`<wa-icon
+            library="my-icons"
+            name="caret-right-solid-full"
+          ></wa-icon>`,
+      )}
+      ${this.task.name}
+    </div>`;
   }
 
   /**
-   * タスクをコピーします。
+   * タスクブックマークをレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnListItem
    */
-  private _duplicate() {
-    emit(this, "copy-task", { detail: { task: this.task } });
+  private _renderTaskBookmark(): HTMLTemplateResult {
+    const classes = {
+      bookmark: true,
+      active: this.task.bookmark,
+    };
+
+    const iconName = this.task.bookmark
+      ? "bookmark-solid-full"
+      : "bookmark-regular-full";
+
+    return html` <div class=${classMap(classes)}>
+      <wa-icon
+        library="my-icons"
+        name=${iconName}
+        @click=${this._handleBookmarkClick}
+      ></wa-icon>
+    </div>`;
   }
 
   /**
-   * タスクIDをクリップボードにコピーします。
+   * 期限日をレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnListItem
    */
-  private async _copyTaskId() {
-    try {
-      const raw = `#{${this.task.id}}{${this.task.name}}`;
-      await navigator.clipboard.writeText(raw);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+  private _renderDueDate(): HTMLTemplateResult {
+    const iconName: string | undefined = choose(
+      this.dueStatus,
+      [
+        ["overdue", () => "fire-solid-full"],
+        ["asap", () => "triangle-exclamation-solid-full"],
+        ["upcoming", () => "calendar-regular-full"],
+      ],
+      () => "calendar-solid-full",
+    );
+
+    return html`<div class="due">
+      ${formatDate(new Date(this.task.dueDate), "yy-MM-dd")}
+      <wa-icon library="my-icons" name=${iconName!}></wa-icon>
+    </div>`;
   }
 }
