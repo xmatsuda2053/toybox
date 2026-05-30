@@ -9,10 +9,9 @@ import {
 } from "lit";
 
 // 2. Decorators & Directives
-import { customElement, query, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 
 // 3. Third-party Components & Utils
-import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Modules (Database, Models, Shared Components)
@@ -34,25 +33,6 @@ export class StepNoteApp extends LitElement {
    * @memberof StepNoteApp
    */
   @state() isThinMode: boolean = false;
-
-  /**
-   * ファイル選択
-   *
-   * @private
-   * @type {HTMLInputElement}
-   * @memberof StepNoteApp
-   */
-  @query("#importFile") private _inputFile!: HTMLInputElement;
-
-  /**
-   * インポート完了ダイアログ
-   *
-   * @private
-   * @type {WaDialog}
-   * @memberof StepNoteApp
-   */
-  @query("#dialog-import-complete-overview")
-  private _dialogImportCompleat!: WaDialog;
 
   /**
    * スタイルシートを適用
@@ -124,13 +104,7 @@ export class StepNoteApp extends LitElement {
         @id-click=${(e: CustomEvent) => this._taskSelect(e.detail.id)}
       >
         <div class="panel menu">
-          <sn-menu
-            @click-menu-explore=${this._toggleExploreNav}
-            @click-menu-import=${this._importDataSelect}
-            @click-menu-export=${this._exportData}
-            @click-menu-config=${this._showConfig}
-          ></sn-menu>
-          <input type="file" id="importFile" @change=${this._importData} />
+          <sn-menu @click-menu-explore=${this._toggleExploreNav}></sn-menu>
         </div>
         <div class="panel nav">
           <div class="quick">
@@ -171,49 +145,6 @@ export class StepNoteApp extends LitElement {
    */
   private _toggleExploreNav() {
     this.isThinMode = !this.isThinMode;
-  }
-
-  /**
-   * インポート対象のファイル選択画面を起動する。
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private _importDataSelect() {
-    this._inputFile.click();
-  }
-
-  /**
-   * インポート処理を実行する。
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private async _importData() {
-    const file = this._inputFile?.files?.[0];
-    if (!file) return;
-    await snDB.importDatabase(file);
-    this._dialogImportCompleat.open = true;
-  }
-
-  /**
-   * データをエクスポートする
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private async _exportData() {
-    await snDB.exportDatabase();
-  }
-
-  /**
-   * 設定画面を表示する
-   *
-   * @private
-   * @memberof StepNoteApp
-   */
-  private _showConfig() {
-    console.log("Showing configuration...");
   }
 
   /**

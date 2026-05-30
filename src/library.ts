@@ -31,6 +31,7 @@ import "@common/help-viewer/help-viewer";
 import "@common/search-input/search-input";
 import "@/common/datepicker-input/datepicker-input";
 import "@/common/data-exporter/data-exporter";
+import "@/common/file-uploader/file-uploader";
 
 import "@ap/components/file/ap-file";
 import "@ap/components/app/ap-selector";
