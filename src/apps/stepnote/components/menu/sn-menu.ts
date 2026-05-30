@@ -1,33 +1,35 @@
-// 1. Core Libraries
+// Core Libraries
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  nothing,
 } from "lit";
+import { map } from "lit/directives/map.js";
 
-// 2. Lit Extensions (Decorators & Directives)
-import { customElement, query } from "lit/decorators.js";
+// Lit Extensions (Decorators & Directives)
+import { customElement, state } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
-import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
-// 4. Internal Shared (Utils)
+// Internal Modules (Database, Models, Shared Components)
+import { snDB } from "@sn/database/SnDB";
+
+// Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";
 import { HelpItem } from "@/common/help-viewer/help-viewer";
 
-// 5. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/menu/sn-menu.lit.scss?inline";
 
-// 6. Initializations
+// Initializations
 setBasePath("/");
 
-// 7. Configuration & Initialization ---
+// Configuration & Initialization ---
 import mdIntroduction from "./help/introduction.md?raw";
 import mdMenu from "./help/menu.md?raw";
 import mdQuickAccess from "./help/quick-access.md?raw";
@@ -36,7 +38,44 @@ import mdLists from "./help/list.md?raw";
 import mdTasks from "./help/task.md?raw";
 import mdJournal from "./help/journal.md?raw";
 
-const helpItems: HelpItem[] = [
+/**
+ * メニューボタンの定義
+ */
+const MENU_BUTTONS = [
+  {
+    id: "btn-explore",
+    className: "field active",
+    tooltip: "Explore",
+    iconName: "file-regular-full",
+    key: "explore",
+  },
+  {
+    id: "btn-import",
+    className: "field bottom",
+    tooltip: "Import",
+    iconName: "upload-solid-full",
+    key: "import",
+  },
+  {
+    id: "btn-export",
+    className: "field",
+    tooltip: "Export",
+    iconName: "download-solid-full",
+    key: "export",
+  },
+  {
+    id: "btn-help",
+    className: "field",
+    tooltip: "Help",
+    iconName: "circle-question-regular-full",
+    key: "help",
+  },
+] as const;
+
+/**
+ * ヘルプ内容の定義
+ */
+const HELP_ITEMS: HelpItem[] = [
   {
     name: "introduction",
     title: "INTRODUCTION",
@@ -72,7 +111,8 @@ const helpItems: HelpItem[] = [
     title: "JOURNAL",
     markdown: mdJournal,
   },
-];
+] as const;
+type MenuButtonKey = (typeof MENU_BUTTONS)[number]["key"];
 
 /**
  * メニュー
@@ -89,33 +129,108 @@ export class SnMenu extends LitElement {
    * @static
    * @memberof SnMenu
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
   /**
-   * ヘルプダイアログ
+   * インポートダイアログの開閉制御
    *
-   * @type {WaDialog}
-   * @memberof HaMenu
-   */
-  @query("#dialog-help") dialogHelp!: WaDialog;
-
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @type {boolean}
    * @memberof SnMenu
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  @state() _isImportDialogOpen: boolean = false;
+
+  /**
+   * インポート完了ダイアログの開閉制御
+   *
+   * @type {boolean}
+   * @memberof SnMenu
+   */
+  @state() _isImportFinishDialogOpen: boolean = false;
+
+  /**
+   * ヘルプダイアログの開閉制御
+   *
+   * @type {boolean}
+   * @memberof SnMenu
+   */
+  @state() _isHelpDialogOpen: boolean = false;
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
+  /**
+   * メニューボタンクリック処理を統合する。
+   *
+   * @private
+   * @param {MenuButtonKey} key
+   * @memberof SnMenu
+   */
+  private _handleButtonClick = (key: MenuButtonKey) => {
+    switch (key) {
+      case "explore":
+        emit(this, "click-menu-explore");
+        break;
+      case "import":
+        this._isImportDialogOpen = true;
+        break;
+      case "export":
+        snDB.exportDatabase();
+        break;
+      case "help":
+        this._isHelpDialogOpen = true;
+        break;
+    }
+  };
+
+  /**
+   * インポートダイアログを閉じた後の処理を制御します。
+   *
+   * @private
+   * @memberof SnMenu
+   */
+  private _handleAfterHideImport = () => {
+    this._isImportDialogOpen = false;
+  };
+
+  /**
+   * インポート完了ダイアログを閉じた後の処理を制御します。
+   *
+   * @private
+   * @memberof SnMenu
+   */
+  private _handleAfterHideImportFinish = () => {
+    this._isImportFinishDialogOpen = false;
+  };
+
+  /**
+   * 選択されたファイルをインポートします。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnMenu
+   */
+  private _handleUploadFile = async (e: CustomEvent) => {
+    const file = e.detail.file as File;
+    if (!file) return;
+    await snDB.importDatabase(file);
+    this._isImportDialogOpen = false;
+    this._isImportFinishDialogOpen = true;
+  };
+
+  /**
+   * ヘルプダイアログを閉じた後の処理を制御します。
+   *
+   * @private
+   * @memberof SnMenu
+   */
+  private _handleAfterHideHelp = () => {
+    this._isHelpDialogOpen = false;
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * メニューボタンをレンダリングします。
@@ -127,63 +242,81 @@ export class SnMenu extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
-        <!--エクスプローラーボタン-->
-        <div class="field active">
-          <wa-tooltip for="btn-explore" placement="right"> Explore </wa-tooltip>
-          <wa-button
-            variant="neutral"
-            appearance="accent"
-            id="btn-explore"
-            @click=${() => emit(this, "click-menu-explore")}
-          >
-            <wa-icon library="my-icons" name="file-regular-full"></wa-icon>
-          </wa-button>
-        </div>
-
-        <!--インポートボタン-->
-        <div class="field bottom">
-          <wa-tooltip for="btn-import" placement="right">Import</wa-tooltip>
-          <wa-button
-            variant="neutral"
-            appearance="accent"
-            id="btn-import"
-            @click=${() => emit(this, "click-menu-import")}
-          >
-            <wa-icon library="my-icons" name="upload-solid-full"></wa-icon>
-          </wa-button>
-        </div>
-
-        <!--エクスポートボタン-->
-        <div class="field">
-          <wa-tooltip for="btn-export" placement="right">Export</wa-tooltip>
-          <wa-button
-            variant="neutral"
-            appearance="accent"
-            id="btn-export"
-            @click=${() => emit(this, "click-menu-export")}
-          >
-            <wa-icon library="my-icons" name="download-solid-full"></wa-icon>
-          </wa-button>
-        </div>
-
-        <!--ヘルプボタン-->
-        <div class="field ">
-          <wa-button
-            variant="neutral"
-            appearance="accent"
-            id="help-button"
-            @click=${() => (this.dialogHelp.open = true)}
-          >
-            <wa-icon
-              library="my-icons"
-              name="circle-question-regular-full"
-            ></wa-icon>
-          </wa-button>
-        </div>
+        ${map(MENU_BUTTONS, (button) => {
+          return html`<div class=${button.className}>
+            <wa-tooltip for=${button.id} placement="right">
+              ${button.tooltip}
+            </wa-tooltip>
+            <wa-button
+              variant="neutral"
+              appearance="accent"
+              id=${button.id}
+              @click=${() => this._handleButtonClick(button.key)}
+            >
+              <wa-icon library="my-icons" name=${button.iconName}></wa-icon>
+            </wa-button>
+          </div>`;
+        })}
       </div>
-      <!--ヘルプダイアログ-->
-      <wa-dialog light-dismiss label="HOW TO USE" id="dialog-help">
-        <help-viewer .helpItems=${helpItems}></help-viewer>
-      </wa-dialog> `;
+      ${this._renderImportDialog()} ${this._renderHelpDialog()}`;
+  }
+
+  /**
+   * インポートダイアログをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnMenu
+   */
+  private _renderImportDialog(): HTMLTemplateResult {
+    return html`<wa-dialog
+        light-dismiss
+        class="import-dialog"
+        label="IMPORT"
+        .open=${this._isImportDialogOpen}
+        @upload-file=${this._handleUploadFile}
+        @wa-after-hide=${this._handleAfterHideImport}
+      >
+        <file-uploader accept="application/json">
+          ファイルを指定してください
+        </file-uploader>
+      </wa-dialog>
+      <wa-dialog
+        light-dismiss
+        label="Complete"
+        .open=${this._isImportFinishDialogOpen}
+        @wa-after-hide=${this._handleAfterHideImportFinish}
+      >
+        インポート処理が完了しました。
+        <wa-button
+          appearance="filled"
+          slot="footer"
+          variant="brand"
+          data-dialog="close"
+        >
+          OK
+        </wa-button>
+      </wa-dialog>`;
+  }
+
+  /**
+   * ヘルプダイアログをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnMenu
+   */
+  private _renderHelpDialog(): HTMLTemplateResult {
+    return html`<wa-dialog
+      light-dismiss
+      class="help-dialog"
+      label="HOW TO USE"
+      .open=${this._isHelpDialogOpen}
+      @wa-after-hide=${this._handleAfterHideHelp}
+    >
+      ${this._isHelpDialogOpen
+        ? html`<help-viewer .helpItems=${HELP_ITEMS}></help-viewer>`
+        : nothing}
+    </wa-dialog>`;
   }
 }
