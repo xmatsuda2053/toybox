@@ -1,15 +1,8 @@
 // 1. Core Libraries
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, property } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 
 // 3. Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -32,38 +25,16 @@ setBasePath("/");
 @customElement("sn-list-section")
 export class SnListSection extends LitElement {
   /**
-   * セクション開閉
-   *
-   * @type {boolean}
-   * @memberof SnListSection
-   */
-  @property({ type: Boolean }) isExpanded: boolean = true;
-
-  /**
    * スタイルシートを適用
    *
    * @static
    * @memberof SnListSection
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SnListSection
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * タスクリストのセクションをレンダリングします。
@@ -77,7 +48,7 @@ export class SnListSection extends LitElement {
     return html`<div id="contents-root">
       <header>
         <span><slot name="year"></slot>年度</span>
-        <wa-badge appearance="filled" variant="neutral" pill>
+        <wa-badge variant="brand" pill>
           <slot name="count"></slot>
         </wa-badge>
       </header>
