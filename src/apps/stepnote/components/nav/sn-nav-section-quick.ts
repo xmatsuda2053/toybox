@@ -1,6 +1,5 @@
 // 1. Core Libraries (Lit & Dexie)
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
@@ -8,6 +7,7 @@ import {
   type PropertyValues,
 } from "lit";
 import { liveQuery, type Subscription } from "dexie";
+import { map } from "lit/directives/map.js";
 
 // 2. Lit Extensions (Decorators & Directives)
 import { customElement, state } from "lit/decorators.js";
@@ -19,6 +19,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { snDB } from "@sn/database/SnDB";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { QuickAccess } from "@sn/models/QuickAccess";
+import { navVariants } from "@sn/components/nav/sn-nav-item";
 
 // 5. Internal Shared (Utils)
 
@@ -29,6 +30,30 @@ import styles from "@sn/styles/nav/sn-nav-section-quick.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 const [PENDING, PROGRESS, DONE] = TaskStatus.getAll();
+
+/**
+ * ナビゲーションアイテムの定義
+ */
+interface navItem {
+  isDivider?: boolean;
+  divider?: string;
+  label?: string;
+  icon?: string;
+  key?: keyof QuickAccess;
+  variants?: navVariants;
+  isSelected?: boolean;
+  hasAlert?: boolean;
+  isViewable?: boolean;
+}
+
+/**
+ * 下記フラグをONにした場合、ラベル選択状態を初期化する
+ */
+const LABEL_CLEAR_TARGET_KEYS: (keyof QuickAccess)[] = [
+  "isOverdueSelected",
+  "isAsapSelected",
+  "isUpcomingSelected",
+];
 
 setBasePath("/");
 
@@ -95,16 +120,24 @@ export class SnNavSectionQuick extends LitElement {
    * スタイルシートを適用
    *
    * @static
+   * @memberof SnNavSectionLabel
+   */
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
+
+  /**
+   * render直前に実行されます。
+   *
+   * @protected
+   * @param {PropertyValues} _changedProperties
    * @memberof SnNavSectionQuick
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  protected willUpdate(_changedProperties: PropertyValues) {
+    super.willUpdate(_changedProperties);
+  }
 
   /**
    * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
@@ -114,7 +147,31 @@ export class SnNavSectionQuick extends LitElement {
    */
   connectedCallback() {
     super.connectedCallback();
+    this._subscribeLabels();
+  }
 
+  /**
+   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
+   *
+   * @override
+   * @memberof SnNavSectionQuick
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._dbSubscription?.unsubscribe();
+  }
+
+  // -------------------------------------------------------------
+  // Database Actions (Dexie 連携)
+  // -------------------------------------------------------------
+
+  /**
+   * Labelの状態が更新された場合に最新データを取得します。
+   *
+   * @private
+   * @memberof SnNavSectionQuick
+   */
+  private _subscribeLabels() {
     const observable = liveQuery(async () => {
       const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
         [
@@ -143,28 +200,146 @@ export class SnNavSectionQuick extends LitElement {
       error: (err) => console.error("LiveQuery Error:", err),
     });
   }
+  // -------------------------------------------------------------
+  // クラスメンバ
+  // -------------------------------------------------------------
+  get navItems(): navItem[] {
+    const isOn = (key: keyof QuickAccess): boolean => {
+      return this._quickAccess[key] === 1;
+    };
 
-  /**
-   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
-   *
-   * @override
-   * @memberof SnNavSectionQuick
-   */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this._dbSubscription?.unsubscribe();
+    return [
+      {
+        isDivider: true,
+      },
+      {
+        label: "お気に入り",
+        icon: "bookmark-regular-full",
+        key: "isBookmarkSelected",
+        isSelected: isOn("isBookmarkSelected"),
+      },
+      {
+        label: "未分類",
+        icon: "question-solid-full",
+        key: "isUncategorizedSelected",
+        isSelected: isOn("isUncategorizedSelected"),
+      },
+      {
+        isDivider: true,
+      },
+      {
+        label: "期限切れ",
+        icon: "fire-solid-full",
+        key: "isOverdueSelected",
+        variants: "danger",
+        isSelected: isOn("isOverdueSelected"),
+        hasAlert: this._hasOverdue,
+      },
+      {
+        label: "期限当日",
+        icon: "triangle-exclamation-solid-full",
+        key: "isAsapSelected",
+        variants: "warning",
+        isSelected: isOn("isAsapSelected"),
+        hasAlert: this._hasAsap,
+      },
+      {
+        label: "期限間近",
+        icon: "calendar-solid-full",
+        key: "isUpcomingSelected",
+        variants: "info",
+        isSelected: isOn("isUpcomingSelected"),
+        hasAlert: this._hasUpcoming,
+      },
+      {
+        isDivider: true,
+      },
+      {
+        label: "完了",
+        icon: DONE.iconName,
+        key: "isDoneSelected",
+        variants: "success",
+        isSelected: isOn("isDoneSelected"),
+        isViewable: true,
+      },
+      {
+        label: "対応中",
+        icon: PROGRESS.iconName,
+        key: "isProgressSelected",
+        variants: "brand",
+        isSelected: isOn("isProgressSelected"),
+        isViewable: true,
+      },
+      {
+        label: "開始待ち",
+        icon: PENDING.iconName,
+        key: "isPendingSelected",
+        isSelected: isOn("isPendingSelected"),
+        isViewable: true,
+      },
+      {
+        isDivider: true,
+      },
+    ];
   }
 
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
   /**
-   * render直前に実行されます。
+   * コンテンツの開閉を切り替える
    *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @private
    * @memberof SnNavSectionQuick
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  private _handleExpandClick = () => {
+    this.isExpanded = !this.isExpanded;
+  };
+
+  /**
+   * クイックアクセス項目の選択状態（Boolean）を反転させ、データベースを更新します。
+   * * 指定されたキーが存在しない場合は、キーを追加します。
+   * 状態を反転させた新しいオブジェクトを生成し、`psDB.putQuickAccess` を介して永続化します。
+   *
+   * @private
+   * @param {keyof QuickAccess} key - 反転対象とするクイックアクセスの設定キー
+   * @return {void}
+   * @memberof SnNavSectionQuick
+   */
+  private _toggleSelected = async (key: keyof QuickAccess): Promise<void> => {
+    // 元のデータを安全にコピーし、初期値（未定義時）を補正
+    const currentVal = this._quickAccess[key] ?? 0;
+    const newQuickAccess: QuickAccess = {
+      ...this._quickAccess,
+      [key]: currentVal,
+    };
+
+    // ON(1) / OFF(0) を切り替え
+    const nextSelected = currentVal === 1 ? 0 : 1;
+
+    // 期限切れ・期限当日・期限間近をONにした場合、ラベル選択状態をリセットする
+    if (nextSelected === 1 && LABEL_CLEAR_TARGET_KEYS.includes(key)) {
+      await snDB.resetLabelSelected();
+
+      Object.assign(newQuickAccess, {
+        isOverdueSelected: 0,
+        isAsapSelected: 0,
+        isUpcomingSelected: 0,
+        isDoneSelected: 0,
+        isProgressSelected: 1,
+        isPendingSelected: 1,
+      });
+    }
+
+    // 対象のキーの状態を更新する
+    newQuickAccess[key] = nextSelected;
+    await snDB.putQuickAccess(newQuickAccess);
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * ナビゲーションのセクションをレンダリングします。
@@ -182,180 +357,62 @@ export class SnNavSectionQuick extends LitElement {
       id="contents-root"
       class="${this.isExpanded ? "open" : ""}"
     >
-      <div class="header">
-        QUICK ACCESS
-        <span class="end"></span>
-        <wa-icon
-          id="expand-button"
-          library="my-icons"
-          name="angle-down-solid-full"
-          class="toggleIcon"
-          @click=${this._toggleExpand}
-        ></wa-icon>
-      </div>
-      <div class="contents ${this.isExpanded ? "open" : ""}">
-        <div class="contents-inner">
-          <wa-divider></wa-divider>
-          <!--お気に入り-->
-          <sn-nav-item
-            icon="bookmark-regular-full"
-            eventName="click-bookmark"
-            ?selected=${this._quickAccess?.isBookmarkSelected === 1}
-            @click-bookmark=${() => {
-              this._toggleSelected("isBookmarkSelected");
-            }}
-          >
-            お気に入り
-          </sn-nav-item>
-          <!--未分類-->
-          <sn-nav-item
-            icon="question-solid-full"
-            eventName="click-uncategorized"
-            ?selected=${this._quickAccess?.isUncategorizedSelected === 1}
-            @click-uncategorized=${() => {
-              this._toggleSelected("isUncategorizedSelected");
-            }}
-          >
-            未分類
-          </sn-nav-item>
-          <wa-divider></wa-divider>
-          <!--期限切れ-->
-          <sn-nav-item
-            icon="fire-solid-full"
-            eventName="click-overdue"
-            variants="danger"
-            ?selected=${this._quickAccess?.isOverdueSelected === 1}
-            ?animation=${this._hasOverdue}
-            ?dot=${this._hasOverdue}
-            @click-overdue=${async () => {
-              this._toggleSelected("isOverdueSelected");
-            }}
-          >
-            期限切れ
-          </sn-nav-item>
-          <!--期限当日-->
-          <sn-nav-item
-            icon="triangle-exclamation-solid-full"
-            eventName="click-asap"
-            variants="warning"
-            ?selected=${this._quickAccess?.isAsapSelected === 1}
-            ?animation=${this._hasAsap}
-            ?dot=${this._hasAsap}
-            @click-asap=${() => {
-              this._toggleSelected("isAsapSelected");
-            }}
-          >
-            期限当日
-          </sn-nav-item>
-          <!--期限間近-->
-          <sn-nav-item
-            icon="calendar-solid-full"
-            eventName="click-upcoming"
-            variants="info"
-            ?selected=${this._quickAccess?.isUpcomingSelected === 1}
-            ?animation=${this._hasUpcoming}
-            ?dot=${this._hasUpcoming}
-            @click-upcoming=${() => {
-              this._toggleSelected("isUpcomingSelected");
-            }}
-          >
-            期限間近
-          </sn-nav-item>
-          <wa-divider></wa-divider>
-          <!--完了-->
-          <sn-nav-item
-            icon=${DONE.iconName}
-            eventName="click-done"
-            variants="success"
-            .isDone=${true}
-            ?selected=${this._quickAccess?.isDoneSelected === 1}
-            ?viewable=${true}
-            @click-done=${() => {
-              this._toggleSelected("isDoneSelected");
-            }}
-          >
-            ${DONE.label}
-          </sn-nav-item>
-          <!--対応中-->
-          <sn-nav-item
-            icon=${PROGRESS.iconName}
-            eventName="click-progress"
-            variants="brand"
-            ?selected=${this._quickAccess?.isProgressSelected === 1}
-            ?viewable=${true}
-            @click-progress=${() => {
-              this._toggleSelected("isProgressSelected");
-            }}
-          >
-            ${PROGRESS.label}
-          </sn-nav-item>
-          <!--開始待ち-->
-          <sn-nav-item
-            icon=${PENDING.iconName}
-            eventName="click-pending"
-            ?selected=${this._quickAccess?.isPendingSelected === 1}
-            ?viewable=${true}
-            @click-pending=${() => {
-              this._toggleSelected("isPendingSelected");
-            }}
-          >
-            ${PENDING.label}
-          </sn-nav-item>
-          <wa-divider></wa-divider>
-        </div>
-      </div>
-      <wa-dialog label="検索" id="search-dialog-overview">
-        This is a standard dialog. You can put any content you want in here!
-      </wa-dialog>
+      ${this._renderHeader()} ${this._renderContents()}
     </div>`;
   }
 
   /**
-   * コンテンツの開閉を切り替える
+   * ヘッダーをレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnNavSectionQuick
    */
-  private _toggleExpand() {
-    this.isExpanded = !this.isExpanded;
+  private _renderHeader(): HTMLTemplateResult {
+    return html` <div class="header">
+      QUICK ACCESS
+      <span class="end"></span>
+      <wa-icon
+        id="expand-button"
+        library="my-icons"
+        name="angle-down-solid-full"
+        class="toggleIcon"
+        @click=${this._handleExpandClick}
+      ></wa-icon>
+    </div>`;
   }
 
   /**
-   * クイックアクセス項目の選択状態（Boolean）を反転させ、データベースを更新します。
-   * * 指定されたキーが存在しない場合は、キーを追加します。
-   * 状態を反転させた新しいオブジェクトを生成し、`psDB.putQuickAccess` を介して永続化します。
+   * コンテンツをレンダリングします。
    *
    * @private
-   * @param {keyof QuickAccess} key - 反転対象とするクイックアクセスの設定キー
-   * @return {void}
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnNavSectionQuick
    */
-  private async _toggleSelected(key: keyof QuickAccess): Promise<void> {
-    if (typeof this._quickAccess[key] !== "number") {
-      this._quickAccess[key] = 0;
-    }
+  private _renderContents(): HTMLTemplateResult {
+    return html` <div class="contents">
+      <div class="contents-inner">
+        ${map(this.navItems, (item) => {
+          if (item.isDivider) {
+            return html`<wa-divider></wa-divider>`;
+          }
 
-    const target: QuickAccess = { ...this._quickAccess };
-    const selected = !target[key] ? 1 : 0;
-
-    if (selected) {
-      if (
-        key === "isOverdueSelected" ||
-        key === "isAsapSelected" ||
-        key === "isUpcomingSelected"
-      ) {
-        await snDB.resetLabelSelected();
-
-        target.isOverdueSelected = 0;
-        target.isAsapSelected = 0;
-        target.isUpcomingSelected = 0;
-        target.isDoneSelected = 0;
-        target.isProgressSelected = 1;
-        target.isPendingSelected = 1;
-      }
-    }
-
-    target[key] = selected;
-    await snDB.putQuickAccess(target);
+          return html` <sn-nav-item
+            icon=${item.icon as string}
+            eventName="click-qa-item"
+            variants=${item.variants!}
+            ?selected=${item.isSelected}
+            ?viewable=${item.isViewable}
+            ?animation=${item.hasAlert}
+            ?dot=${item.hasAlert}
+            @click-qa-item=${() => {
+              this._toggleSelected(item.key!);
+            }}
+          >
+            ${item.label}
+          </sn-nav-item>`;
+        })}
+      </div>
+    </div>`;
   }
 }

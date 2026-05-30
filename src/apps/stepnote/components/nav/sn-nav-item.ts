@@ -26,6 +26,17 @@ import styles from "@sn/styles/nav/sn-nav-item.lit.scss?inline";
 setBasePath("/");
 
 /**
+ * アイコンカラー
+ */
+export type navVariants =
+  | "neutral"
+  | "danger"
+  | "warning"
+  | "info"
+  | "success"
+  | "brand";
+
+/**
  * ナビゲーションアイテム
  *
  * @export
@@ -61,21 +72,10 @@ export class SnNavItem extends LitElement {
   /**
    * アイコンカラー
    *
-   * @type {("neutral"
-   *     | "danger"
-   *     | "warning"
-   *     | "info"
-   *     | "success"
-   *     | "brand")}
+   * @type {navVariants}
    * @memberof SnNavItem
    */
-  @property({ type: String }) variants:
-    | "neutral"
-    | "danger"
-    | "warning"
-    | "info"
-    | "success"
-    | "brand" = "neutral";
+  @property({ type: String }) variants: navVariants = "neutral";
 
   /**
    * 選択状態
