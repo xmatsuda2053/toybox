@@ -1,23 +1,71 @@
+// ==========================================
+// 1. 定数・マップの定義
+// ==========================================
 $line-height: 1.8em;
 
+$status-colors: (
+  "danger": var(--wa-color-danger-60),
+  "warning": var(--wa-color-yellow-60),
+  "info": var(--wa-color-cyan-60),
+  "brand": var(--wa-color-brand-60),
+  "success": var(--wa-color-success-60),
+  "neutral": var(--wa-color-neutral-95),
+);
+
+// ==========================================
+// 2. メインコンポーネント
+// ==========================================
 #contents-root {
-  cursor: pointer;
-  color: var(--wa-color-neutral-95);
-
+  // レイアウト
   display: flex;
-  gap: var(--wa-space-s);
   align-items: center;
-
+  gap: var(--wa-space-s);
   height: $line-height;
   margin-block: var(--wa-space-3xs);
   padding-inline: var(--wa-space-xs);
 
+  // デザイン
+  color: var(--wa-color-neutral-95);
+  background-color: transparent;
   border-radius: var(--wa-border-radius-m);
+  cursor: pointer;
 
+  // ----------------------------------------
+  // 状態
+  // ----------------------------------------
   &:hover {
     background-color: var(--wa-color-neutral-10);
   }
 
+  // アイコンカラー
+  @each $status, $color in $status-colors {
+    &.#{$status} .start-icon {
+      color: $color;
+    }
+  }
+
+  // 閲覧可能（未選択）状態
+  &.viewable:not(.selected) {
+    .label,
+    .end {
+      color: var(--wa-color-neutral-70);
+    }
+  }
+
+  // 選択済み状態
+  &.selected {
+    .label {
+      color: var(--wa-color-brand-70);
+
+      wa-icon {
+        color: var(--wa-color-brand-70);
+      }
+    }
+  }
+
+  // ----------------------------------------
+  // 子要素（Elements）
+  // ----------------------------------------
   .button-area {
     display: flex;
     gap: var(--wa-space-s);
@@ -50,78 +98,26 @@ $line-height: 1.8em;
     .target-task-dot {
       color: var(--wa-color-green-60);
     }
+  }
+}
 
-    wa-dropdown {
-      wa-dropdown-item {
-        font-size: var(--wa-font-size-s);
-
-        wa-icon {
-          font-size: var(--wa-font-size-m);
-        }
-
-        &.danger {
-          color: var(--wa-color-danger-50);
-        }
-      }
-
-      &:hover {
-        > wa-icon {
-          color: var(--wa-color-brand-60);
-        }
-      }
-    }
+// ==========================================
+// 3. サブコンポーネント（ネストの分離）
+// ==========================================
+wa-dropdown {
+  &:hover > wa-icon {
+    color: var(--wa-color-brand-60);
   }
 
-  &.danger {
-    .start-icon {
-      color: var(--wa-color-danger-60);
+  wa-dropdown-item {
+    font-size: var(--wa-font-size-s);
+
+    wa-icon {
+      font-size: var(--wa-font-size-m);
     }
-  }
 
-  &.warning {
-    .start-icon {
-      color: var(--wa-color-yellow-60);
-    }
-  }
-
-  &.info {
-    .start-icon {
-      color: var(--wa-color-cyan-60);
-    }
-  }
-
-  &.pending {
-    .start-icon {
-      color: var(--wa-color-neutral-95);
-    }
-  }
-
-  &.progress {
-    .start-icon {
-      color: var(--wa-color-brand-60);
-    }
-  }
-
-  &.done {
-    .start-icon {
-      color: var(--wa-color-success-60);
-    }
-  }
-
-  &.viewable:not(.selected) {
-    .label,
-    .end {
-      color: var(--wa-color-neutral-70);
-    }
-  }
-
-  &.selected {
-    .label {
-      color: var(--wa-color-brand-70);
-
-      wa-icon {
-        color: var(--wa-color-brand-70);
-      }
+    &.danger {
+      color: var(--wa-color-danger-50);
     }
   }
 }

@@ -1,31 +1,42 @@
 @use "../../../_shared/mixins";
 
-#contents-root {
-  background: var(--wa-color-neutral-20);
+// ==========================================
+// 1. 定数・マップの定義
+// ==========================================
 
+// ==========================================
+// 2. メインコンポーネント
+// ==========================================
+#contents-root {
+  // レイアウト
   display: grid;
   grid-template-rows: auto auto 1fr;
   height: 100%;
   overflow: hidden;
 
+  // デザイン
+  background: var(--wa-color-neutral-20);
+
+  // ----------------------------------------
+  // ヘッダー
+  // ----------------------------------------
   .header {
     display: flex;
+    padding-block: 0;
+    padding-inline: var(--wa-space-s);
 
     color: var(--wa-color-neutral-95);
     font-size: var(--wa-font-size-m);
     font-weight: bold;
 
-    padding-block: 0;
-    padding-inline: var(--wa-space-s);
-
-    .end {
-      margin-inline-start: auto;
+    .title {
+      margin-inline-end: auto;
     }
 
     wa-icon {
       cursor: pointer;
-      font-size: var(--wa-font-size-l);
 
+      font-size: var(--wa-font-size-l);
       transition:
         transform 0.2s ease-in-out,
         color 0.2s;
@@ -36,12 +47,18 @@
     }
   }
 
+  // ----------------------------------------
+  // 検索
+  // ----------------------------------------
   .search {
     padding: 0 var(--wa-space-s);
     margin-block-start: var(--wa-space-xs);
     margin-block-end: var(--wa-space-m);
   }
 
+  // ----------------------------------------
+  // コンテンツ
+  // ----------------------------------------
   .contents {
     padding-inline-start: var(--wa-space-s);
     padding-inline-end: var(--wa-space-2xs);
