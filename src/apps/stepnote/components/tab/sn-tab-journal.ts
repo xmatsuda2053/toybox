@@ -10,18 +10,12 @@ import {
 import { liveQuery, type Subscription } from "dexie";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, query, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 
 // 3. Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Shared (Components, Database, Models)
-import {
-  FlexibleTabArea,
-  type config,
-} from "@common/flexible-tab-area/flexible-tab-area";
-import { SnJournalLog } from "@sn/components/journal/sn-journal-log";
-import { SnJournalNote } from "@sn/components/journal/sn-journal-note";
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
@@ -29,6 +23,7 @@ import { Note } from "@sn/models/Note";
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
+import styles from "@sn/styles/tab/sn-tab.lit.scss?inline";
 
 setBasePath("/");
 
@@ -56,15 +51,7 @@ export class SnTabJournal extends LitElement {
    * @type {number}
    * @memberof SnTabJournal
    */
-  @state() selectedTaskId: number = 0;
-
-  /**
-   * タブエリア
-   *
-   * @type {FlexibleTabArea}
-   * @memberof SnTabJournal
-   */
-  @query("#tab-area") tabArea!: FlexibleTabArea;
+  @state() taskId: number = 0;
 
   /**
    * ログ一覧
@@ -83,32 +70,25 @@ export class SnTabJournal extends LitElement {
   @state() notes!: Note[];
 
   /**
-   * ログ
+   * 選択中タブ
    *
-   * @type {SnJournalLog}
+   * @private
+   * @type {string}
    * @memberof SnTabJournal
    */
-  @query("#journal-log") journalLog!: SnJournalLog;
-
-  /**
-   * ノート
-   *
-   * @type {SnJournalNote}
-   * @memberof SnTabJournal
-   */
-  @query("#journal-note") journalNote!: SnJournalNote;
+  @state() private _activeTab: string = "log";
 
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof SnTabJournal
+   * @memberof SnTabTask
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
@@ -118,36 +98,7 @@ export class SnTabJournal extends LitElement {
    */
   connectedCallback() {
     super.connectedCallback();
-
-    const observable = liveQuery(async () => {
-      const tasks = await snDB.tasks.where("selected").equals(1).toArray();
-
-      const task = tasks?.[0];
-      if (!task) {
-        return { task: null, logs: [], notes: [] };
-      }
-
-      const logs = await snDB.selectLogsAscId(task.id!);
-      const notes = await snDB.selectNotesAscId(task.id!);
-      return { task, logs, notes };
-    });
-    this._dbSubscription = observable.subscribe({
-      next: async (result) => {
-        if (result.task) {
-          if (this.selectedTaskId !== result.task.id) {
-            this.tabArea?.initTab();
-          }
-          this.selectedTaskId = result.task.id!;
-          this.logs = result.logs;
-          this.notes = result.notes;
-        } else {
-          this.selectedTaskId = 0;
-          this.logs = [];
-          this.notes = [];
-        }
-      },
-      error: (err) => console.error("LiveQuery Error:", err),
-    });
+    this._subscribeTasks();
   }
 
   /**
@@ -172,6 +123,71 @@ export class SnTabJournal extends LitElement {
     super.willUpdate(_changedProperties);
   }
 
+  // -------------------------------------------------------------
+  // Database Actions (Dexie 連携)
+  // -------------------------------------------------------------
+
+  /**
+   * テーブル状態が更新された場合に最新データを取得します。
+   *
+   * @private
+   * @memberof SnTabJournal
+   */
+  private _subscribeTasks() {
+    this._dbSubscription?.unsubscribe();
+
+    const observable = liveQuery(async () => {
+      const tasks = await snDB.tasks.where("selected").equals(1).toArray();
+
+      const task = tasks?.[0];
+      if (!task) {
+        return { task: null, logs: [], notes: [] };
+      }
+
+      const logs = await snDB.selectLogsAscId(task.id!);
+      const notes = await snDB.selectNotesAscId(task.id!);
+      return { task, logs, notes };
+    });
+
+    this._dbSubscription = observable.subscribe({
+      next: async (result) => {
+        if (result.task) {
+          if (this.taskId !== result.task.id) {
+            this._activeTab = "log";
+          }
+          this.taskId = result.task.id!;
+          this.logs = result.logs;
+          this.notes = result.notes;
+        } else {
+          this._activeTab = "log";
+          this.taskId = 0;
+          this.logs = [];
+          this.notes = [];
+        }
+      },
+      error: (err) => console.error("LiveQuery Error:", err),
+    });
+  }
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
+  /**
+   * タブ切り替え時の処理を制御する。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnTabTask
+   */
+  private _handleTabChange(e: CustomEvent) {
+    this._activeTab = e.detail.panel;
+  }
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
+
   /**
    * ジャーナルタブをレンダリングします。
    *
@@ -181,27 +197,49 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabJournal
    */
   protected render(): HTMLTemplateResult {
-    const hasNote =
-      this.notes?.length > 0 && this.notes?.[0].value.trim() !== "";
-    const JOURNALS: config[] = [
-      { id: "log", label: "Log" },
-      { id: "note", label: "Note", mark: hasNote },
-    ];
+    return html`<div id="contents-root">
+      <div class="header">${this._renderHeader()}</div>
+      <div class="main">${this._renderMain()}</div>
+    </div>`;
+  }
 
-    return html`<flexible-tab-area id="tab-area" .tabs=${JOURNALS}>
-      JOURNAL
-      <sn-journal-log
-        id="journal-log"
-        slot="log"
-        .taskId=${this.selectedTaskId}
-        .logs=${this.logs}
-      ></sn-journal-log>
-      <sn-journal-note
-        id="journal-note"
-        slot="note"
-        .taskId=${this.selectedTaskId}
-        .notes=${this.notes}
-      ></sn-journal-note>
-    </flexible-tab-area>`;
+  /**
+   * ヘッダーをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTabJournal
+   */
+  private _renderHeader(): HTMLTemplateResult {
+    return html` <div class="title">JOURNAL</div> `;
+  }
+
+  /**
+   * メインをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTabJournal
+   */
+  private _renderMain(): HTMLTemplateResult {
+    return html` <wa-tab-group
+      .active=${this._activeTab}
+      @wa-tab-show=${this._handleTabChange}
+    >
+      <wa-tab panel="log">Log</wa-tab>
+      <wa-tab panel="note">Note</wa-tab>
+      <wa-tab-panel name="log">
+        <sn-journal-log
+          .taskId=${this.taskId}
+          .logs=${this.logs}
+        ></sn-journal-log>
+      </wa-tab-panel>
+      <wa-tab-panel name="note">
+        <sn-journal-note
+          .taskId=${this.taskId}
+          .notes=${this.notes}
+        ></sn-journal-note>
+      </wa-tab-panel>
+    </wa-tab-group>`;
   }
 }

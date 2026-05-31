@@ -25,7 +25,6 @@ import "@awesome.me/webawesome/dist/components/textarea/textarea.js";
 import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
 
 import "@common/thin-markdown-editor/thin-markdown-editor.ts";
-import "@common/flexible-tab-area/flexible-tab-area";
 import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
 import "@common/search-input/search-input";

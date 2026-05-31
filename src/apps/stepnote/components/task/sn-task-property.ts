@@ -305,7 +305,7 @@ export class SnTaskProperty extends LitElement {
     this.task.fiscalYear = Number(this.fiscalYear.value!);
     this.task.labelId = Number(this.taskLabel.value!);
     await snDB.updateLabelSelection(this.task.labelId, 1);
-    emit(this, "input");
+    emit(this, "input-task");
   }
 
   /**
