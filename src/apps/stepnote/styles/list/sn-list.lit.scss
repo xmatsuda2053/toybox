@@ -1,27 +1,25 @@
 @use "../../../_shared/mixins";
 
 #contents-root {
-  background: var(--wa-color-neutral-20);
-
   display: grid;
   grid-template-rows: auto auto 1fr;
   height: 100%;
-
   padding-top: var(--wa-space-s);
+
   overflow: hidden;
+  background: var(--wa-color-neutral-20);
 
   .header {
     display: flex;
+    padding-block: 0;
+    padding-inline: var(--wa-space-s);
 
     color: var(--wa-color-neutral-95);
     font-size: var(--wa-font-size-m);
     font-weight: bold;
 
-    padding-block: 0;
-    padding-inline: var(--wa-space-s);
-
-    .end {
-      margin-inline-start: auto;
+    .title {
+      margin-inline-end: auto;
     }
 
     wa-icon {
@@ -64,28 +62,6 @@
       sn-list-section,
       sn-list-item {
         width: 100%;
-      }
-    }
-  }
-
-  #task-dialog-overview {
-    .dialog-item {
-      display: flex;
-      align-items: center;
-
-      .label {
-        font-size: var(--wa-font-size-s);
-        width: 70px;
-        flex-shrink: 0;
-      }
-
-      .item {
-        flex-grow: 1;
-        min-width: 0;
-      }
-
-      &:not(:last-child) {
-        margin-block-end: var(--wa-space-l);
       }
     }
   }

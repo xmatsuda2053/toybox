@@ -40,19 +40,25 @@ import "@ap/components/tool/ap-tool-date-utility";
 
 import "@sn/step-note-app";
 import "@sn/components/menu/sn-menu";
+
 import "@sn/components/nav/sn-nav-section-label";
 import "@sn/components/nav/sn-nav-section-quick";
 import "@sn/components/nav/sn-nav-item";
+
 import "@sn/components/list/sn-list";
+import "@sn/components/list/sn-list-editor";
 import "@sn/components/list/sn-list-section";
 import "@sn/components/list/sn-list-item";
+
 import "@sn/components/tab/sn-tab-task";
 import "@sn/components/tab/sn-tab-journal";
+
 import "@sn/components/task/sn-task-summary";
 import "@sn/components/task/sn-task-button";
 import "@sn/components/task/sn-task-contact";
 import "@sn/components/task/sn-task-property";
 import "@sn/components/task/sn-task-deletion";
+
 import "@sn/components/journal/sn-journal-note";
 import "@sn/components/journal/sn-journal-log";
 import "@sn/components/journal/sn-journal-log-item";

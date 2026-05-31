@@ -71,6 +71,7 @@ const MENU_BUTTONS = [
     key: "help",
   },
 ] as const;
+type MenuButtonKey = (typeof MENU_BUTTONS)[number]["key"];
 
 /**
  * ヘルプ内容の定義
@@ -112,7 +113,6 @@ const HELP_ITEMS: HelpItem[] = [
     markdown: mdJournal,
   },
 ] as const;
-type MenuButtonKey = (typeof MENU_BUTTONS)[number]["key"];
 
 /**
  * メニュー
@@ -189,7 +189,8 @@ export class SnMenu extends LitElement {
    * @private
    * @memberof SnMenu
    */
-  private _handleAfterHideImport = () => {
+  private _handleAfterHideImport = (e: CustomEvent) => {
+    if (e.target !== e.currentTarget) return;
     this._isImportDialogOpen = false;
   };
 
@@ -199,7 +200,8 @@ export class SnMenu extends LitElement {
    * @private
    * @memberof SnMenu
    */
-  private _handleAfterHideImportFinish = () => {
+  private _handleAfterHideImportFinish = (e: CustomEvent) => {
+    if (e.target !== e.currentTarget) return;
     this._isImportFinishDialogOpen = false;
   };
 
@@ -224,7 +226,8 @@ export class SnMenu extends LitElement {
    * @private
    * @memberof SnMenu
    */
-  private _handleAfterHideHelp = () => {
+  private _handleAfterHideHelp = (e: CustomEvent) => {
+    if (e.target !== e.currentTarget) return;
     this._isHelpDialogOpen = false;
   };
 

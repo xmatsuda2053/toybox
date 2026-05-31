@@ -282,7 +282,7 @@ export class SnListItem extends LitElement {
       [
         ["overdue", () => "fire-solid-full"],
         ["asap", () => "triangle-exclamation-solid-full"],
-        ["upcoming", () => "calendar-regular-full"],
+        ["upcoming", () => "calendar-solid-full"],
       ],
       () => "calendar-solid-full",
     );

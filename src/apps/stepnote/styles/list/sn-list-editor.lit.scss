@@ -1,0 +1,12 @@
+#task-form {
+  .contents {
+    &:not(:last-child) {
+      margin-block-end: var(--wa-space-m);
+    }
+  }
+}
+
+.footer {
+  margin-block-start: var(--wa-space-m);
+  text-align: right;
+}
