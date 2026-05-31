@@ -5,10 +5,6 @@ export type TaskIconName =
   | "circle-stop-solid-full"
   | "circle-play-solid-full"
   | "circle-check-solid-full";
-export type TaskIconNameSub =
-  | "circle-stop-solid-full"
-  | "circle-play-solid-full"
-  | "circle-check-solid-full";
 
 export class TaskStatus {
   static readonly PENDING = new TaskStatus(
@@ -16,20 +12,17 @@ export class TaskStatus {
     "pending",
     "開始待ち",
     "circle-stop-solid-full",
-    "circle-stop-solid-full",
   );
   static readonly PROGRESS = new TaskStatus(
     "5",
     "progress",
     "対応中",
     "circle-play-solid-full",
-    "circle-play-solid-full",
   );
   static readonly DONE = new TaskStatus(
     "9",
     "done",
     "完了",
-    "circle-check-solid-full",
     "circle-check-solid-full",
   );
 
@@ -44,7 +37,6 @@ export class TaskStatus {
     public readonly name: TaskStatusName,
     public readonly label: TaskStatusLabel,
     public readonly iconName: TaskIconName,
-    public readonly iconNameSub: TaskIconNameSub,
   ) {}
 
   /**

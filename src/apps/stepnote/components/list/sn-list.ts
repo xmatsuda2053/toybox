@@ -1,53 +1,80 @@
-// 1. Core Libraries (Lit & Dexie)
+// Core Libraries (Lit & Dexie)
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  nothing,
 } from "lit";
 import { liveQuery, type Subscription } from "dexie";
+import { map } from "lit/directives/map.js";
 
-// 2. Lit Extensions (Decorators & Directives)
-import { customElement, query, state } from "lit/decorators.js";
+// Lit Extensions (Decorators & Directives)
+import { customElement, state } from "lit/decorators.js";
 import "@lit-labs/virtualizer";
 
-// 3. Third-party UI & SDKs (WebAwesome)
-import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
-import WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
-import WaSelect from "@awesome.me/webawesome/dist/components/select/select.js";
+// Third-party UI & SDKs (WebAwesome)
+
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Database, Models, Codes)
+// Internal Shared (Database, Models, Codes)
 import { snDB } from "@sn/database/SnDB";
-import { TaskStatus } from "@sn/code/TaskStatus";
+
 import { Label } from "@sn/models/Label";
 import { Task } from "@sn/models/Task";
-import { DatePickerInput } from "@/common/datepicker-input/datepicker-input";
 
-// 5. Internal Shared (Utils)
-import {
-  formatDate,
-  getCurrentFiscalYear,
-  getYearList,
-} from "@/utils/DateUtils";
-
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/list/sn-list.lit.scss?inline";
 
 // --- Configuration & Initialization ---
-const yearList = getYearList(2024, new Date().getFullYear() + 1);
-const currentFiscalYear = getCurrentFiscalYear();
+
+/**
+ * タスクイベント
+ */
+type taskEventKey = "show-in-progress" | "find-all-mode" | "add";
+
+/**
+ * ヘッダーボタンの型定義
+ */
+interface HeaderButton {
+  id: string;
+  tooltip: string;
+  iconName: string;
+  key: taskEventKey;
+}
+
+/**
+ * ヘッダーボタンの情報
+ */
+const HEADER_BUTTONS: HeaderButton[] = [
+  {
+    id: "btn-incomplete-task",
+    tooltip: "Show In Progress",
+    iconName: "inbox-solid-full",
+    key: "show-in-progress",
+  },
+  {
+    id: "btn-search-all-mode",
+    tooltip: "Find All Mode",
+    iconName: "algolia-brands-solid-full",
+    key: "find-all-mode",
+  },
+  {
+    id: "btn-add",
+    tooltip: "Add",
+    iconName: "plus-solid-full",
+    key: "add",
+  },
+] as const;
 
 /**
  * 年度またはタスクアイテムを描画するための型定義
  */
 type RenderItem =
   | { type: "year"; year: number; count: number }
-  | { type: "task"; task: Task; labelId: number };
+  | { type: "task"; task: Task; labelName: string };
 
 setBasePath("/");
 
@@ -88,58 +115,12 @@ export class SnList extends LitElement {
   @state() private _activeFiscalYears: number[] = [];
 
   /**
-   * 検索入力欄
+   * 編集ダイアログの開閉制御
    *
    * @private
-   * @type {HTMLInputElement}
    * @memberof SnList
    */
-  @query("#input-search") private _inputSearch!: HTMLInputElement;
-
-  /**
-   * タスク編集ダイアログ
-   *
-   * @private
-   * @type {WaDialog}
-   * @memberof SnList
-   */
-  @query("#task-dialog-overview") private _editDialog!: WaDialog;
-
-  /**
-   * 新規タスク名
-   *
-   * @private
-   * @type {WaInput}
-   * @memberof SnList
-   */
-  @query("#task-name") private taskName!: WaInput;
-
-  /**
-   * 新規タスク期限日
-   *
-   * @private
-   * @type {WaInput}
-   * @memberof SnList
-   */
-  @query("#task-due-date") private taskDueDate!: DatePickerInput;
-
-  /**
-   * 新規タスク年度
-   *
-   * @private
-   * @type {WaSelect}
-   * @memberof SnList
-   */
-  @query("#task-fiscal-year") private taskFiscalYear!: WaSelect;
-
-  /**
-   * 新規タスクラベルID
-   *
-   * @private
-   * @type {WaSelect}
-   * @memberof SnList
-   */
-  @query("#task-label-id") private taskLabelId!: WaSelect;
+  @state() private _isEditDialogOpen = false;
 
   /**
    * 検索フィルタのキーワード
@@ -169,6 +150,14 @@ export class SnList extends LitElement {
   private _sourceTask!: Task | undefined;
 
   /**
+   * ラベルIDと名称を対応付けするためのMap
+   *
+   * @private
+   * @memberof SnList
+   */
+  private _labelMap = new Map<number, string>();
+
+  /**
    * テーブルの更新を検知する
    *
    * @private
@@ -183,62 +172,11 @@ export class SnList extends LitElement {
    * @static
    * @memberof SnList
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
-  /**
-   * ショートカットキー
-   *
-   * @private
-   * @param {KeyboardEvent} e
-   * @memberof SnList
-   */
-  private _shortcutKey = async (e: KeyboardEvent) => {
-    if (e.altKey && e.shiftKey && (e.key === "T" || e.key === "t")) {
-      this._openAddTaskEditor();
-    }
-    if (e.altKey && e.shiftKey && (e.key === "F" || e.key === "f")) {
-      this._setAllSearchMode();
-    }
-  };
-
-  /**
-   * 全検索モード切替
-   *
-   * @private
-   * @memberof SnList
-   */
-  private async _setAllSearchMode() {
-    await snDB.resetQuickAccessSelected();
-    await snDB.resetLabelSelected();
-    await this.updateComplete;
-  }
-
-  /**
-   * 実行中タスクのみ表示します。
-   *
-   * @private
-   * @memberof SnList
-   */
-  private async _showInProgress() {
-    await snDB.showInProgress();
-    await snDB.resetLabelSelected();
-  }
-
-  /**
-   * Creates an instance of SnList.
-   * @memberof SnList
-   */
-  constructor() {
-    super();
-    window.addEventListener("keydown", this._shortcutKey);
-  }
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
@@ -252,6 +190,21 @@ export class SnList extends LitElement {
   }
 
   /**
+   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
+   *
+   * @override
+   * @memberof SnList
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._dbSubscription?.unsubscribe();
+  }
+
+  // -------------------------------------------------------------
+  // Database Actions (Dexie 連携)
+  // -------------------------------------------------------------
+
+  /**
    * テーブル状態が更新された場合に最新データを取得します。
    * フィルタ用のキーワードが変更された場合にも実行します。
    *
@@ -261,13 +214,14 @@ export class SnList extends LitElement {
   private _subscribeLabels() {
     this._dbSubscription?.unsubscribe();
 
+    const keyword = this._filterKeyword;
     const observable = liveQuery(async () => {
       const [quickAccess, labels, tasks, activeFiscalYears] = await Promise.all(
         [
           snDB.getQuickAccess(),
           snDB.selectLabelsAscName(),
-          snDB.selectTaskAscSortKey(this._filterKeyword),
-          snDB.getActiveFiscalYears(this._filterKeyword),
+          snDB.selectTaskAscSortKey(keyword),
+          snDB.getActiveFiscalYears(keyword),
         ],
       );
 
@@ -284,6 +238,7 @@ export class SnList extends LitElement {
         this._labels = data.labels;
         this._tasks = data.tasks;
         this._activeFiscalYears = data.activeFiscalYears;
+        this._labelMap = new Map(data.labels.map((l) => [l.id!, l.name]));
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -296,61 +251,127 @@ export class SnList extends LitElement {
    * @param {CustomEvent} e
    * @memberof SnList
    */
-  private async _filterTasks(e: CustomEvent) {
+  private _filterTasks(e: CustomEvent) {
     const keyword = e.detail.keyword ?? "";
     this._filterKeyword = keyword;
     this._subscribeLabels();
   }
 
-  /**
-   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
-   *
-   * @override
-   * @memberof SnList
-   */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this._dbSubscription?.unsubscribe();
-    window.removeEventListener("keydown", this._shortcutKey);
-  }
-
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SnList
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  // -------------------------------------------------------------
+  // メンバ
+  // -------------------------------------------------------------
 
   /**
    * 描画するアイテムデータの一覧を取得します。
    * virtualizerを使用するために、年度とタスクを一つの配列に統合しています。
    *
    * @readonly
-   * @private
-   * @type {RenderItem[]}
    * @memberof SnList
    */
-  private get _getRenderItems(): RenderItem[] {
+  get renderItemData() {
     const items: RenderItem[] = [];
 
-    this._activeFiscalYears.forEach((year) => {
-      const tasks = this._filterTasksByFiscalYear(year);
+    // 年度単位にタスクをグルーピング
+    const tasksByYear = new Map<number, Task[]>();
+    for (const task of this._tasks) {
+      if (!tasksByYear.has(task.fiscalYear)) {
+        tasksByYear.set(task.fiscalYear, []);
+      }
+      tasksByYear.get(task.fiscalYear)!.push(task);
+    }
+
+    // グルーピングしたタスクを配列化
+    for (const year of this._activeFiscalYears) {
+      const tasks = tasksByYear.get(year) ?? [];
+
       items.push({ type: "year", year, count: tasks.length });
-      tasks.forEach((task) => {
+
+      for (const task of tasks) {
         items.push({
           type: "task",
           task,
-          labelId: task.labelId,
+          labelName: this._labelMap.get(task.labelId) ?? "未分類",
         });
-      });
-    });
+      }
+    }
 
     return items;
   }
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
+  /**
+   * ヘッダーボタンのイベントを制御します。
+   *
+   * @private
+   * @param {headerButtonKey} key
+   * @memberof SnList
+   */
+  private _handleHeaderEvents = async (key: taskEventKey) => {
+    switch (key) {
+      case "find-all-mode":
+        // 全検索モード切替
+        await snDB.resetQuickAccessSelected();
+        await snDB.resetLabelSelected();
+        break;
+
+      case "show-in-progress":
+        // 実行中タスク表示モード切替
+        await snDB.showInProgress();
+        await snDB.resetLabelSelected();
+        break;
+
+      case "add":
+        // 新規追加画面表示
+        this._dialogMode = "Add";
+        this._sourceTask = undefined;
+        this._isEditDialogOpen = true;
+        break;
+    }
+  };
+
+  /**
+   * タスク複製画面を起動します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnList
+   */
+  private _handleTaskCopyClick(e: CustomEvent) {
+    this._dialogMode = "Copy";
+    this._sourceTask = e.detail.task;
+    this._isEditDialogOpen = true;
+  }
+
+  /**
+   * タスク内容の保存後の動作を制御します。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private _handleTaskSaved(): void {
+    this._isEditDialogOpen = false;
+  }
+
+  /**
+   * 編集ダイアログ終了後の動作を制御します。
+   *
+   * @private
+   * @memberof SnList
+   */
+  private _handleAfterHideEditDialog(e: CustomEvent): void {
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    this._isEditDialogOpen = false;
+  }
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
+
   /**
    * タスクリストをレンダリングします。
    *
@@ -359,339 +380,116 @@ export class SnList extends LitElement {
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
    * @memberof SnList
    */
-  protected render(): HTMLTemplateResult {
-    if (!this._tasks) {
-      return html``;
-    }
-
-    const hasLabel = this._labels.length !== 0;
-
+  protected render(): HTMLTemplateResult | typeof nothing {
     return html`<div id="contents-root">
       <div class="header">
-        LIST
-        <span class="end"></span>
-        ${hasLabel
-          ? html` <wa-tooltip for="btn-incomplete-task" placement="top">
-                Show In Progress
-              </wa-tooltip>
-              <wa-icon
-                id="btn-incomplete-task"
-                library="my-icons"
-                name="inbox-solid-full"
-                @click=${this._showInProgress}
-              ></wa-icon>
-              <wa-tooltip for="btn-search-all-mode" placement="top">
-                Find All Mode
-              </wa-tooltip>
-              <wa-icon
-                id="btn-search-all-mode"
-                library="my-icons"
-                name="algolia-brands-solid-full"
-                @click=${this._setAllSearchMode}
-              ></wa-icon>
-              <wa-tooltip for="btn-add" placement="top">Add</wa-tooltip>
-              <wa-icon
-                id="btn-add"
-                library="my-icons"
-                name="plus-solid-full"
-                @click=${this._openAddTaskEditor}
-              ></wa-icon>`
-          : html``}
+        <span class="title">LIST</span>
+        ${this._renderHeaderButtons()}
       </div>
-      <div class="search">
-        <search-input @input-keyword=${this._filterTasks}></search-input>
+      <div class="search" @input-keyword=${this._filterTasks}>
+        <search-input></search-input>
       </div>
-      <div class="items" @copy-task=${this._openCopyTaskEditor}>
-        <lit-virtualizer
-          .items=${this._getRenderItems}
-          .renderItem=${((item: RenderItem) => {
-            if (item.type === "year") {
-              return html`<sn-list-section>
-                ${html`<span slot="year">${item.year}</span>`}
-                ${html`<span slot="count">${item.count}</span>`}
-              </sn-list-section>`;
-            } else {
-              return html`<sn-list-item
-                .task=${item.task}
-                .labelName=${this._getLabelName(item.labelId)}
-                slot="item"
-              ></sn-list-item>`;
-            }
-          }) as any}
-        >
-        </lit-virtualizer>
+      <div class="items" @copy-task=${this._handleTaskCopyClick}>
+        ${this._renderItems()}
       </div>
-      <wa-dialog label="${this._dialogMode} Task" id="task-dialog-overview">
-        <form id="task-form" @submit=${this._saveTask}>
-          <div class="dialog-item">
-            <div class="label">タスク名</div>
-            <wa-input
-              id="task-name"
-              class="item"
-              name="taskName"
-              size="small"
-              placeholder="新規タスク"
-            >
-              <wa-icon
-                slot="end"
-                library="my-icons"
-                name="note-sticky-solid-full"
-              ></wa-icon>
-            </wa-input>
-          </div>
-
-          <div class="dialog-item">
-            <div class="label">期限日</div>
-            <datepicker-input
-              id="task-due-date"
-              class="item"
-              size="small"
-              .value=${formatDate(new Date(), "yyyy-MM-dd")}
-            >
-            </datepicker-input>
-          </div>
-
-          <div class="dialog-item">
-            <div class="label">年度</div>
-            <wa-select
-              id="task-fiscal-year"
-              size="small"
-              class="item"
-              value=${currentFiscalYear}
-            >
-              <wa-icon
-                library="my-icons"
-                name="calendar-regular-full"
-                slot="end"
-              ></wa-icon>
-              ${yearList.map((year) => {
-                return html`<wa-option value=${year}>${year}年度</wa-option>`;
-              })}
-            </wa-select>
-          </div>
-
-          <div class="dialog-item">
-            <div class="label">ラベル</div>
-            <wa-select
-              id="task-label-id"
-              class="item"
-              size="small"
-              value=${hasLabel
-                ? String(this._labels.find((label) => label.isSelected)?.id)
-                : ""}
-            >
-              <wa-icon
-                library="my-icons"
-                name="tag-solid-full"
-                slot="end"
-              ></wa-icon>
-              ${this._labels.map((label) => {
-                return html`<wa-option value=${label.id ? label.id : ""}>
-                  ${label.name}
-                </wa-option>`;
-              })}
-            </wa-select>
-          </div>
-        </form>
-        <wa-button
-          slot="footer"
-          variant="brand"
-          size="small"
-          type="submit"
-          form="task-form"
-        >
-          Save
-        </wa-button>
+      <wa-dialog
+        label="${this._dialogMode} Task"
+        .open=${this._isEditDialogOpen}
+        @task-saved=${this._handleTaskSaved}
+        @wa-after-hide=${this._handleAfterHideEditDialog}
+      >
+        ${this._isEditDialogOpen
+          ? html` <sn-list-editor
+              .targetTask=${this._sourceTask}
+              ._labelData=${this._labels}
+            ></sn-list-editor>`
+          : nothing}
       </wa-dialog>
     </div>`;
   }
 
   /**
-   * idからラベル名を取得する
+   * リスト制御用のヘッダーボタンを表示する。
    *
    * @private
-   * @param {number} id
-   * @return {*}  {string}
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
    * @memberof SnList
    */
-  private _getLabelName(id: number): string {
-    const label = this._labels.find((label) => label.id === id);
-    return label ? label.name : "未分類";
+  private _renderHeaderButtons(): HTMLTemplateResult | typeof nothing {
+    if (this._labels.length === 0) return nothing;
+
+    return html`${map(HEADER_BUTTONS, (button) => {
+      return html`<wa-tooltip for=${button.id} placement="top">
+          ${button.tooltip}
+        </wa-tooltip>
+        <wa-icon
+          id=${button.id}
+          library="my-icons"
+          name=${button.iconName}
+          @click=${() => this._handleHeaderEvents(button.key)}
+        ></wa-icon>`;
+    })}`;
   }
 
   /**
-   * エディタの状態をリセットする
+   * タスクアイテム一覧をレンダリングします。
    *
    * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
    * @memberof SnList
    */
-  private _resetEditor() {
-    this.taskName.value = "";
-    this.taskDueDate.value = formatDate(new Date(), "yyyy-MM-dd");
-    this.taskFiscalYear.value = String(currentFiscalYear);
-    this.taskLabelId.value =
-      this._labels.length !== 0
-        ? String(this._labels.find((label) => label.isSelected)?.id)
-        : "";
+  private _renderItems(): HTMLTemplateResult | typeof nothing {
+    const data = this.renderItemData;
+    if (!data) return nothing;
+
+    return html` <lit-virtualizer
+      .items=${data}
+      .renderItem=${this._renderItem as any}
+      .keyFunction=${this._keyFunction as any}
+    >
+    </lit-virtualizer>`;
   }
 
   /**
-   * タスク追加エディタを起動する。
+   * タスクアイテムをレンダリングします。
    *
    * @private
+   * @param {RenderItem} item
    * @memberof SnList
    */
-  private _openAddTaskEditor() {
-    this._resetEditor();
-    this._dialogMode = "Add";
-    this._sourceTask = undefined;
-    this._editDialog.open = true;
+  private _renderItem = (
+    item: RenderItem,
+  ): HTMLTemplateResult | typeof nothing => {
+    switch (item.type) {
+      case "year":
+        return html`<sn-list-section>
+          <span slot="year">${item.year}</span>
+          <span slot="count">${item.count}</span>
+        </sn-list-section>`;
 
-    // 表示アニメーションが終わるのを待ってからフォーカスを当てる
-    this._editDialog.addEventListener(
-      "wa-after-show",
-      () => this.taskName.focus(),
-      { once: true },
-    );
-  }
+      case "task":
+        return html`<sn-list-item
+          .task=${item.task}
+          .label=${item.labelName}
+          slot="item"
+        ></sn-list-item>`;
 
-  /**
-   * タスク複製エディタを起動する。
-   *
-   * @private
-   * @param {CustomEvent} e
-   * @memberof SnList
-   */
-  private _openCopyTaskEditor(e: CustomEvent) {
-    this._resetEditor();
-    this._dialogMode = "Copy";
-    this._sourceTask = e.detail.task;
-
-    if (!this._sourceTask) return;
-
-    // コピー元タスクの情報をエディタに反映する（年度以外）
-    this.taskName.value = this._sourceTask.name;
-    this.taskDueDate.value = formatDate(this._sourceTask.dueDate, "yyyy-MM-dd");
-    this.taskLabelId.value = String(this._sourceTask.labelId);
-
-    this._editDialog.open = true;
-
-    // 表示アニメーションが終わるのを待ってからフォーカスを当てる
-    this._editDialog.addEventListener(
-      "wa-after-show",
-      () => this.taskName.focus(),
-      { once: true },
-    );
-  }
-
-  /**
-   * タスクを保存する。
-   *
-   * @private
-   * @param {Event} e
-   * @memberof SnList
-   */
-  private async _saveTask(e: Event) {
-    e.preventDefault();
-
-    if (this._dialogMode === "Add") {
-      await this._addTask();
-    } else {
-      await this._copyTask();
+      default:
+        return nothing;
     }
-  }
+  };
 
   /**
-   * タスクを新規追加する。
+   * virtualizer用のKEYを作成します。
    *
    * @private
+   * @param {RenderItem} item
    * @memberof SnList
    */
-  private async _addTask() {
-    const name = this.taskName.value as string;
-    const dueDate = new Date(this.taskDueDate.value as string);
-    const fiscalYear = Number(this.taskFiscalYear.value);
-    const labelId = Number(this.taskLabelId.value);
-
-    const task: Task = {
-      statusCode: TaskStatus.PENDING.code,
-      name: name,
-      dueDate: dueDate,
-      contacts: [{ div: "", name: "", tel: "" }],
-      description: "",
-      fiscalYear: fiscalYear,
-      labelId: labelId,
-      bookmark: 0,
-      selected: 0,
-    };
-
-    const id = await snDB.putTask(task);
-    await snDB.putLog({
-      taskId: id,
-      value: "#### 新規追加",
-    });
-    await snDB.putNote({
-      taskId: id,
-      value: "",
-    });
-
-    await snDB.selectSingleTask(id);
-    await snDB.updateLabelSelection(labelId, 1);
-
-    this._editDialog.open = false;
-    this._resetEditor();
-  }
-
-  /**
-   * タスクをコピーする
-   *
-   * @private
-   * @memberof SnList
-   */
-  private async _copyTask() {
-    if (!this._sourceTask) return;
-
-    const name = this.taskName.value as string;
-    const dueDate = new Date(this.taskDueDate.value as string);
-    const fiscalYear = Number(this.taskFiscalYear.value);
-    const labelId = Number(this.taskLabelId.value);
-
-    const task: Task = {
-      statusCode: TaskStatus.PENDING.code,
-      name: name,
-      dueDate: dueDate,
-      contacts: this._sourceTask.contacts ?? [{ div: "", name: "", tel: "" }],
-      description: this._sourceTask.description ?? "",
-      fiscalYear: fiscalYear,
-      labelId: labelId,
-      bookmark: 0,
-      selected: 0,
-    };
-
-    const id = await snDB.putTask(task);
-    await snDB.putLog({
-      taskId: id,
-      value: `#### Copied From\n- #{${this._sourceTask.id}}{${this._sourceTask.name}}`,
-    });
-    await snDB.putNote({
-      taskId: id,
-      value: "",
-    });
-
-    await snDB.selectSingleTask(id);
-    await snDB.updateLabelSelection(labelId, 1);
-
-    this._editDialog.open = false;
-    this._resetEditor();
-  }
-
-  /**
-   * 指定した年度（fiscalYear）に合致するタスクのみを抽出します。
-   * @param {number} targetYear 抽出したい年度
-   * @returns {Task[]} フィルタリングされたタスク配列
-   * @memberof SnList
-   */
-  private _filterTasksByFiscalYear(targetYear: number): Task[] {
-    return this._tasks.filter((task) => task.fiscalYear === targetYear);
-  }
+  private _keyFunction = (item: RenderItem): string => {
+    if (item.type === "year") {
+      return `year-${item.year}`;
+    }
+    return `task-${item.task.id}`;
+  };
 }

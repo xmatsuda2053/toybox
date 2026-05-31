@@ -1,19 +1,19 @@
 #contents-root {
   header {
-    color: white;
-
     display: flex;
     align-items: center;
     padding-block: var(--wa-space-2xs);
     margin-block-end: var(--wa-space-3xs);
+
+    color: white;
 
     span {
       font-size: var(--wa-font-size-s);
       margin-inline-end: auto;
     }
 
-    &:hover {
-      color: var(--wa-color-neutral-90);
+    wa-badge {
+      font-size: var(--wa-font-size-2xs);
     }
   }
 }

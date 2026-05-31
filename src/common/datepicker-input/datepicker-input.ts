@@ -66,6 +66,12 @@ const additionalDays = [...Array(42).keys()] as const;
  */
 @customElement("datepicker-input")
 export class DatePickerInput extends LitElement {
+  // Form要素であることを明示
+  static formAssociated = true;
+
+  // ブラウザのForm制御と同期させるためのインターフェースを取得
+  private _internals = this.attachInternals();
+
   /**
    * スタイルシートを適用
    *
@@ -90,15 +96,30 @@ export class DatePickerInput extends LitElement {
   @state() currentMY: string = formatDate(new Date(), "yyyy-MM");
 
   /**
+   * コンポーネントの名前
+   *
+   * @memberof DatePickerInput
+   */
+  @property({ type: String }) name = "";
+
+  /**
    * 日付
    *
    * @type {string}
    * @memberof DatePickerInput
    */
-  @property({ type: String }) value: string = formatDate(
-    new Date(),
-    "yyyy-MM-dd",
-  );
+  private _value: string = formatDate(new Date(), "yyyy-MM-dd");
+  @property({ type: String })
+  get value() {
+    return this._value;
+  }
+  set value(newValue: string) {
+    const oldValue = this._value;
+    this._value = newValue;
+    // ブラウザのFormDataシステムに値を登録
+    this._internals.setFormValue(newValue);
+    this.requestUpdate("value", oldValue);
+  }
 
   /**
    * カレンダー

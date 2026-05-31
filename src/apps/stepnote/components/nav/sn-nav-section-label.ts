@@ -232,8 +232,7 @@ export class SnNavSectionLabel extends LitElement {
       labelToSave.id = this._editingLabel.id;
     }
 
-    const id = await snDB.putLabel(labelToSave);
-    await snDB.updateLabelSelection(id, 1);
+    await snDB.putLabel(labelToSave);
 
     this._isAddDialogOpen = false;
     this._editingLabel = null;
@@ -245,7 +244,8 @@ export class SnNavSectionLabel extends LitElement {
    * @private
    * @memberof SnNavSectionLabel
    */
-  private _handleAfterHideAdd = () => {
+  private _handleAfterHideAdd = (e: CustomEvent) => {
+    if (e.target !== e.currentTarget) return;
     this._isAddDialogOpen = false;
     this._editingLabel = null;
   };
@@ -287,7 +287,8 @@ export class SnNavSectionLabel extends LitElement {
    * @private
    * @memberof SnNavSectionLabel
    */
-  private _handleAfterHideDelete = () => {
+  private _handleAfterHideDelete = (e: CustomEvent) => {
+    if (e.target !== e.currentTarget) return;
     this._isDeleteDialogOpen = false;
     this._editingLabel = null;
   };

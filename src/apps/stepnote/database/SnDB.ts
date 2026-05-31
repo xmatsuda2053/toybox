@@ -70,7 +70,11 @@ export class SnDB extends Dexie {
       newData.createdAt = now;
     }
 
-    return await this.labels.put(newData);
+    return await snDB.transaction("rw", [snDB.labels], async () => {
+      const id = await snDB.labels.put(newData);
+      await snDB.updateLabelSelection(id, 1);
+      return id;
+    });
   }
 
   /**
@@ -212,6 +216,70 @@ export class SnDB extends Dexie {
     newData.isPendingSelected = 1;
 
     await this.putQuickAccess(newData);
+  }
+
+  /**
+   * 新規タスクの追加を行う。
+   *
+   * @param {Task} newData
+   * @return {*}  {Promise<number>}
+   * @memberof SnDB
+   */
+  async addNewTask(newData: Task): Promise<number> {
+    return await snDB.transaction(
+      "rw",
+      [snDB.tasks, snDB.logs, snDB.notes, snDB.labels, snDB.quickAccesses],
+      async () => {
+        const id = await snDB.putTask(newData);
+
+        await snDB.putLog({
+          taskId: id,
+          value: "#### 新規追加",
+        });
+
+        await snDB.putNote({
+          taskId: id,
+          value: "",
+        });
+
+        await snDB.selectSingleTask(id);
+        await snDB.updateLabelSelection(newData.labelId, 1);
+        return id;
+      },
+    );
+  }
+
+  /**
+   * タスクの複製を行う。
+   *
+   * @param {Task} copiedTask
+   * @param {number} sourceId
+   * @return {*}  {Promise<number>}
+   * @memberof SnDB
+   */
+  async addCopiedTask(copiedTask: Task, sourceId: number): Promise<number> {
+    return await snDB.transaction(
+      "rw",
+      [snDB.tasks, snDB.logs, snDB.notes, snDB.labels, snDB.quickAccesses],
+      async () => {
+        const id = await snDB.putTask(copiedTask);
+
+        await snDB.putLog({
+          taskId: id,
+          value: "#### 新規追加",
+        });
+
+        const notes: Note[] = await snDB.selectNotesAscId(sourceId);
+        await snDB.putNote({
+          taskId: id,
+          value: notes[0].value,
+        });
+
+        await snDB.selectSingleTask(id);
+        await snDB.updateLabelSelection(copiedTask.labelId, 1);
+        return id;
+      },
+    );
   }
 
   /**

@@ -102,7 +102,7 @@ export class SnTaskButton extends LitElement {
           >
             <wa-icon
               library="my-icons"
-              name=${status.iconNameSub}
+              name=${status.iconName}
               class=${status.name}
             ></wa-icon>
             <span>${status.label}</span>
