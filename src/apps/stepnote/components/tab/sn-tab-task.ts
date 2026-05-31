@@ -1,67 +1,54 @@
-// 1. Core Libraries (Lit & Dexie)
+// Core Libraries (Lit & Dexie)
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  nothing,
 } from "lit";
 import { liveQuery, type Subscription } from "dexie";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, query, state } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs (WebAwesome)
+// Third-party UI & SDKs (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Components, Database, Codes, Models)
-import {
-  FlexibleTabArea,
-  type config,
-} from "@common/flexible-tab-area/flexible-tab-area";
+// Internal Shared (Components, Database, Codes, Models)
 import { SnTaskProperty } from "../task/sn-task-property";
 import { SnTaskSummary } from "@sn/components/task/sn-task-summary";
 import { snDB } from "@sn/database/SnDB";
-import { TaskStatus } from "@sn/code/TaskStatus";
 import { Task } from "@sn/models/Task";
 
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import { debounce } from "@utils/CommonUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-
-// --- Configuration & Initialization ---
-/**
- * タスクエリアに表示するコンテンツの設定
- */
-const TASKS: config[] = [
-  { id: "summary", label: "Summary" },
-  { id: "property", label: "Property" },
-];
+import styles from "@sn/styles/tab/sn-tab.lit.scss?inline";
 
 setBasePath("/");
 
 @customElement("sn-tab-task")
 export class SnTabTask extends LitElement {
   /**
-   * タスク一覧
+   *　タスク一覧
    *
    * @private
-   * @type {Label[]}
+   * @type {(Task | undefined)}
    * @memberof SnTabTask
    */
-  @state() private _task!: Task;
+  @state() private _task!: Task | undefined;
 
   /**
-   * タブエリア
+   * 選択中タブ
    *
-   * @type {FlexibleTabArea}
+   * @private
+   * @type {string}
    * @memberof SnTabTask
    */
-  @query("#tab-area") tabArea!: FlexibleTabArea;
+  @state() private _activeTab: string = "summary";
 
   /**
    * サマリ
@@ -80,6 +67,14 @@ export class SnTabTask extends LitElement {
   @query("#property") taskProperty!: SnTaskProperty;
 
   /**
+   * スタイルシートを適用
+   *
+   * @static
+   * @memberof SnTabTask
+   */
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  /**
    * テーブルの更新を検知する
    *
    * @private
@@ -88,35 +83,114 @@ export class SnTabTask extends LitElement {
    */
   private _dbSubscription?: Subscription;
 
-  /**
-   * スタイルシートを適用
-   *
-   * @static
-   * @memberof SnTabTask
-   */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-  ];
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
-   * 入力処理にデバウンスを設定します。
+   * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
+   *
+   * @override
+   * @memberof SnTabTask
+   */
+  connectedCallback() {
+    super.connectedCallback();
+    this._subscribeTasks();
+  }
+
+  /**
+   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
+   *
+   * @override
+   * @memberof SnTabTask
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._dbSubscription?.unsubscribe();
+    this._handleTaskInput.cancel();
+  }
+
+  // -------------------------------------------------------------
+  // Database Actions (Dexie 連携)
+  // -------------------------------------------------------------
+
+  /**
+   * テーブル状態が更新された場合に最新データを取得します。
    *
    * @private
    * @memberof SnTabTask
    */
-  private _debounceInput = debounce(async () => {
-    await this._saveTask();
-  }, 800);
+  private _subscribeTasks() {
+    this._dbSubscription?.unsubscribe();
+
+    const observable = liveQuery(() =>
+      snDB.tasks.where("selected").equals(1).toArray(),
+    );
+
+    this._dbSubscription = observable.subscribe({
+      next: (tasks) => {
+        const selectedTask = tasks?.[0];
+
+        // タスク未選択の場合、タブ選択を初期化
+        if (!selectedTask) {
+          this._activeTab = "summary";
+          this._task = undefined;
+          return;
+        }
+
+        // タスクIDが変更された場合、タブ選択を初期化
+        if (this._task?.id !== selectedTask.id) {
+          this._activeTab = "summary";
+        }
+
+        this._task = selectedTask;
+      },
+      error: (err) => console.error("LiveQuery Error:", err),
+    });
+  }
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
 
   /**
-   * タスク編集内容を保存します。
+   * タブ切り替え時の処理を制御する。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnTabTask
+   */
+  private _handleTabChange(e: CustomEvent) {
+    this._activeTab = e.detail.panel;
+  }
+
+  /**
+   * ステータス変更処理を制御します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnTabTask
+   */
+  private _handleChangeStatus = async (e: CustomEvent) => {
+    if (!this._task) return;
+
+    await snDB.changeStatusCode({
+      id: this._task.id!,
+      afterCode: e.detail.code,
+      beforeCode: this._task.statusCode,
+    });
+  };
+
+  /**
+   * タスク内容入力時の処理を制御します。
+   * 処理にデバウンスを設定します。
    *
    * @private
    * @memberof SnTabTask
    */
-  private async _saveTask() {
+  private _handleTaskInput = debounce(async () => {
+    if (!this._task) return;
+
     const summary = this.taskSummary.task;
     const property = this.taskProperty.task;
     const updateTask: Task = {
@@ -129,60 +203,11 @@ export class SnTabTask extends LitElement {
       labelId: property.labelId,
     };
     await snDB.putTask(updateTask);
-  }
+  }, 100);
 
-  /**
-   * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
-   *
-   * @override
-   * @memberof SnTabTask
-   */
-  connectedCallback() {
-    super.connectedCallback();
-
-    const observable = liveQuery(() =>
-      snDB.tasks.where("selected").equals(1).toArray(),
-    );
-    this._dbSubscription = observable.subscribe({
-      next: (tasks) => {
-        const selectedTask = tasks?.[0];
-
-        if (selectedTask) {
-          if (this._task?.id !== selectedTask.id) {
-            this.tabArea?.initTab();
-          }
-        } else {
-          this.tabArea?.initTab();
-        }
-        this._task = selectedTask;
-      },
-      error: (err) => console.error("LiveQuery Error:", err),
-    });
-  }
-
-  /**
-   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
-   *
-   * @override
-   * @memberof SnTabTask
-   */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this._dbSubscription?.unsubscribe();
-    this._debounceInput.cancel();
-  }
-
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SnTabTask
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
-
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
   /**
    * タスクタブをレンダリングします。
    *
@@ -192,69 +217,51 @@ export class SnTabTask extends LitElement {
    * @memberof SnTabTask
    */
   protected render(): HTMLTemplateResult {
-    return html` <flexible-tab-area
-      id="tab-area"
-      .tabs=${TASKS}
-      @input=${this._updateTask}
-      @input-asap=${this._updateTaskAsap}
+    return html`<div id="contents-root">
+      <div class="header">${this._renderHeader()}</div>
+      <div class="main">${this._renderMain()}</div>
+    </div>`;
+  }
+
+  /**
+   * ヘッダーをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTabTask
+   */
+  private _renderHeader(): HTMLTemplateResult {
+    return html` <div class="title">TASK</div>
+      <div class="menu">
+        ${this._task
+          ? html` <sn-task-button
+              @change-status=${this._handleChangeStatus}
+            ></sn-task-button>`
+          : nothing}
+      </div>`;
+  }
+
+  /**
+   * メインをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTabTask
+   */
+  private _renderMain(): HTMLTemplateResult {
+    return html` <wa-tab-group
+      .active=${this._activeTab}
+      @input-task=${this._handleTaskInput}
+      @wa-tab-show=${this._handleTabChange}
     >
-      TASK
-      <sn-task-button
-        slot="end"
-        @change-status=${this._changeStatus}
-      ></sn-task-button>
-      <sn-task-summary
-        id="summary"
-        slot="summary"
-        .task=${this._task}
-      ></sn-task-summary>
-      <sn-task-property
-        id="property"
-        slot="property"
-        .task=${this._task}
-      ></sn-task-property>
-    </flexible-tab-area>`;
-  }
-
-  /**
-   * タスクのステータス変更
-   *
-   * @private
-   * @param {CustomEvent} e
-   * @memberof SnTabTask
-   */
-  private async _changeStatus(e: CustomEvent) {
-    if (this._task && this._task.id) {
-      const id = this._task.id;
-      const code = e.detail.code;
-      const beforeStatus = TaskStatus.fromCode(this._task.statusCode);
-      const afterStatus = TaskStatus.fromCode(code);
-
-      await snDB.changeStatusCode(id, e.detail.code);
-      await snDB.putLog({
-        taskId: id,
-        value: `#### 状態変更\n- ${beforeStatus.label} > ${afterStatus.label}`,
-      });
-    }
-  }
-
-  /**
-   * 入力内容でDBの値を更新する
-   *
-   * @private
-   * @memberof SnTabTask
-   */
-  private _updateTask() {
-    this._debounceInput();
-  }
-
-  /**
-   * 入力内容でDBの値を更新する（即時）
-   *
-   * @private
-   * @memberof SnTabTask
-   */
-  private _updateTaskAsap() {
-    this._saveTask();
+      <wa-tab panel="summary">Summary</wa-tab>
+      <wa-tab panel="property">Property</wa-tab>
+      <wa-tab-panel name="summary">
+        <sn-task-summary id="summary" .task=${this._task}></sn-task-summary>
+      </wa-tab-panel>
+      <wa-tab-panel name="property">
+        <sn-task-property id="property" .task=${this._task}></sn-task-property>
+      </wa-tab-panel>
+    </wa-tab-group>`;
   }
 }

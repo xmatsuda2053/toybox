@@ -190,7 +190,6 @@ export class SnTaskSummary extends LitElement {
           <div class="label">期限日</div>
           <datepicker-input
             id="due-date"
-            class="asap"
             size="small"
             .value=${formatDate(this.task.dueDate, "yyyy-MM-dd")}
           >
@@ -221,23 +220,15 @@ export class SnTaskSummary extends LitElement {
    * 入力のイベントを発生させる。
    *
    * @private
-   * @param {Event} e
    * @memberof SnTaskSummary
    */
-  private _inputData(e: Event) {
+  private _inputData() {
     this.task.name = this.taskName.value!;
     this.task.dueDate = new Date(this.dueDate.value!);
     this.task.contacts = [this.taskContact.contact];
     this.task.description = this.taskDescription.value;
 
-    const target = e.target as HTMLInputElement;
-    const isAsap = target.classList.contains("asap");
-
-    if (isAsap) {
-      emit(this, "input-asap");
-    } else {
-      emit(this, "input");
-    }
+    emit(this, "input-task");
   }
 
   /**

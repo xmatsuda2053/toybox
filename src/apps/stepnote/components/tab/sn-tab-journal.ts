@@ -83,6 +83,14 @@ export class SnTabJournal extends LitElement {
   @state() notes!: Note[];
 
   /**
+   * 選択中のタブ番号
+   *
+   * @type {string}
+   * @memberof SnTabJournal
+   */
+  @state() currentTab: string = "";
+
+  /**
    * ログ
    *
    * @type {SnJournalLog}
@@ -135,7 +143,7 @@ export class SnTabJournal extends LitElement {
       next: async (result) => {
         if (result.task) {
           if (this.selectedTaskId !== result.task.id) {
-            this.tabArea?.initTab();
+            this.currentTab = "";
           }
           this.selectedTaskId = result.task.id!;
           this.logs = result.logs;
@@ -188,7 +196,11 @@ export class SnTabJournal extends LitElement {
       { id: "note", label: "Note", mark: hasNote },
     ];
 
-    return html`<flexible-tab-area id="tab-area" .tabs=${JOURNALS}>
+    return html`<flexible-tab-area
+      id="tab-area"
+      .activeTabId=${this.currentTab}
+      .tabs=${JOURNALS}
+    >
       JOURNAL
       <sn-journal-log
         id="journal-log"

@@ -1,10 +1,9 @@
 import {
   LitElement,
   html,
-  css,
   unsafeCSS,
-  PropertyValues,
   HTMLTemplateResult,
+  type PropertyValues,
 } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { withStatic } from "lit/static-html.js";
@@ -39,6 +38,13 @@ export class FlexibleTabArea extends LitElement {
   @property({ type: Array }) tabs: config[] = [];
 
   /**
+   * 選択中のタブID
+   *
+   * @memberof FlexibleTabArea
+   */
+  @property({ type: String, attribute: "active-tab-id" }) activeTabId = "";
+
+  /**
    * タブグループ
    *
    * @type {WaTabGroup}
@@ -52,22 +58,36 @@ export class FlexibleTabArea extends LitElement {
    * @static
    * @memberof PSTask
    */
-  static styles = [
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(styles)];
 
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
   /**
-   * render直前に実行されます。
+   * DOM生成後に実行されます。
    *
    * @protected
    * @param {PropertyValues} _changedProperties
-   * @memberof PSTask
+   * @memberof SnTaskProperty
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
+  protected updated(_changedProperties: PropertyValues) {
+    super.updated(_changedProperties);
+
+    if (
+      (_changedProperties.has("activeTabId") ||
+        _changedProperties.has("tabs")) &&
+      this.tabGroup
+    ) {
+      const targetId = this.activeTabId || this.tabs[0]?.id;
+      if (targetId && this.tabGroup.active !== targetId) {
+        this.tabGroup.active = targetId;
+      }
+    }
   }
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * タスク詳細をレンダリングします。
@@ -81,7 +101,7 @@ export class FlexibleTabArea extends LitElement {
     return html` <div id="contents-root">
       <div class="header">
         <div class="text"><slot></slot></div>
-        <div class="end"><slot name="end"></slot></div>
+        <slot name="end"></slot>
       </div>
       <div class="contents">
         <wa-tab-group id="tab-group">
@@ -105,18 +125,5 @@ export class FlexibleTabArea extends LitElement {
         </wa-tab-group>
       </div>
     </div>`;
-  }
-
-  /**
-   * タブ選択を初期化します。
-   *
-   * @return {*}
-   * @memberof FlexibleTabArea
-   */
-  initTab(): void {
-    if (!this.tabGroup) return;
-    if (this.tabs?.length === 0) return;
-
-    this.tabGroup.active = this.tabs[0].id;
   }
 }

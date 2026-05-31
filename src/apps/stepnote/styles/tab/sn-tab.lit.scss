@@ -1,38 +1,9 @@
-:host,
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-wa-input {
-  &::part(base),
-  &::part(input) {
-    outline: none;
-  }
-}
-
-wa-textarea {
-  &::part(base),
-  &::part(control),
-  &::part(textarea) {
-    outline: none;
-  }
-}
-
-wa-select {
-  &::part(combobox),
-  &::part(form-control),
-  &::part(form-control-input) {
-    outline: none;
-  }
-}
-
 #contents-root {
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: var(--wa-space-s);
+  padding-inline-end: 0;
   padding-block-end: 0;
 
   overflow: hidden;
@@ -45,12 +16,12 @@ wa-select {
 
     align-items: center;
 
-    .text {
+    .title {
       margin-inline-end: auto;
     }
   }
 
-  .contents {
+  .main {
     flex: 1;
     height: 100%;
     overflow: hidden;
@@ -77,23 +48,18 @@ wa-select {
         &::part(base) {
           font-size: var(--wa-font-size-s);
         }
-
-        wa-icon {
-          font-size: var(--wa-space-xs);
-          color: var(--wa-color-success-50);
-        }
       }
+    }
 
-      wa-tab-panel {
+    wa-tab-panel {
+      height: 100%;
+
+      --padding: var(--wa-space-xs);
+
+      &::part(base) {
         height: 100%;
-
-        --padding: var(--wa-space-xs);
-
-        &::part(base) {
-          height: 100%;
-          padding-block: var(--wa-space-m);
-          padding-block-end: var(--wa-space-m);
-        }
+        padding-block: var(--wa-space-m);
+        padding-block-end: var(--wa-space-m);
       }
     }
   }

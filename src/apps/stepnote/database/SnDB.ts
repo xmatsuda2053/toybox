@@ -303,15 +303,32 @@ export class SnDB extends Dexie {
   /**
    * タスクの状態を更新
    *
-   * @param {number} id
-   * @param {string} code
+   * @param {{
+   *     id: number;
+   *     afterCode: string;
+   *     beforeCode: string;
+   *   }} data
    * @return {*}  {Promise<void>}
    * @memberof SnDB
    */
-  async changeStatusCode(id: number, code: string): Promise<void> {
+  async changeStatusCode(data: {
+    id: number;
+    afterCode: string;
+    beforeCode: string;
+  }): Promise<void> {
     try {
-      await this.tasks.update(id, {
-        statusCode: code,
+      await this.transaction("rw", [this.tasks, this.logs], async () => {
+        await this.tasks.update(data.id, {
+          statusCode: data.afterCode,
+        });
+
+        const beforeStatus = TaskStatus.fromCode(data.beforeCode);
+        const afterStatus = TaskStatus.fromCode(data.afterCode);
+
+        await this.putLog({
+          taskId: data.id,
+          value: `#### 状態変更\n- ${beforeStatus.label} > ${afterStatus.label}`,
+        });
       });
     } catch (error) {
       console.error("Failed to update statusCode:", error);
