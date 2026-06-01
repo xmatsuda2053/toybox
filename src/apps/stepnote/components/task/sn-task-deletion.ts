@@ -1,15 +1,8 @@
 // 1. Core Libraries
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, query, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 
 // 3. Third-party UI & SDKs (WebAwesome)
 import type WaSwitch from "@awesome.me/webawesome/dist/components/switch/switch.js";
@@ -41,15 +34,7 @@ export class SnTaskDeletion extends LitElement {
    * @type {boolean}
    * @memberof SnTaskDeletion
    */
-  @state() isDeletionAllowed: boolean = false;
-
-  /**
-   * 削除可否スイッチ
-   *
-   * @type {typeof WaSwitch}
-   * @memberof SnTaskDeletion
-   */
-  @query("#deletionSwitch") deletionSwitch!: WaSwitch;
+  @state() _isDeletionAllowed: boolean = false;
 
   /**
    * スタイルシートを適用
@@ -57,36 +42,40 @@ export class SnTaskDeletion extends LitElement {
    * @static
    * @memberof SnTaskDeletion
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
 
   /**
-   * Creates an instance of PSTaskDeletion.
-   * @memberof SnTaskDeletion
-   */
-  constructor() {
-    super();
-  }
-
-  /**
-   * render直前に実行されます。
+   * 削除制御スイッチのONOFF処理を制御します。
    *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @private
+   * @param {Event} e
    * @memberof SnTaskDeletion
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  private _handleDeletionSwitchChange = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this._isDeletionAllowed = (e.target as WaSwitch).checked;
+  };
 
   /**
-   * リファレンスをレンダリングします。
+   * 削除ボタンクリック時のイベントを制御します。
+   *
+   * @private
+   * @memberof SnTaskDeletion
+   */
+  private _handleDeleteClick = () => {
+    emit(this, "delete-task");
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
+  /**
+   * 削除機能をレンダリングします。
    *
    * @protected
    * @override
@@ -97,17 +86,20 @@ export class SnTaskDeletion extends LitElement {
     return html`<div id="contents-root">
       <div class="contents">
         <div class="switch">
-          <wa-switch id="deletionSwitch" @change=${this._toggleDeletionAllowed}>
+          <wa-switch
+            id="deletionSwitch"
+            @change=${this._handleDeletionSwitchChange}
+          >
             このタスクを削除可能とする
           </wa-switch>
         </div>
         <div class="button">
           <wa-button
-            appearance=${this.isDeletionAllowed ? "accent" : "outlined"}
+            appearance=${this._isDeletionAllowed ? "accent" : "outlined"}
             variant="danger"
             size="small"
-            ?disabled=${!this.isDeletionAllowed}
-            @click=${() => emit(this, "delete-task")}
+            ?disabled=${!this._isDeletionAllowed}
+            @click=${this._handleDeleteClick}
           >
             <wa-icon
               slot="start"
@@ -119,15 +111,5 @@ export class SnTaskDeletion extends LitElement {
         </div>
       </div>
     </div>`;
-  }
-
-  /**
-   * 削除可否を切り替えます。
-   *
-   * @private
-   * @memberof SnTaskDeletion
-   */
-  private _toggleDeletionAllowed() {
-    this.isDeletionAllowed = this.deletionSwitch.checked;
   }
 }
