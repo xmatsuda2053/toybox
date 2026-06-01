@@ -1,15 +1,12 @@
 @use "../../../_shared/mixins";
 
 #contents-root {
-  height: 100%;
-  box-sizing: border-box;
-
-  //padding-inline: var(--wa-space-2xs);
-  //padding-block-start: var(--wa-space-m);
-
   display: flex;
   gap: var(--wa-space-m);
   flex-direction: column;
+
+  height: 100%;
+  box-sizing: border-box;
 
   @include mixins.scrollable(
     var(--wa-color-neutral-30),
@@ -38,12 +35,11 @@
   }
 
   .task-item {
-    height: auto;
-    //padding-block-end: var(--wa-space-m);
-    box-sizing: border-box;
-
     display: flex;
     flex-direction: column;
+
+    height: auto;
+    box-sizing: border-box;
 
     .has-label {
       display: flex;

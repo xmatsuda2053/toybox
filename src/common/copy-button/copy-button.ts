@@ -137,7 +137,9 @@ export class CopyButton extends LitElement {
    */
   render(): HTMLTemplateResult {
     return html`
+      <wa-tooltip for="btn-copy" placement="top"><slot></slot></wa-tooltip>
       <wa-button
+        id="btn-copy"
         size=${this.size}
         appearance=${this.appearance}
         variant=${this.variant}

@@ -1,15 +1,16 @@
 // 1. Core Libraries
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  PropertyValues,
+  nothing,
 } from "lit";
+import { live } from "lit/directives/live.js";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 // 3. Third-party UI & SDKs (WebAwesome)
@@ -36,6 +37,11 @@ import styles from "@sn/styles/task/sn-task-summary.lit.scss?inline";
 setBasePath("/");
 
 /**
+ * タスク説明の初期値
+ */
+const DEFAULT_DESCRIPTION: string = "## タスク説明\n\n### 概要";
+
+/**
  * タスク概要
  *
  * @export
@@ -54,40 +60,12 @@ export class SnTaskSummary extends LitElement {
   @property({ type: Object }) task!: Task;
 
   /**
-   * タスク名
+   * タスクステータス
    *
-   * @private
-   * @type {WaInput}
+   * @type {TaskStatus}
    * @memberof SnTaskSummary
    */
-  @query("#name") private taskName!: WaInput;
-
-  /**
-   * 期限日
-   *
-   * @private
-   * @type {DatePickerInput}
-   * @memberof SnTaskSummary
-   */
-  @query("#due-date") private dueDate!: DatePickerInput;
-
-  /**
-   * 関係者
-   *
-   * @private
-   * @type {SnTaskContact}
-   * @memberof SnTaskSummary
-   */
-  @query("#task-contact") private taskContact!: SnTaskContact;
-
-  /**
-   * タスク説明
-   *
-   * @private
-   * @type {ThinMarkdownEditor}
-   * @memberof SnTaskSummary
-   */
-  @query("#task-description") private taskDescription!: ThinMarkdownEditor;
+  @state() _status: TaskStatus = TaskStatus.PENDING;
 
   /**
    * スタイルシートを適用
@@ -95,43 +73,109 @@ export class SnTaskSummary extends LitElement {
    * @static
    * @memberof SnTaskSummary
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
-  /**
-   * Creates an instance of SnTaskSummary.
-   * @memberof SnTaskSummary
-   */
-  constructor() {
-    super();
-  }
-
-  /**
-   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
-   *
-   * @override
-   * @memberof SnTaskSummary
-   */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
+  // -------------------------------------------------------------
+  // ライフサイクル
+  // -------------------------------------------------------------
 
   /**
    * render直前に実行されます。
    *
    * @protected
    * @param {PropertyValues} _changedProperties
-   * @memberof SnTaskSummary
+   * @memberof SnTaskProperty
    */
   protected willUpdate(_changedProperties: PropertyValues) {
     super.willUpdate(_changedProperties);
+
+    if (_changedProperties.has("task")) {
+      this._status = TaskStatus.fromCode(this.task.statusCode);
+    }
   }
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
+
+  /**
+   * タスク名の入力イベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnTaskSummary
+   */
+  private _handleNameInput = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target as WaInput;
+    this.task["name"] = target.value ?? "";
+
+    emit(this, "input-task");
+  };
+
+  /**
+   * 期限日の変更イベントを制御します。
+   */
+  private _handleDueDateChange = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target as DatePickerInput;
+    this.task["dueDate"] = target.value ? new Date(target.value) : new Date();
+
+    emit(this, "input-task");
+  };
+
+  /**
+   * 関係者（連絡先）の入力イベントを制御します。
+   */
+  private _handleContactInput = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target as SnTaskContact;
+    this.task["contacts"] = [target.contact];
+
+    emit(this, "input-task");
+  };
+
+  /**
+   * タスク説明（エディタ）の入力イベントを制御します。
+   */
+  private _handleDescriptionInput = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target as ThinMarkdownEditor;
+    this.task["description"] = target.value;
+
+    emit(this, "input-task");
+  };
+
+  /**
+   * IDコピーボタンのクリック時処理を制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnTaskSummary
+   */
+  private _handleCopyIdClick = async (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      const raw = `#{${this.task.id}}{${this.task.name}}`;
+      await navigator.clipboard.writeText(raw);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * サマリをレンダリングします。
@@ -141,110 +185,120 @@ export class SnTaskSummary extends LitElement {
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
    * @memberof SnTaskSummary
    */
-  protected render(): HTMLTemplateResult {
-    if (!this.task) {
-      return html`<div></div>`;
-    }
-    const status = TaskStatus.fromCode(this.task.statusCode);
+  protected render(): HTMLTemplateResult | typeof nothing {
+    if (!this.task) return nothing;
+
     const baseClassMap = classMap({
-      pending: status.isPending(),
-      progress: status.isProgress(),
-      done: status.isDone(),
+      [this._status.name]: true,
     });
 
-    return html`<div
-      id="contents-root"
-      class=${baseClassMap}
-      @input=${this._inputData}
-    >
+    return html`<div id="contents-root" class=${baseClassMap}>
       <div class="task-item">
         <div class="has-label">
-          <div class="label">タスク名</div>
-          <wa-input
-            id="name"
-            class="item"
-            size="small"
-            .value=${this.task.name}
-          >
-            <wa-icon
-              library="my-icons"
-              name=${status.iconName}
-              class="status-icon"
-              slot="start"
-            ></wa-icon>
-            <wa-icon
-              library="my-icons"
-              name="note-sticky-solid-full"
-              slot="end"
-            ></wa-icon>
-          </wa-input>
-          <wa-tooltip for="btn-copy-id" placement="top">Copy ID</wa-tooltip>
-          <copy-button
-            id="btn-copy-id"
-            @click=${this._copyIdAndName}
-          ></copy-button>
+          ${this._renderTaskName()} ${this._renderIdCopyButton()}
         </div>
       </div>
       <div class="task-item">
-        <div class="has-label has-weekday">
-          <div class="label">期限日</div>
-          <datepicker-input
-            id="due-date"
-            size="small"
-            .value=${formatDate(this.task.dueDate, "yyyy-MM-dd")}
-          >
-          </datepicker-input>
-        </div>
+        <div class="has-label">${this._renderDueDate()}</div>
       </div>
       <div class="task-item">
-        <div class="has-label">
-          <div class="label">関係者</div>
-          <div class="item">
-            <sn-task-contact
-              id="task-contact"
-              .contact=${this.task.contacts[0]}
-            ></sn-task-contact>
-          </div>
-        </div>
+        <div class="has-label">${this._renderContact()}</div>
       </div>
-      <div class="task-item grow-item">
-        <thin-markdown-editor
-          id="task-description"
-          .value=${this.task.description || "## タスク説明\n\n### 概要"}
-        ></thin-markdown-editor>
-      </div>
+      <div class="task-item grow-item">${this._renderDescription()}</div>
     </div>`;
   }
 
   /**
-   * 入力のイベントを発生させる。
+   * タスク名をレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnTaskSummary
    */
-  private _inputData() {
-    this.task.name = this.taskName.value!;
-    this.task.dueDate = new Date(this.dueDate.value!);
-    this.task.contacts = [this.taskContact.contact];
-    this.task.description = this.taskDescription.value;
-
-    emit(this, "input-task");
+  private _renderTaskName(): HTMLTemplateResult {
+    return html` <div class="label">タスク名</div>
+      <wa-input
+        id="name"
+        class="item"
+        size="small"
+        .value=${live(this.task.name)}
+        @input=${this._handleNameInput}
+      >
+        <wa-icon
+          library="my-icons"
+          name=${this._status.iconName}
+          class="status-icon"
+          slot="start"
+        ></wa-icon>
+        <wa-icon
+          library="my-icons"
+          name="note-sticky-solid-full"
+          slot="end"
+        ></wa-icon>
+      </wa-input>`;
   }
 
   /**
-   * Markdown用のIDとタスク名をクリップボードにコピーする。
+   * IDコピーボタンをレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnTaskSummary
    */
-  private async _copyIdAndName(e: Event) {
-    e.preventDefault();
+  private _renderIdCopyButton(): HTMLTemplateResult {
+    return html` <copy-button @click=${this._handleCopyIdClick}>
+      Copy ID
+    </copy-button>`;
+  }
 
-    try {
-      const raw = `#{${this.task.id}}{${this.task.name}}`;
-      await navigator.clipboard.writeText(raw);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+  /**
+   * 期限日をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTaskSummary
+   */
+  private _renderDueDate(): HTMLTemplateResult {
+    return html`<div class="label">期限日</div>
+      <datepicker-input
+        id="due-date"
+        size="small"
+        .value=${live(formatDate(this.task.dueDate, "yyyy-MM-dd"))}
+        @input=${this._handleDueDateChange}
+      >
+      </datepicker-input>`;
+  }
+
+  /**
+   * 関係者をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTaskSummary
+   */
+  private _renderContact(): HTMLTemplateResult {
+    return html`<div class="label">関係者</div>
+      <div class="item">
+        <sn-task-contact
+          id="contact"
+          .contact=${live(this.task.contacts[0])}
+          @input=${this._handleContactInput}
+        ></sn-task-contact>
+      </div>`;
+  }
+
+  /**
+   * タスク説明をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTaskSummary
+   */
+  private _renderDescription(): HTMLTemplateResult {
+    return html`<thin-markdown-editor
+      id="description"
+      .value=${live(this.task.description || DEFAULT_DESCRIPTION)}
+      @input=${this._handleDescriptionInput}
+    ></thin-markdown-editor>`;
   }
 }

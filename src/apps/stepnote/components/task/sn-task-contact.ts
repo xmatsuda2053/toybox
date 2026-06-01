@@ -91,7 +91,7 @@ export class SnTaskContact extends LitElement {
    * @private
    * @memberof SnTaskContact
    */
-  private _handleInput(e: Event) {
+  private _handleInput = (e: Event) => {
     const inputElement = e.target as WaInput;
     const fieldId = inputElement.id as keyof Contact;
     const newValue = inputElement.value ?? "";
@@ -101,7 +101,7 @@ export class SnTaskContact extends LitElement {
       this.contact[fieldId] = newValue;
     }
     emit(this, "input");
-  }
+  };
 
   // -------------------------------------------------------------
   // レンダリング
