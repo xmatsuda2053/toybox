@@ -9,19 +9,15 @@ import {
 import { liveQuery, type Subscription } from "dexie";
 
 // Lit Extensions (Decorators & Directives)
-import { customElement, query, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 
 // Third-party UI & SDKs (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // Internal Shared (Components, Database, Codes, Models)
-import { SnTaskProperty } from "../task/sn-task-property";
-import { SnTaskSummary } from "@sn/components/task/sn-task-summary";
 import { snDB } from "@sn/database/SnDB";
+import { Label } from "@sn/models/Label";
 import { Task } from "@sn/models/Task";
-
-// Internal Shared (Utils)
-import { debounce } from "@utils/CommonUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -32,6 +28,15 @@ setBasePath("/");
 
 @customElement("sn-tab-task")
 export class SnTabTask extends LitElement {
+  /**
+   * ラベル一覧
+   *
+   * @private
+   * @type {Label[]}
+   * @memberof SnTaskProperty
+   */
+  @state() private _labels: Label[] = [];
+
   /**
    *　タスク一覧
    *
@@ -49,22 +54,6 @@ export class SnTabTask extends LitElement {
    * @memberof SnTabTask
    */
   @state() private _activeTab: string = "summary";
-
-  /**
-   * サマリ
-   *
-   * @type {SnTaskSummary}
-   * @memberof SnTabTask
-   */
-  @query("#summary") taskSummary!: SnTaskSummary;
-
-  /**
-   * プロパティ
-   *
-   * @type {SnTaskProperty}
-   * @memberof SnTabTask
-   */
-  @query("#property") taskProperty!: SnTaskProperty;
 
   /**
    * スタイルシートを適用
@@ -107,7 +96,6 @@ export class SnTabTask extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this._dbSubscription?.unsubscribe();
-    this._handleTaskInput.cancel();
   }
 
   // -------------------------------------------------------------
@@ -123,18 +111,27 @@ export class SnTabTask extends LitElement {
   private _subscribeTasks() {
     this._dbSubscription?.unsubscribe();
 
-    const observable = liveQuery(() =>
-      snDB.tasks.where("selected").equals(1).toArray(),
-    );
+    const observable = liveQuery(async () => {
+      const [labels, tasks] = await Promise.all([
+        snDB.selectLabelsAscName(),
+        snDB.tasks.where("selected").equals(1).toArray(),
+      ]);
+      return {
+        labels,
+        tasks,
+      };
+    });
 
     this._dbSubscription = observable.subscribe({
-      next: (tasks) => {
-        const selectedTask = tasks?.[0];
+      next: (data) => {
+        this._labels = data.labels;
+        const selectedTask = data.tasks?.[0];
 
         // タスク未選択の場合、タブ選択を初期化
         if (!selectedTask) {
           this._activeTab = "summary";
           this._task = undefined;
+
           return;
         }
 
@@ -161,7 +158,7 @@ export class SnTabTask extends LitElement {
    * @memberof SnTabTask
    */
   private _handleTabChange(e: CustomEvent) {
-    this._activeTab = e.detail.panel;
+    this._activeTab = e.detail.name;
   }
 
   /**
@@ -180,30 +177,6 @@ export class SnTabTask extends LitElement {
       beforeCode: this._task.statusCode,
     });
   };
-
-  /**
-   * タスク内容入力時の処理を制御します。
-   * 処理にデバウンスを設定します。
-   *
-   * @private
-   * @memberof SnTabTask
-   */
-  private _handleTaskInput = debounce(async () => {
-    if (!this._task) return;
-
-    const summary = this.taskSummary.task;
-    const property = this.taskProperty.task;
-    const updateTask: Task = {
-      ...this._task,
-      name: summary.name,
-      dueDate: summary.dueDate,
-      contacts: summary.contacts,
-      description: summary.description,
-      fiscalYear: property.fiscalYear,
-      labelId: property.labelId,
-    };
-    await snDB.putTask(updateTask);
-  }, 100);
 
   // -------------------------------------------------------------
   // レンダリング
@@ -251,16 +224,19 @@ export class SnTabTask extends LitElement {
   private _renderMain(): HTMLTemplateResult {
     return html` <wa-tab-group
       .active=${this._activeTab}
-      @input-task=${this._handleTaskInput}
       @wa-tab-show=${this._handleTabChange}
     >
       <wa-tab panel="summary">Summary</wa-tab>
       <wa-tab panel="property">Property</wa-tab>
       <wa-tab-panel name="summary">
-        <sn-task-summary id="summary" .task=${this._task}></sn-task-summary>
+        <sn-task-summary id="summary" .task=${this._task!}></sn-task-summary>
       </wa-tab-panel>
       <wa-tab-panel name="property">
-        <sn-task-property id="property" .task=${this._task}></sn-task-property>
+        <sn-task-property
+          id="property"
+          .task=${this._task!}
+          .labels=${this._labels}
+        ></sn-task-property>
       </wa-tab-panel>
     </wa-tab-group>`;
   }

@@ -2,10 +2,11 @@
 import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
 // 2. Lit Extensions (Decorators & Directives)
-import { customElement, state } from "lit/decorators.js";
+import { customElement, state, query } from "lit/decorators.js";
 
 // 3. Third-party UI & SDKs (WebAwesome)
 import type WaSwitch from "@awesome.me/webawesome/dist/components/switch/switch.js";
+import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Shared (Utils)
@@ -35,6 +36,15 @@ export class SnTaskDeletion extends LitElement {
    * @memberof SnTaskDeletion
    */
   @state() _isDeletionAllowed: boolean = false;
+
+  /**
+   * 削除ダイアログ
+   *
+   * @private
+   * @type {WaDialog}
+   * @memberof SnTaskProperty
+   */
+  @query("#delete-task-overview") private _deleteDialog!: WaDialog;
 
   /**
    * スタイルシートを適用
@@ -68,6 +78,17 @@ export class SnTaskDeletion extends LitElement {
    * @memberof SnTaskDeletion
    */
   private _handleDeleteClick = () => {
+    this._deleteDialog.label = `このタスクを削除しますか?`;
+    this._deleteDialog.open = true;
+  };
+
+  /**
+   * タスク削除実行時のイベントを制御します。
+   *
+   * @private
+   * @memberof SnTaskDeletion
+   */
+  private _handleDeleteTaskClick = () => {
     emit(this, "delete-task");
   };
 
@@ -90,7 +111,7 @@ export class SnTaskDeletion extends LitElement {
             id="deletionSwitch"
             @change=${this._handleDeletionSwitchChange}
           >
-            このタスクを削除可能とする
+            <slot></slot>
           </wa-switch>
         </div>
         <div class="button">
@@ -110,6 +131,30 @@ export class SnTaskDeletion extends LitElement {
           </wa-button>
         </div>
       </div>
+      <wa-dialog label="Confirm Delete" id="delete-task-overview">
+        <div class="delete-confirmation">
+          対象データを削除します。<br />
+          この操作は取り消せません。
+        </div>
+        <wa-button
+          slot="footer"
+          variant="danger"
+          appearance="accent"
+          size="small"
+          @click=${this._handleDeleteTaskClick}
+        >
+          Delete Task
+        </wa-button>
+        <wa-button
+          slot="footer"
+          variant="neutral"
+          appearance="filled-outlined"
+          size="small"
+          data-dialog="close"
+        >
+          Cancel
+        </wa-button>
+      </wa-dialog>
     </div>`;
   }
 }

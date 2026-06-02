@@ -18,6 +18,7 @@ import WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // 4. Internal Shared (Components, Codes, Models)
+import { snDB } from "@sn/database/SnDB";
 import { ThinMarkdownEditor } from "@common/thin-markdown-editor/thin-markdown-editor";
 import { SnTaskContact } from "@sn/components/task/sn-task-contact.ts";
 import { TaskStatus } from "@sn/code/TaskStatus";
@@ -26,7 +27,7 @@ import { DatePickerInput } from "@/common/datepicker-input/datepicker-input";
 
 // 5. Internal Shared (Utils)
 import { formatDate } from "@/utils/DateUtils";
-import { emit } from "@utils/EventUtils";
+import { debounce } from "@utils/CommonUtils";
 
 // 6. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -53,8 +54,7 @@ export class SnTaskSummary extends LitElement {
   /**
    * タスクデータ
    *
-   * @private
-   * @type {Label[]}
+   * @type {Task}
    * @memberof SnTaskSummary
    */
   @property({ type: Object }) task!: Task;
@@ -76,7 +76,7 @@ export class SnTaskSummary extends LitElement {
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
   // -------------------------------------------------------------
-  // ライフサイクル
+  // Lifecycle
   // -------------------------------------------------------------
 
   /**
@@ -90,9 +90,28 @@ export class SnTaskSummary extends LitElement {
     super.willUpdate(_changedProperties);
 
     if (_changedProperties.has("task")) {
-      this._status = TaskStatus.fromCode(this.task.statusCode);
+      if (this.task) {
+        this._status = TaskStatus.fromCode(this.task.statusCode);
+      }
     }
   }
+
+  // -------------------------------------------------------------
+  // Database Actions (Dexie 連携)
+  // -------------------------------------------------------------
+
+  /**
+   * タスクデータを更新します。
+   *
+   * @private
+   * @memberof SnTaskSummary
+   */
+  private _update = debounce(
+    async (updateData: Partial<Task>): Promise<void> => {
+      await snDB.updateTask(updateData);
+    },
+    500,
+  );
 
   // -------------------------------------------------------------
   // イベント制御
@@ -112,7 +131,10 @@ export class SnTaskSummary extends LitElement {
     const target = e.target as WaInput;
     this.task["name"] = target.value ?? "";
 
-    emit(this, "input-task");
+    this._update({
+      id: this.task.id,
+      name: this.task.name,
+    });
   };
 
   /**
@@ -125,7 +147,10 @@ export class SnTaskSummary extends LitElement {
     const target = e.target as DatePickerInput;
     this.task["dueDate"] = target.value ? new Date(target.value) : new Date();
 
-    emit(this, "input-task");
+    this._update({
+      id: this.task.id,
+      dueDate: this.task.dueDate,
+    });
   };
 
   /**
@@ -138,7 +163,10 @@ export class SnTaskSummary extends LitElement {
     const target = e.target as SnTaskContact;
     this.task["contacts"] = [target.contact];
 
-    emit(this, "input-task");
+    this._update({
+      id: this.task.id,
+      contacts: this.task.contacts,
+    });
   };
 
   /**
@@ -151,7 +179,10 @@ export class SnTaskSummary extends LitElement {
     const target = e.target as ThinMarkdownEditor;
     this.task["description"] = target.value;
 
-    emit(this, "input-task");
+    this._update({
+      id: this.task.id,
+      description: this.task.description,
+    });
   };
 
   /**
@@ -297,7 +328,7 @@ export class SnTaskSummary extends LitElement {
   private _renderDescription(): HTMLTemplateResult {
     return html`<thin-markdown-editor
       id="description"
-      .value=${live(this.task.description || DEFAULT_DESCRIPTION)}
+      .value=${this.task.description || DEFAULT_DESCRIPTION}
       @input=${this._handleDescriptionInput}
     ></thin-markdown-editor>`;
   }
