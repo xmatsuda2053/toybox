@@ -1,31 +1,25 @@
-// 1. Core Libraries
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+// Core Libraries
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, property } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Codes, Models, Database)
+// Internal Shared (Codes, Models, Database)
 import { TaskStatus, type TaskStatusCode } from "@sn/code/TaskStatus";
 
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/task/sn-task-button.lit.scss?inline";
 
-// 7. Initializations
+// Initializations
 setBasePath("/");
 
 /**
@@ -40,7 +34,7 @@ export class SnTaskButton extends LitElement {
   /**
    * 状態コード
    *
-   * @type {Contact}
+   * @type {TaskStatusCode}
    * @memberof SnTaskButton
    */
   @property({ type: String }) status: TaskStatusCode = "0";
@@ -51,25 +45,34 @@ export class SnTaskButton extends LitElement {
    * @static
    * @memberof SnTaskButton
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
 
   /**
-   * render直前に実行されます。
+   * ステータス選択時のイベントハンドラ
    *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @private
+   * @param {Event} e
    * @memberof SnTaskButton
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
+  private _handleItemClick(e: Event) {
+    // クリックされた要素（またはその親要素）から、埋め込んだ data-code を取得
+    const currentTarget = e.currentTarget as HTMLElement;
+    const code = currentTarget.dataset.code as TaskStatusCode;
+
+    if (code) {
+      emit(this, "change-status", {
+        detail: { code },
+      });
+    }
   }
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
 
   /**
    * タスク制御ボタンをレンダリングします。
@@ -80,34 +83,33 @@ export class SnTaskButton extends LitElement {
    * @memberof SnTaskButton
    */
   protected render(): HTMLTemplateResult {
+    const statuses = TaskStatus.getAll();
+
     return html`<div id="contents-root">
       <wa-dropdown>
         <div slot="trigger" class="label">
-          <wa-icon
-            library="my-icons"
-            name="circle-check-solid-full"
-            slot="trigger"
-          ></wa-icon>
+          <wa-icon library="my-icons" name="circle-check-solid-full"></wa-icon>
           <span>Mark as</span>
           <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
         </div>
 
-        ${TaskStatus.getAll().map((status) => {
-          return html` <wa-dropdown-item
-            @click=${() => {
-              emit(this, "change-status", {
-                detail: { code: status.code },
-              });
-            }}
-          >
-            <wa-icon
-              library="my-icons"
-              name=${status.iconName}
-              class=${status.name}
-            ></wa-icon>
-            <span>${status.label}</span>
-          </wa-dropdown-item>`;
-        })}
+        ${repeat(
+          statuses,
+          (status) => status.code,
+          (status) => {
+            return html` <wa-dropdown-item
+              data-code=${status.code}
+              @click=${this._handleItemClick}
+            >
+              <wa-icon
+                library="my-icons"
+                name=${status.iconName}
+                class=${status.name}
+              ></wa-icon>
+              <span>${status.label}</span>
+            </wa-dropdown-item>`;
+          },
+        )}
       </wa-dropdown>
     </div>`;
   }

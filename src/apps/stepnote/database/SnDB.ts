@@ -283,6 +283,20 @@ export class SnDB extends Dexie {
   }
 
   /**
+   * タスクを更新します。
+   *
+   * @param {Partial<Task>} newData
+   * @return {*}
+   * @memberof SnDB
+   */
+  async updateTask(newData: Partial<Task>): Promise<void> {
+    if (!newData.id) return;
+
+    newData.updatedAt = new Date();
+    await this.tasks.update(newData.id, newData);
+  }
+
+  /**
    * タスクを追加/更新します。
    *
    * @param {Task} newData
@@ -298,6 +312,20 @@ export class SnDB extends Dexie {
     }
 
     return await this.tasks.put(newData);
+  }
+
+  /**
+   * タスクを削除する。
+   *
+   * @param {number} id
+   * @return {*}  {Promise<void>}
+   * @memberof SnDB
+   */
+  async deleteTask(id: number): Promise<void> {
+    await this.transaction("rw", [this.tasks], async () => {
+      await this.tasks.delete(id);
+      await this.resetTaskSelected();
+    });
   }
 
   /**

@@ -1,12 +1,10 @@
 @use "../../../_shared/mixins";
 
 #contents-root {
-  height: 100%;
-
-  padding-inline: var(--wa-space-2xs);
-
   display: flex;
   flex-direction: column;
+  height: 100%;
+  padding-inline: var(--wa-space-2xs);
 
   @include mixins.scrollable(
     var(--wa-color-neutral-30),
@@ -27,9 +25,10 @@
       align-items: center;
 
       .label {
-        font-size: var(--wa-font-size-s);
-        width: 70px;
         flex-shrink: 0;
+        width: 70px;
+
+        font-size: var(--wa-font-size-s);
       }
 
       .item {
