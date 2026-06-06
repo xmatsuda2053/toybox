@@ -708,6 +708,20 @@ export class SnDB extends Dexie {
   }
 
   /**
+   * タスクを更新します。
+   *
+   * @param {Partial<Log>} newLog
+   * @return {*}
+   * @memberof SnDB
+   */
+  async updateLog(newLog: Partial<Log>): Promise<void> {
+    if (!newLog.id) return;
+
+    newLog.updatedAt = new Date();
+    await this.tasks.update(newLog.id, newLog);
+  }
+
+  /**
    * ログを検索します。
    * 検索結果はIDの昇順でソートします。
    *

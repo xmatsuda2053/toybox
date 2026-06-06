@@ -1,20 +1,19 @@
 @use "../../../_shared/mixins";
 
 #contents-root {
-  padding-inline: var(--wa-space-2xs);
-
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-inline: var(--wa-space-2xs);
 
   .search-area {
     position: sticky;
     flex-shrink: 0;
     top: 0;
     z-index: 10000;
-    background-color: var(--wa-color-neutral-95);
-
     padding-block-end: var(--wa-space-m);
+
+    background-color: var(--wa-color-neutral-95);
   }
 
   .log-area {
@@ -24,26 +23,22 @@
     sn-journal-log-item:not(:last-child)::after {
       content: "";
       height: var(--wa-space-m);
-      border-inline-start: 2px solid var(--wa-color-neutral-80);
       margin-inline-start: var(--wa-space-xl);
-    }
-
-    .hidden {
-      display: none;
+      border-inline-start: 2px solid var(--wa-color-neutral-80);
     }
   }
 
   .footer-area {
     position: sticky;
     flex-shrink: 0;
-    bottom: 0;
-    z-index: 10000;
-    background-color: var(--wa-color-neutral-95);
-
-    padding-block-start: var(--wa-space-xs);
 
     display: flex;
     gap: var(--wa-space-xs);
+    bottom: 0;
+    z-index: 10000;
+    padding-block-start: var(--wa-space-xs);
+
+    background-color: var(--wa-color-neutral-95);
 
     .area {
       flex: 1;

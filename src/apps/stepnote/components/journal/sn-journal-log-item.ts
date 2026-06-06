@@ -1,35 +1,34 @@
-// 1. Core Libraries
+// Core Libraries
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  nothing,
 } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
-import { customElement, property, query, state } from "lit/decorators.js";
+// Lit Extensions (Decorators & Directives)
+import { customElement, property } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Common Components, Database, Models)
+// Internal Shared (Common Components, Database, Models)
 import { ThinMarkdownEditor } from "@common/thin-markdown-editor/thin-markdown-editor";
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import { debounce } from "@/utils/CommonUtils";
 import { formatDate } from "@/utils/DateUtils";
 import { emit } from "@/utils/EventUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/journal/sn-journal-log-item.lit.scss?inline";
 
-// 7. Initializations
+// Initializations
 setBasePath("/");
 
 /**
@@ -41,22 +40,6 @@ setBasePath("/");
  */
 @customElement("sn-journal-log-item")
 export class SnJournalLogItem extends LitElement {
-  /**
-   * 編集モード制御
-   *
-   * @type {boolean}
-   * @memberof SnJournalLogItem
-   */
-  @state() isEditMode: boolean = false;
-
-  /**
-   * ログ編集用エディタ
-   *
-   * @type {ThinMarkdownEditor}
-   * @memberof SnJournalLogItem
-   */
-  @query("#log-editor") logEditor!: ThinMarkdownEditor;
-
   /**
    * ログデータ
    *
@@ -71,36 +54,11 @@ export class SnJournalLogItem extends LitElement {
    * @static
    * @memberof SnJournalLogItem
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
-  /**
-   * 入力処理にデバウンスを設定します。
-   *
-   * @private
-   * @memberof SnJournalLogItem
-   */
-  private _debounceInput = debounce(async () => {
-    const log = {
-      ...this.log,
-      value: this.logEditor.value,
-    };
-    snDB.putLog(log);
-  }, 800);
-
-  /**
-   * Creates an instance of PsJournalLogItem.
-   * @memberof SnJournalLogItem
-   */
-  constructor() {
-    super();
-  }
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
@@ -110,19 +68,54 @@ export class SnJournalLogItem extends LitElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this._debounceInput.cancel();
+    this._updateLogDatabase.cancel();
   }
 
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
+
   /**
-   * render直前に実行されます。
+   * ログ更新処理にデバウンスを設定します。
    *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @private
    * @memberof SnJournalLogItem
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  private _updateLogDatabase = debounce(async (newLog: Partial<Log>) => {
+    await snDB.updateLog(newLog);
+  }, 600);
+
+  /**
+   * ログ入力時のイベントを制御します。
+   *
+   * @private
+   * @memberof SnJournalLogItem
+   */
+  private _handleLogInput = (e: CustomEvent) => {
+    const target = e.target as ThinMarkdownEditor;
+    if (!target) return;
+    if (!this.log) return;
+
+    this.log["value"] = target.value;
+    this._updateLogDatabase({
+      id: this.log.id,
+      value: target.value,
+    });
+  };
+
+  /**
+   * ログ削除クリック時のイベントを制御します。
+   *
+   * @private
+   * @memberof SnJournalLogItem
+   */
+  private _handleDeleteLogClick = () => {
+    emit(this, "delete-log");
+  };
+
+  // -------------------------------------------------------------
+  // Rendering
+  // -------------------------------------------------------------
 
   /**
    * ログアイテムをレンダリングします。
@@ -132,65 +125,73 @@ export class SnJournalLogItem extends LitElement {
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
    * @memberof SnJournalLogItem
    */
-  protected render(): HTMLTemplateResult {
-    if (!this.log) {
-      return html``;
-    }
+  protected render(): HTMLTemplateResult | typeof nothing {
+    if (!this.log) return nothing;
 
     return html`<div id="contents-root">
       <div class="header">
-        <wa-icon library="my-icons" name="code-commit-solid-full"></wa-icon>
-        <div class="text log-date">
-          ${formatDate(this.log.createdAt, "yyyy-MM-dd (EEE) HH:mm")}
-        </div>
-        <wa-relative-time
-          .date=${this.log.createdAt!}
-          class="text"
-        ></wa-relative-time>
-        <wa-dropdown>
-          <wa-icon
-            library="my-icons"
-            name="bars-solid-full"
-            slot="trigger"
-            class="end"
-          ></wa-icon>
-          <wa-dropdown-item @click=${this._deleteLog} class="danger">
-            <wa-icon
-              slot="icon"
-              library="my-icons"
-              name="trash-solid-full"
-            ></wa-icon>
-            Delete
-          </wa-dropdown-item>
-        </wa-dropdown>
+        ${this._renderCreatedAtLabel()} ${this._renderHeaderDropdown()}
       </div>
-      <div class="contents">
-        <thin-markdown-editor
-          id="log-editor"
-          .value=${this.log.value}
-          @input=${this._updateLog}
-        ></thin-markdown-editor>
-      </div>
+      ${this._renderContents()}
     </div>`;
   }
 
   /**
-   * 入力内容をDBに反映する。
+   * ログ作成日の表示ラベルをレンダリングします。
    *
-   * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnJournalLogItem
    */
-  private _updateLog() {
-    this._debounceInput();
+  _renderCreatedAtLabel(): HTMLTemplateResult {
+    return html`<div class="label-area">
+      <wa-icon library="my-icons" name="code-commit-solid-full"></wa-icon>
+      <div class="label log-date">
+        ${formatDate(this.log.createdAt, "yyyy-MM-dd (EEE) HH:mm")}
+      </div>
+      <wa-relative-time
+        .date=${this.log.createdAt!}
+        class="label"
+      ></wa-relative-time>
+    </div>`;
   }
 
   /**
-   * ログ削除イベントを実行する。
+   * ドロップダウンをレンダリングします。
    *
-   * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof SnJournalLogItem
    */
-  private _deleteLog() {
-    emit(this, "delete-log");
+  _renderHeaderDropdown(): HTMLTemplateResult {
+    return html` <wa-dropdown>
+      <wa-icon
+        library="my-icons"
+        name="bars-solid-full"
+        slot="trigger"
+      ></wa-icon>
+      <wa-dropdown-item @click=${this._handleDeleteLogClick} class="danger">
+        <wa-icon
+          slot="icon"
+          library="my-icons"
+          name="trash-solid-full"
+        ></wa-icon>
+        Delete
+      </wa-dropdown-item>
+    </wa-dropdown>`;
+  }
+
+  /**
+   * コンテンツをレンダリングします。
+   *
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnJournalLogItem
+   */
+  _renderContents(): HTMLTemplateResult {
+    return html` <div class="contents">
+      <thin-markdown-editor
+        id="log-editor"
+        .value=${this.log.value}
+        @input=${this._handleLogInput}
+      ></thin-markdown-editor>
+    </div>`;
   }
 }
