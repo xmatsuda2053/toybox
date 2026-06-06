@@ -1,36 +1,40 @@
-// 1. Lit Core & Statics
+// Lit Core & Statics
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
   type PropertyValues,
+  nothing,
 } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, property, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
-// 3. Third-party UI Components & Utils (WebAwesome)
+// Third-party UI Components & Utils (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
-import { SearchInput } from "@/common/search-input/search-input";
 
-// 4. Business Logic & Models
+// Business Logic & Models
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 
-// 5. Utilities
+// Utilities
 import { formatDate } from "@/utils/DateUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/journal/sn-journal-log.lit.scss?inline";
 
 // --- Side Effects ---
 setBasePath("/");
+
+/**
+ * スクロールの方向
+ */
+type ScrollDirection = "up" | "down";
 
 /**
  * ログ操作
@@ -67,14 +71,6 @@ export class SnJournalLog extends LitElement {
   @state() private _filterKeyword: string = "";
 
   /**
-   * 検索入力欄
-   *
-   * @type {SearchInput}
-   * @memberof SnJournalLog
-   */
-  @query("#search-input") searchInput!: SearchInput;
-
-  /**
    * ログ表示エリア
    *
    * @type {HTMLDivElement}
@@ -97,69 +93,11 @@ export class SnJournalLog extends LitElement {
    * @static
    * @memberof SnJournalLog
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
-  /**
-   * ログ一覧にフィルタをかける。
-   *
-   * @private
-   * @param {CustomEvent} e
-   * @memberof SnJournalLog
-   */
-  private async _filterLogs(e: CustomEvent) {
-    const keyword = e.detail.keyword ?? "";
-    this._filterKeyword = keyword.toLowerCase();
-  }
-
-  /**
-   * ショートカットキー
-   *
-   * @private
-   * @param {KeyboardEvent} e
-   * @memberof SnJournalLog
-   */
-  private _shortcutKey = (e: KeyboardEvent) => {
-    if (e.altKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
-      this._addLog();
-    }
-  };
-
-  /**
-   * Creates an instance of PsJournalLog.
-   * @memberof SnJournalLog
-   */
-  constructor() {
-    super();
-    window.addEventListener("keydown", this._shortcutKey);
-  }
-  /**
-   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
-   *
-   * @override
-   * @memberof SnJournalLog
-   */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener("keydown", this._shortcutKey);
-  }
-
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SnJournalLog
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * 画面更新後の処理を実行します。
@@ -171,194 +109,98 @@ export class SnJournalLog extends LitElement {
   protected async updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
-    // taskId が変更された（＝タスクが切り替わった）場合
+    // タスクが切り替わった場合、フィルタをクリア
     if (changedProperties.has("taskId")) {
       this._filterKeyword = "";
-      this.searchInput?.init();
     }
   }
 
-  /**
-   * ログをレンダリングします。
-   *
-   * @protected
-   * @override
-   * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
-   * @memberof SnJournalLog
-   */
-  protected render(): HTMLTemplateResult {
-    if (!this.logs || this.logs.length === 0) {
-      return html``;
-    }
-
-    return html`<div id="contents-root">
-      <div class="search-area">
-        <search-input
-          id="search-input"
-          @input-keyword=${this._filterLogs}
-        ></search-input>
-      </div>
-      <div class="log-area">
-        ${repeat(
-          this.logs,
-          (log) => log.id,
-          (log) => {
-            const filterResult = this._containsFilterKeyword(log.value);
-            return html`<sn-journal-log-item
-              .log=${log}
-              class=${filterResult ? "" : "hidden"}
-              @delete-log=${() => this._OpenDeleteDialog(log)}
-            ></sn-journal-log-item>`;
-          },
-        )}
-      </div>
-      <div class="footer-area">
-        <div class="area">
-          <wa-tooltip for="btn-scroll-up" placement="top">Scroll Up</wa-tooltip>
-          <wa-button
-            id="btn-scroll-up"
-            size="small"
-            appearance="accent"
-            variant="neutral"
-            @click=${this._scrollToTop}
-          >
-            <wa-icon library="my-icons" name="arrow-up-solid-full"></wa-icon>
-          </wa-button>
-        </div>
-        <div class="area">
-          <wa-tooltip for="btn-add" placement="top">Add</wa-tooltip>
-          <wa-button
-            id="btn-add"
-            class="large"
-            appearance="accent"
-            variant="success"
-            size="small"
-            @click=${this._addLog}
-          >
-            <wa-icon library="my-icons" name="plus-solid-full"></wa-icon>
-          </wa-button>
-        </div>
-        <div class="area">
-          <wa-tooltip for="btn-scroll-down" placement="top">
-            Scroll Down
-          </wa-tooltip>
-          <wa-button
-            id="btn-scroll-down"
-            size="small"
-            appearance="accent"
-            variant="neutral"
-            @click=${this._scrollToBottom}
-          >
-            <wa-icon library="my-icons" name="arrow-down-solid-full"></wa-icon>
-          </wa-button>
-        </div>
-      </div>
-      <wa-dialog label="Confirm Delete" id="delete-log-overview">
-        <div class="delete-confirmation">
-          選択したログを削除します。<br />
-          この操作は取り消せません。
-        </div>
-        <wa-button
-          slot="footer"
-          variant="danger"
-          appearance="accent"
-          size="small"
-          @click=${this._deleteLog}
-        >
-          削除
-        </wa-button>
-        <wa-button
-          slot="footer"
-          variant="neutral"
-          appearance="filled-outlined"
-          size="small"
-          data-dialog="close"
-        >
-          キャンセル
-        </wa-button>
-      </wa-dialog>
-    </div>`;
-  }
+  // -------------------------------------------------------------
+  // イベント制御
+  // -------------------------------------------------------------
 
   /**
-   * フィルタ用キーワードに一致するか判定します。
-   * キーワード未設定の場合は、常に一致したものとして結果を返します。
+   * ログ一覧にフィルタをかける。
    *
    * @private
-   * @param {string} value
-   * @return {*}
+   * @param {CustomEvent} e
    * @memberof SnJournalLog
    */
-  private _containsFilterKeyword(value: string) {
-    if (!this._filterKeyword) return true;
-    return value.toLowerCase().includes(this._filterKeyword);
-  }
+  private _handleFilterKeywordInput = (e: CustomEvent) => {
+    const keyword = e.detail.keyword ?? "";
+    this._filterKeyword = keyword.toLowerCase();
+  };
 
   /**
-   * ログエリアを一番上までスクロール
+   * ログ削除ボタンクリック時のイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnJournalLog
+   */
+  private _handleDeleteLogClick = (e: Event) => {
+    const target = e.currentTarget as HTMLElement;
+    const logId = target.dataset.logId;
+    const log = this.logs.find((log) => log.id === Number(logId));
+    if (!log) return;
+
+    this._deleteDialog.label = `Delete Log "${formatDate(log.createdAt, "yyyy-MM-dd (EEE) HH:mm")}" ?`;
+    this._deleteDialog.dataset.logId = logId?.toString() || "";
+    this._deleteDialog.open = true;
+  };
+
+  /**
+   * 指定した方向にコンテンツ内容をスクロールします。
+   *
+   * @private
+   * @param {ScrollDirection} scroll
+   * @return {*}  {void}
+   * @memberof SnJournalLog
+   */
+  private _scroll = (scroll: ScrollDirection): void => {
+    if (!scroll) return;
+    if (!this.scrollContainer) return;
+    this.scrollContainer.scrollTo({
+      top: scroll === "up" ? 0 : this.scrollContainer.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  /**
+   * スクロールボタンクリック時のイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnJournalLog
+   */
+  private _handleScrollClick = (e: Event) => {
+    const target = e.currentTarget as HTMLElement;
+    const scroll: ScrollDirection = target.dataset.scroll as ScrollDirection;
+    this._scroll(scroll);
+  };
+
+  /**
+   * ログ追加ボタンクリック時のイベントを制御します。
    *
    * @private
    * @memberof SnJournalLog
    */
-  private _scrollToTop() {
-    if (this.scrollContainer) {
-      this.scrollContainer.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  }
-
-  /**
-   * ログエリアを一番下までスクロール
-   *
-   * @private
-   * @memberof SnJournalLog
-   */
-  private _scrollToBottom() {
-    if (this.scrollContainer) {
-      this.scrollContainer.scrollTo({
-        top: this.scrollContainer.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }
-
-  /**
-   * ログを追加
-   *
-   * @private
-   * @memberof SnJournalLog
-   */
-  private async _addLog() {
-    const log: Log = {
+  private _handleAddClick = async () => {
+    await snDB.putLog({
       taskId: this.taskId,
       value: "",
-    };
-    await snDB.putLog(log);
-    this._scrollToBottom();
-  }
+    });
+    this.updateComplete;
+    this._scroll("down");
+  };
 
   /**
-   * ログのタスク削除ダイアログを開きます。
-   *
-   * @private
-   * @param {Log} log
-   * @memberof SnJournalLog
-   */
-  private _OpenDeleteDialog(log: Log) {
-    this._deleteDialog.label = `Delete Log "${formatDate(log.createdAt, "yyyy-MM-dd (EEE) HH:mm")}" ?`;
-    this._deleteDialog.dataset.logId = log.id?.toString() || "";
-    this._deleteDialog.open = true;
-  }
-
-  /**
-   * ログを削除
+   * ログ削除ボタンクリック時のイベントを制御します。
    *
    * @private
    * @memberof SnJournalLog
    */
-  private async _deleteLog() {
+  private _handleDeleteLogAllowClick = async () => {
     const logId = this._deleteDialog.dataset.logId;
     if (!logId) {
       console.error("Invalid log ID for deletion");
@@ -368,5 +210,139 @@ export class SnJournalLog extends LitElement {
     await snDB.logs.delete(Number(logId));
     this._deleteDialog.dataset.logId = "";
     this._deleteDialog.open = false;
+  };
+
+  // -------------------------------------------------------------
+  // レンダリング
+  // -------------------------------------------------------------
+
+  /**
+   * ログをレンダリングします。
+   *
+   * @protected
+   * @override
+   * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
+   * @memberof SnJournalLog
+   */
+  protected render(): HTMLTemplateResult | typeof nothing {
+    if (!this.logs || this.logs.length === 0) return nothing;
+
+    return html`<div id="contents-root">
+      <div class="search-area">
+        <search-input
+          .searchKeyword=${this._filterKeyword}
+          @input-keyword=${this._handleFilterKeywordInput}
+        ></search-input>
+      </div>
+      <div class="log-area">${this._renderLogs()}</div>
+      <div class="footer-area">
+        <div class="area">${this._renderScrollButton("up")}</div>
+        <div class="area">${this._renderAddButton()}</div>
+        <div class="area">${this._renderScrollButton("down")}</div>
+      </div>
+      ${this._renderDeleteDialog()}
+    </div>`;
+  }
+
+  /**
+   * ログをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnJournalLog
+   */
+  private _renderLogs(): HTMLTemplateResult {
+    const filteredLogs = this._filterKeyword
+      ? this.logs.filter((log) =>
+          log.value.toLowerCase().includes(this._filterKeyword),
+        )
+      : this.logs;
+
+    return html` ${repeat(
+      filteredLogs,
+      (log) => log.id,
+      (log) => {
+        return html`<sn-journal-log-item
+          .log=${log}
+          data-log-id=${log.id!}
+          @delete-log=${this._handleDeleteLogClick}
+        ></sn-journal-log-item>`;
+      },
+    )}`;
+  }
+
+  /**
+   * スクロールボタンをレンダリングします。
+   *
+   * @private
+   * @param {ScrollDirection} [scroll="up"]
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnJournalLog
+   */
+  private _renderScrollButton(
+    scroll: ScrollDirection = "up",
+  ): HTMLTemplateResult {
+    return html` <wa-button
+      size="small"
+      appearance="accent"
+      variant="neutral"
+      data-scroll=${scroll}
+      @click=${this._handleScrollClick}
+    >
+      <wa-icon library="my-icons" name="arrow-${scroll}-solid-full"></wa-icon>
+    </wa-button>`;
+  }
+
+  /**
+   * ログ追加ボタンをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnJournalLog
+   */
+  private _renderAddButton(): HTMLTemplateResult {
+    return html` <wa-button
+      class="large"
+      appearance="accent"
+      variant="success"
+      size="small"
+      @click=${this._handleAddClick}
+    >
+      <wa-icon library="my-icons" name="plus-solid-full"></wa-icon>
+    </wa-button>`;
+  }
+
+  /**
+   * 削除ダイアログをレンダリングしまsう。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnJournalLog
+   */
+  private _renderDeleteDialog(): HTMLTemplateResult {
+    return html` <wa-dialog label="Confirm Delete" id="delete-log-overview">
+      <div class="delete-confirmation">
+        選択したログを削除します。<br />
+        この操作は取り消せません。
+      </div>
+      <wa-button
+        slot="footer"
+        variant="danger"
+        appearance="accent"
+        size="small"
+        @click=${this._handleDeleteLogAllowClick}
+      >
+        削除
+      </wa-button>
+      <wa-button
+        slot="footer"
+        variant="neutral"
+        appearance="filled-outlined"
+        size="small"
+        data-dialog="close"
+      >
+        キャンセル
+      </wa-button>
+    </wa-dialog>`;
   }
 }
