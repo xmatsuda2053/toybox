@@ -72,7 +72,7 @@ export class SnJournalLogItem extends LitElement {
   }
 
   // -------------------------------------------------------------
-  // Event
+  // Database Actions (Dexie 連携)
   // -------------------------------------------------------------
 
   /**
@@ -85,6 +85,10 @@ export class SnJournalLogItem extends LitElement {
     await snDB.updateLog(newLog);
   }, 600);
 
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
+
   /**
    * ログ入力時のイベントを制御します。
    *
@@ -94,9 +98,8 @@ export class SnJournalLogItem extends LitElement {
   private _handleLogInput = (e: CustomEvent) => {
     const target = e.target as ThinMarkdownEditor;
     if (!target) return;
-    if (!this.log) return;
 
-    this.log["value"] = target.value;
+    this.log.value = target.value;
     this._updateLogDatabase({
       id: this.log.id,
       value: target.value,

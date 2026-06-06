@@ -1,33 +1,32 @@
-// 1. Core Libraries
+// Core Libraries
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
-  type PropertyValues,
+  nothing,
 } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
-import { customElement, property, query } from "lit/decorators.js";
+// Lit Extensions (Decorators & Directives)
+import { customElement, property } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Common Components, Database, Models)
+// Internal Shared (Common Components, Database, Models)
 import { ThinMarkdownEditor } from "@/common/thin-markdown-editor/thin-markdown-editor";
 import { snDB } from "@sn/database/SnDB";
 import { Note } from "@sn/models/Note";
 
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import { debounce } from "@/utils/CommonUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/journal/sn-journal-note.lit.scss?inline";
 
-// 7. Initializations
+// Initializations
 setBasePath("/");
 
 /**
@@ -56,49 +55,16 @@ export class SnJournalNote extends LitElement {
   @property({ type: Array }) notes!: Note[];
 
   /**
-   * ノートエディタ
-   *
-   * @type {ThinMarkdownEditor}
-   * @memberof SnJournalNote
-   */
-  @query("#note-editor") noteEditor!: ThinMarkdownEditor;
-
-  /**
    * スタイルシートを適用
    *
    * @static
    * @memberof SnJournalNote
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
-  /**
-   * 入力処理にデバウンスを設定します。
-   *
-   * @private
-   * @memberof SnJournalNote
-   */
-  private _debounceInput = debounce(async () => {
-    const note = {
-      ...this.notes[0],
-      value: this.noteEditor.value,
-    };
-    snDB.putNote(note);
-  }, 800);
-
-  /**
-   * Creates an instance of PsJournalNote.
-   * @memberof SnJournalNote
-   */
-  constructor() {
-    super();
-  }
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
@@ -108,19 +74,47 @@ export class SnJournalNote extends LitElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this._debounceInput.cancel();
+    this._updateNoteDatabase.cancel();
   }
 
+  // -------------------------------------------------------------
+  // Database Actions (Dexie 連携)
+  // -------------------------------------------------------------
+
   /**
-   * render直前に実行されます。
+   * 入力処理にデバウンスを設定します。
    *
-   * @protected
-   * @param {PropertyValues} _changedProperties
+   * @private
    * @memberof SnJournalNote
    */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  private _updateNoteDatabase = debounce(async (newNote: Partial<Note>) => {
+    snDB.updateNote(newNote);
+  }, 600);
+
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
+
+  /**
+   * 画面入力イベントを制御します。
+   *
+   * @private
+   * @memberof SnJournalNote
+   */
+  private _handleNoteInput = (e: CustomEvent) => {
+    const target = e.target as ThinMarkdownEditor;
+    if (!target) return;
+
+    this.notes[0].value = target.value;
+    this._updateNoteDatabase({
+      id: this.notes[0].id,
+      value: target.value,
+    });
+  };
+
+  // -------------------------------------------------------------
+  // Rendering
+  // -------------------------------------------------------------
 
   /**
    * ノートをレンダリングします。
@@ -130,24 +124,14 @@ export class SnJournalNote extends LitElement {
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
    * @memberof SnJournalNote
    */
-  protected render(): HTMLTemplateResult {
-    if (!this.notes || this.notes.length === 0) return html``;
+  protected render(): HTMLTemplateResult | typeof nothing {
+    if (!this.notes || this.notes.length === 0) return nothing;
+
     return html`<div id="contents-root">
       <thin-markdown-editor
-        id="note-editor"
         .value=${this.notes[0].value}
-        @input=${this._updateNote}
+        @input=${this._handleNoteInput}
       ></thin-markdown-editor>
     </div>`;
-  }
-
-  /**
-   * 入力内容をDBに反映する。
-   *
-   * @private
-   * @memberof SnJournalNote
-   */
-  private _updateNote() {
-    this._debounceInput();
   }
 }

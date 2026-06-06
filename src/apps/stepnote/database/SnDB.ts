@@ -708,7 +708,7 @@ export class SnDB extends Dexie {
   }
 
   /**
-   * タスクを更新します。
+   * ログを更新します。
    *
    * @param {Partial<Log>} newLog
    * @return {*}
@@ -718,7 +718,7 @@ export class SnDB extends Dexie {
     if (!newLog.id) return;
 
     newLog.updatedAt = new Date();
-    await this.tasks.update(newLog.id, newLog);
+    await this.logs.update(newLog.id, newLog);
   }
 
   /**
@@ -755,6 +755,20 @@ export class SnDB extends Dexie {
     }
 
     return await this.notes.put(newNote);
+  }
+
+  /**
+   * ノートを更新します。
+   *
+   * @param {Partial<Note>} newNote
+   * @return {*}
+   * @memberof SnDB
+   */
+  async updateNote(newNote: Partial<Note>): Promise<void> {
+    if (!newNote.id) return;
+
+    newNote.updatedAt = new Date();
+    await this.notes.update(newNote.id, newNote);
   }
 
   /**

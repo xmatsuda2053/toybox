@@ -163,7 +163,7 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabTask
    */
   private _handleTabChange(e: CustomEvent) {
-    this._activeTab = e.detail.panel;
+    this._activeTab = e.detail.name;
   }
 
   // -------------------------------------------------------------
