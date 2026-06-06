@@ -28,6 +28,21 @@ export class QuickAccessRepository {
   }
 
   /**
+   * クイックアクセス設定データを部分更新します。
+   *
+   * @param {Partial<QuickAccess>} data
+   * @return {*}  {Promise<void>}
+   * @memberof QuickAccessRepository
+   */
+  async updateQuickAccess(data: Partial<QuickAccess>): Promise<void> {
+    if (!data.id) {
+      data.id = 1;
+    }
+    console.log(data);
+    await this.db.quickAccesses.update(data.id, data);
+  }
+
+  /**
    * クイックアクセス設定データを取得します。
    *
    * @return {*}  {Promise<QuickAccess>}

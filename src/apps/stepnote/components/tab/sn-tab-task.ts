@@ -171,7 +171,7 @@ export class SnTabTask extends LitElement {
   private _handleChangeStatus = async (e: CustomEvent) => {
     if (!this._task) return;
 
-    await snDB.changeStatusCode({
+    await snDB.taskRepo.changeStatusCode({
       id: this._task.id!,
       afterCode: e.detail.code,
       beforeCode: this._task.statusCode,

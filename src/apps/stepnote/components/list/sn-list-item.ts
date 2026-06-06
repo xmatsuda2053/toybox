@@ -108,7 +108,7 @@ export class SnListItem extends LitElement {
    * @memberof SnListItem
    */
   private _handleTaskClick = async () => {
-    await snDB.selectSingleTask(this.task.id);
+    await snDB.taskRepo.changeTaskSelection(this.task.id);
   };
 
   /**
@@ -117,7 +117,7 @@ export class SnListItem extends LitElement {
    */
   private _handleBookmarkClick = async (e: Event) => {
     e.stopPropagation();
-    await snDB.toggleBookmark(this.task);
+    await snDB.taskRepo.toggleBookmark(this.task.id!);
   };
 
   /**

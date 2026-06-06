@@ -210,7 +210,7 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabJournal
    */
   private _renderMain(): HTMLTemplateResult {
-    const hasNote = this.notes?.[0].value.trim() !== "";
+    const hasNote = this.notes?.[0]?.value.trim() !== "";
 
     return html` <wa-tab-group
       .active=${this._activeTab}

@@ -80,7 +80,7 @@ export class SnTaskProperty extends LitElement {
    */
   private _update = debounce(
     async (updateData: Partial<Task>): Promise<void> => {
-      await snDB.updateTask(updateData);
+      await snDB.taskRepo.updateTask(updateData);
     },
     100,
   );
@@ -137,7 +137,7 @@ export class SnTaskProperty extends LitElement {
    * @memberof SnTaskProperty
    */
   private async _handleDeleteTaskClick() {
-    await snDB.deleteTask(this.task.id!);
+    await snDB.taskRepo.deleteTask(this.task.id!);
   }
 
   // -------------------------------------------------------------

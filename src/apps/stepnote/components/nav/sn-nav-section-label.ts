@@ -308,7 +308,7 @@ export class SnNavSectionLabel extends LitElement {
       } else {
         await snDB.labelRepo.changeLabelSelection(label.id);
       }
-      await snDB.resetTaskSelected();
+      await snDB.taskRepo.changeAllTaskUnSelection();
     }
   };
 
