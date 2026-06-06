@@ -175,7 +175,7 @@ export class SnNavSectionQuick extends LitElement {
     const observable = liveQuery(async () => {
       const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
         [
-          snDB.getQuickAccess(),
+          snDB.quickAccessRepo.getQuickAccess(),
           snDB.hasOverdueTasks(),
           snDB.hasAsapTasks(),
           snDB.hasUpcomingTasks(),
@@ -334,7 +334,7 @@ export class SnNavSectionQuick extends LitElement {
 
     // 対象のキーの状態を更新する
     newQuickAccess[key] = nextSelected;
-    await snDB.putQuickAccess(newQuickAccess);
+    await snDB.quickAccessRepo.putQuickAccess(newQuickAccess);
   };
 
   // -------------------------------------------------------------

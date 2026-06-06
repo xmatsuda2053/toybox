@@ -9,6 +9,7 @@ import { Note } from "@sn/models/Note";
 import { TaskStatus } from "@sn/code/TaskStatus";
 
 import { LabelRepository } from "./repositories/LabelRepository";
+import { QuickAccessRepository } from "./repositories/QuickAccessRepository";
 
 import { formatDate } from "@utils/DateUtils";
 
@@ -29,6 +30,7 @@ export class SnDB extends Dexie {
   notes!: Table<Note>;
 
   readonly labelRepo = new LabelRepository(this);
+  readonly quickAccessRepo = new QuickAccessRepository(this);
 
   // -------------------------------------------------------------
   // Lifecycle
@@ -52,13 +54,13 @@ export class SnDB extends Dexie {
       this.quickAccesses.add({
         id: 1,
         isBookmarkSelected: 0,
-        isDoneSelected: 0,
+        isUncategorizedSelected: 0,
         isOverdueSelected: 0,
         isAsapSelected: 0,
         isUpcomingSelected: 0,
+        isDoneSelected: 1,
         isProgressSelected: 1,
         isPendingSelected: 1,
-        isUncategorizedSelected: 0,
       });
     });
   }
@@ -111,70 +113,6 @@ export class SnDB extends Dexie {
   // -------------------------------------------------------------
   // ▼ リファクタリング対象
   // -------------------------------------------------------------
-
-  /**
-   * クイックアクセス設定データを追加または更新します。
-   *
-   * @param {QuickAccess} newData
-   * @return {*}  {Promise<number>}
-   * @memberof SnDB
-   */
-  async putQuickAccess(newData: QuickAccess): Promise<number> {
-    if (!newData.id) {
-      newData.id = 1;
-    }
-
-    return await this.quickAccesses.put(newData);
-  }
-
-  /**
-   * クイックアクセス設定データを取得します。
-   *
-   * @return {*}  {(Promise<QuickAccess | undefined>)}
-   * @memberof SnDB
-   */
-  async getQuickAccess(): Promise<QuickAccess> {
-    const result = await this.quickAccesses.get(1);
-    return result!;
-  }
-
-  /**
-   * クイックアクセスの選択状態をリセットします。
-   *
-   * @memberof SnDB
-   */
-  async resetQuickAccessSelected() {
-    const newData: QuickAccess = {
-      id: 1,
-      isBookmarkSelected: 0,
-      isDoneSelected: 1,
-      isOverdueSelected: 0,
-      isAsapSelected: 0,
-      isUpcomingSelected: 0,
-      isProgressSelected: 1,
-      isPendingSelected: 1,
-      isUncategorizedSelected: 0,
-    };
-    await this.putQuickAccess(newData);
-  }
-
-  /**
-   * 実行中タスクのみ表示します。
-   *
-   * @memberof SnDB
-   */
-  async showInProgress() {
-    const newData = await this.getQuickAccess();
-
-    newData.isOverdueSelected = 0;
-    newData.isAsapSelected = 0;
-    newData.isUpcomingSelected = 0;
-    newData.isDoneSelected = 0;
-    newData.isProgressSelected = 1;
-    newData.isPendingSelected = 1;
-
-    await this.putQuickAccess(newData);
-  }
 
   /**
    * 新規タスクの追加を行う。
@@ -358,7 +296,7 @@ export class SnDB extends Dexie {
           await this.labelRepo.changeLabelSelectionInTransaction(task.labelId);
 
           // 指定したタスクのステータスを選択状態に変更
-          const oldData = await this.getQuickAccess();
+          const oldData = await this.quickAccessRepo.getQuickAccess();
           const newData = { ...oldData };
           const status = TaskStatus.fromCode(task.statusCode);
 
@@ -372,7 +310,7 @@ export class SnDB extends Dexie {
             // 何もしない
           }
 
-          await this.putQuickAccess(newData);
+          await this.quickAccessRepo.putQuickAccess(newData);
         },
       );
     } catch (error) {

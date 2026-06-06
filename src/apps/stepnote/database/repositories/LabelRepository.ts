@@ -1,4 +1,4 @@
-import { SnDB } from "../SnDB";
+import { SnDB } from "@sn/database/SnDB";
 import { Label } from "@sn/models/Label";
 
 export class LabelRepository {
