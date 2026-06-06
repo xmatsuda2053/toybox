@@ -201,7 +201,7 @@ export class SnDB extends Dexie {
         });
 
         await snDB.selectSingleTask(id);
-        await snDB.labelRepo.selectLabel(newData.labelId);
+        await snDB.labelRepo.changeLabelSelectionInTransaction(newData.labelId);
         return id;
       },
     );
@@ -234,7 +234,9 @@ export class SnDB extends Dexie {
         });
 
         await snDB.selectSingleTask(id);
-        await snDB.labelRepo.selectLabel(copiedTask.labelId);
+        await snDB.labelRepo.changeLabelSelectionInTransaction(
+          copiedTask.labelId,
+        );
         return id;
       },
     );
@@ -353,7 +355,7 @@ export class SnDB extends Dexie {
           if (!isLabelSetting) return;
 
           // 指定したタスクのラベルを選択状態に変更
-          await this.labelRepo.selectLabel(task.labelId);
+          await this.labelRepo.changeLabelSelectionInTransaction(task.labelId);
 
           // 指定したタスクのステータスを選択状態に変更
           const oldData = await this.getQuickAccess();

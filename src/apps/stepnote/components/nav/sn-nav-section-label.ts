@@ -306,7 +306,7 @@ export class SnNavSectionLabel extends LitElement {
       if (label.isSelected) {
         await snDB.labelRepo.deSelectAllLabel();
       } else {
-        await snDB.labelRepo.selectLabel(label.id);
+        await snDB.labelRepo.changeLabelSelection(label.id);
       }
       await snDB.resetTaskSelected();
     }

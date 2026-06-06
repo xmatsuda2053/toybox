@@ -127,7 +127,7 @@ export class SnTaskProperty extends LitElement {
       id: this.task.id,
       labelId: this.task.labelId,
     });
-    await snDB.labelRepo.selectLabel(this.task.labelId);
+    await snDB.labelRepo.changeLabelSelectionInTransaction(this.task.labelId);
   };
 
   /**

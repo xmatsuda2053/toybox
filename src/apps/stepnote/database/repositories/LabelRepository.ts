@@ -12,6 +12,7 @@ export class LabelRepository {
 
   /**
    * ラベルデータを追加/更新します。
+   * 変更したラベルを選択状態とします。
    *
    * @param {Label} data
    * @return {*}  {(Promise<number>)}
@@ -27,33 +28,45 @@ export class LabelRepository {
 
     return await this.db.transaction("rw", [this.db.labels], async () => {
       const id = await this.db.labels.put(data);
-      await this.selectLabel(id);
+      await this.changeLabelSelectionInTransaction(id);
+
       return id;
     });
   }
 
   /**
+   * 指定したIDのラベルを排他的に選択状態にします。
+   * (既存の選択をすべて解除した上で、指定したラベルを選択します)
+   * @param id
+   */
+  async changeLabelSelection(id: number): Promise<void> {
+    await this.db.transaction("rw", [this.db.labels], async () => {
+      await this.changeLabelSelectionInTransaction(id);
+    });
+  }
+
+  /**
+   * 指定したIDのラベルを排他的に選択状態にします。
+   * (既存の選択をすべて解除した上で、指定したラベルを選択します)
+   * 親のトランザクションから呼び出します。
+   *
+   * @param id
+   */
+  async changeLabelSelectionInTransaction(id: number): Promise<void> {
+    await this.deSelectAllLabel();
+    await this.selectLabel(id);
+  }
+
+  /**
    * IDをキーとして、対象のラベルを選択状態とする。
-   * 選択済（true）は排他的に設定される。
    *
    * @param {number} id
    * @memberof LabelRepository
    */
   async selectLabel(id: number) {
-    const now = new Date();
-
-    await this.db.transaction("rw", [this.db.labels], async () => {
-      // 全ての選択を解除
-      await this.db.labels.where("isSelected").equals(1).modify({
-        isSelected: 0,
-        updatedAt: now,
-      });
-
-      // 指定したIDを選択状態とする
-      await this.db.labels.update(id, {
-        isSelected: 1,
-        updatedAt: now,
-      });
+    await this.db.labels.update(id, {
+      isSelected: 1,
+      updatedAt: new Date(),
     });
   }
 
@@ -63,7 +76,6 @@ export class LabelRepository {
    * @memberof LabelRepository
    */
   async deSelectAllLabel() {
-    // 全ての選択を解除
     await this.db.labels.where("isSelected").equals(1).modify({
       isSelected: 0,
       updatedAt: new Date(),
