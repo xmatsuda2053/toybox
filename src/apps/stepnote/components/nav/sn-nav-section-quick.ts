@@ -176,9 +176,9 @@ export class SnNavSectionQuick extends LitElement {
       const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
         [
           snDB.quickAccessRepo.getQuickAccess(),
-          snDB.hasOverdueTasks(),
-          snDB.hasAsapTasks(),
-          snDB.hasUpcomingTasks(),
+          snDB.taskStats.hasOverdue(),
+          snDB.taskStats.hasAsap(),
+          snDB.taskStats.hasUpcoming(),
         ],
       );
 

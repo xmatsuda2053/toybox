@@ -127,57 +127,6 @@ export class SnDB extends Dexie {
   // -------------------------------------------------------------
 
   /**
-   * 期限切れタスクの有無を判定します。
-   *
-   * @return {*}  {Promise<boolean>}
-   * @memberof SnDB
-   */
-  async hasOverdueTasks(): Promise<boolean> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return (
-      (await this.tasks
-        .where("statusCode")
-        .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
-        .filter((task) => task.dueDate < today) // 当日(00:00)より前
-        .count()) > 0
-    );
-  }
-
-  /**
-   * 期限当日タスクの有無を判定します。
-   *
-   * @return {*}  {Promise<boolean>}
-   * @memberof SnDB
-   */
-  async hasAsapTasks(): Promise<boolean> {
-    return (
-      (await this.tasks
-        .where("statusCode")
-        .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
-        .filter((task) => isAsap(false, task.dueDate)) // 当日
-        .count()) > 0
-    );
-  }
-
-  /**
-   * 期限間近タスクの有無を判定します。
-   *
-   * @return {*}  {Promise<boolean>}
-   * @memberof SnDB
-   */
-  async hasUpcomingTasks(): Promise<boolean> {
-    return (
-      (await this.tasks
-        .where("statusCode")
-        .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
-        .filter((task) => isWithinAnyDaysBefore(false, task.dueDate, 3)) // 当日(00:00)より前
-        .count()) > 0
-    );
-  }
-
-  /**
    * タスク一覧を特定の優先順位でソートして取得します。
    * * ソート順序:
    * 1. 年度 (fiscalYear): 降順（新しい年度順）
