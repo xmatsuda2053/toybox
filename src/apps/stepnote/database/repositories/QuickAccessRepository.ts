@@ -1,6 +1,13 @@
 import { SnDB } from "@sn/database/SnDB";
 import { QuickAccess } from "@sn/models/QuickAccess";
 
+/**
+ * クイックアクセス（フィルターやタスクの表示状態・モード設定）データの永続化および状態変更を管理するリポジトリクラスです。
+ * データベースを介して、クイックアクセス設定の取得・更新、および特定の表示モード（全タスク検索、実行中タスク表示など）への一括切り替え機能を提供します。
+ *
+ * @export
+ * @class QuickAccessRepository
+ */
 export class QuickAccessRepository {
   /**
    * Creates an instance of QuickAccessRepository.

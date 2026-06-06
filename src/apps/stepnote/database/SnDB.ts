@@ -10,6 +10,7 @@ import { TaskStatus } from "@sn/code/TaskStatus";
 
 import { LabelRepository } from "./repositories/LabelRepository";
 import { QuickAccessRepository } from "./repositories/QuickAccessRepository";
+import { LogRepository } from "./repositories/LogRepository";
 
 import { formatDate } from "@utils/DateUtils";
 
@@ -31,6 +32,7 @@ export class SnDB extends Dexie {
 
   readonly labelRepo = new LabelRepository(this);
   readonly quickAccessRepo = new QuickAccessRepository(this);
+  readonly logRepo = new LogRepository(this);
 
   // -------------------------------------------------------------
   // Lifecycle
@@ -128,7 +130,7 @@ export class SnDB extends Dexie {
       async () => {
         const id = await snDB.putTask(newData);
 
-        await snDB.putLog({
+        await snDB.logRepo.addLog({
           taskId: id,
           value: "#### 新規追加",
         });
@@ -160,7 +162,7 @@ export class SnDB extends Dexie {
       async () => {
         const id = await snDB.putTask(copiedTask);
 
-        await snDB.putLog({
+        await snDB.logRepo.addLog({
           taskId: id,
           value: "#### 新規追加",
         });
@@ -251,7 +253,7 @@ export class SnDB extends Dexie {
         const beforeStatus = TaskStatus.fromCode(data.beforeCode);
         const afterStatus = TaskStatus.fromCode(data.afterCode);
 
-        await this.putLog({
+        await this.logRepo.addLog({
           taskId: data.id,
           value: `#### 状態変更\n- ${beforeStatus.label} > ${afterStatus.label}`,
         });
@@ -585,56 +587,6 @@ export class SnDB extends Dexie {
       bookmark: task.bookmark === 0 ? 1 : 0,
       updatedAt: new Date(),
     });
-  }
-
-  /**
-   * ログを追加/更新します。
-   *
-   * @param {Log} newLog
-   * @return {*}  {Promise<number>}
-   * @memberof SnDB
-   */
-  async putLog(newLog: Log): Promise<number> {
-    const now = new Date();
-
-    newLog.updatedAt = now;
-    if (!newLog.id) {
-      newLog.createdAt = now;
-    }
-
-    return await this.logs.put(newLog);
-  }
-
-  /**
-   * ログを更新します。
-   *
-   * @param {Partial<Log>} newLog
-   * @return {*}
-   * @memberof SnDB
-   */
-  async updateLog(newLog: Partial<Log>): Promise<void> {
-    if (!newLog.id) return;
-
-    newLog.updatedAt = new Date();
-    await this.logs.update(newLog.id, newLog);
-  }
-
-  /**
-   * ログを検索します。
-   * 検索結果はIDの昇順でソートします。
-   *
-   * @param {Number} taskId
-   * @return {*}  {Promise<Log[]>}
-   * @memberof SnDB
-   */
-  async selectLogsAscId(taskId: number): Promise<Log[]> {
-    if (!this.logs) {
-      return [];
-    }
-    return this.logs
-      .where("[taskId+id]")
-      .between([taskId, Dexie.minKey], [taskId, Dexie.maxKey])
-      .toArray();
   }
 
   /**

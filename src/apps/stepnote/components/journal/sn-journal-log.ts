@@ -186,7 +186,7 @@ export class SnJournalLog extends LitElement {
    * @memberof SnJournalLog
    */
   private _handleAddClick = async () => {
-    await snDB.putLog({
+    await snDB.logRepo.addLog({
       taskId: this.taskId,
       value: "",
     });

@@ -126,7 +126,7 @@ export class SnTabJournal extends LitElement {
         return { task: null, logs: [], notes: [] };
       }
 
-      const logs = await snDB.selectLogsAscId(task.id!);
+      const logs = await snDB.logRepo.getLogsAscId(task.id!);
       const notes = await snDB.selectNotesAscId(task.id!);
       return { task, logs, notes };
     });

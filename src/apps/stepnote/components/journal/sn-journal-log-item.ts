@@ -82,7 +82,7 @@ export class SnJournalLogItem extends LitElement {
    * @memberof SnJournalLogItem
    */
   private _updateLogDatabase = debounce(async (newLog: Partial<Log>) => {
-    await snDB.updateLog(newLog);
+    await snDB.logRepo.updateLog(newLog);
   }, 600);
 
   // -------------------------------------------------------------

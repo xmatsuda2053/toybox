@@ -1,6 +1,14 @@
 import { SnDB } from "@sn/database/SnDB";
 import { Label } from "@sn/models/Label";
 
+/**
+ * 分類ラベルデータの永続化、およびラベルの選択状態を管理するリポジトリクラスです。
+ * データベースを介してラベルのCRUD操作や名前順の検索を提供するほか、
+ * トランザクションを用いた「特定ラベルの排他的な選択状態の切り替え」などの制御を行います。
+ *
+ * @export
+ * @class LabelRepository
+ */
 export class LabelRepository {
   /**
    * Creates an instance of LabelRepository.
