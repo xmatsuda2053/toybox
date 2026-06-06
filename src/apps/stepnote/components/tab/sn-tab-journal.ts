@@ -1,26 +1,19 @@
-// 1. Core Libraries (Lit & Dexie)
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+// Core Libraries (Lit & Dexie)
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 import { liveQuery, type Subscription } from "dexie";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, state } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Internal Shared (Components, Database, Models)
+// Internal Shared (Components, Database, Models)
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
 
-// 5. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/tab/sn-tab.lit.scss?inline";
@@ -112,17 +105,6 @@ export class SnTabJournal extends LitElement {
     this._dbSubscription?.unsubscribe();
   }
 
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SnTabJournal
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
-
   // -------------------------------------------------------------
   // Database Actions (Dexie 連携)
   // -------------------------------------------------------------
@@ -181,7 +163,7 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabTask
    */
   private _handleTabChange(e: CustomEvent) {
-    this._activeTab = e.detail.panel;
+    this._activeTab = e.detail.name;
   }
 
   // -------------------------------------------------------------

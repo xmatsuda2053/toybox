@@ -2,11 +2,9 @@ $header-color: var(--wa-color-neutral-20);
 
 #contents-root {
   .header {
-    background-color: $header-color;
-    color: white;
+    display: flex;
+    align-items: center;
 
-    border-start-start-radius: var(--wa-border-radius-m);
-    border-start-end-radius: var(--wa-border-radius-m);
     padding-block: var(--wa-space-2xs);
     padding-inline: var(--wa-space-xs);
 
@@ -15,17 +13,20 @@ $header-color: var(--wa-color-neutral-20);
     border-start-start-radius: var(--wa-border-radius-m);
     border-start-end-radius: var(--wa-border-radius-m);
 
-    display: flex;
-    align-items: center;
+    background-color: $header-color;
+    color: white;
 
-    .text {
-      font-size: var(--wa-font-size-xs);
-      margin-inline-start: var(--wa-space-xs);
-      margin-inline-end: var(--wa-space-2xs);
-    }
+    .label-area {
+      display: flex;
+      align-items: center;
+      margin-inline-end: auto;
 
-    .end {
-      margin-inline-start: auto;
+      .label {
+        margin-inline-start: var(--wa-space-xs);
+        margin-inline-end: var(--wa-space-2xs);
+
+        font-size: var(--wa-font-size-xs);
+      }
     }
 
     wa-dropdown {

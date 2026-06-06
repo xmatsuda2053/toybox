@@ -88,7 +88,7 @@ export class SearchInput extends LitElement {
     });
     this._loading = false;
     this.searchKeyword = keyword;
-  }, 350);
+  }, 150);
 
   /**
    * 検索欄の入力時にローディングを表示します。
@@ -137,7 +137,7 @@ export class SearchInput extends LitElement {
       class=${this.searchKeyword !== "" ? "has-value" : ""}
       size="small"
       placeholder="filter inquiries..."
-      value=${this.searchKeyword}
+      .value=${this.searchKeyword}
       with-clear
       @input=${this._inputKeyword}
     >
