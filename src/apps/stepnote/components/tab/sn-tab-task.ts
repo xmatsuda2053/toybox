@@ -113,7 +113,7 @@ export class SnTabTask extends LitElement {
 
     const observable = liveQuery(async () => {
       const [labels, tasks] = await Promise.all([
-        snDB.selectLabelsAscName(),
+        snDB.labelRepo.getLabelsAscName(),
         snDB.tasks.where("selected").equals(1).toArray(),
       ]);
       return {

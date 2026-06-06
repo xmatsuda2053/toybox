@@ -8,6 +8,8 @@ import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
 import { TaskStatus } from "@sn/code/TaskStatus";
 
+import { LabelRepository } from "./repositories/LabelRepository";
+
 import { formatDate } from "@utils/DateUtils";
 
 import { isOverdue, isAsap, isWithinAnyDaysBefore } from "@utils/DateUtils";
@@ -25,6 +27,12 @@ export class SnDB extends Dexie {
   tasks!: Table<Task>;
   logs!: Table<Log>;
   notes!: Table<Note>;
+
+  readonly labelRepo = new LabelRepository(this);
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * Creates an instance of SnDB.
@@ -55,104 +63,54 @@ export class SnDB extends Dexie {
     });
   }
 
+  // -------------------------------------------------------------
+  // インポート／エクスポート
+  // -------------------------------------------------------------
+
   /**
-   * 分類ラベルを追加/更新します。
+   * SnDB内の全データをエクスポートします。
+   * @returns void
+   */
+  async exportDatabase(): Promise<void> {
+    const tableCounts = await snDB.tasks.count();
+    if (tableCounts === 0) return;
+
+    const blob = await snDB.export({
+      progressCallback: ({ totalRows, completedRows }) => {
+        console.log(`Progress: ${completedRows}/${totalRows}`);
+        return true;
+      },
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `SnDB_backup_${formatDate(new Date(), "yyyyMMddHHmmss")}.json`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * SnDBにデータをインポートします。
    *
-   * @param {Label} newData
-   * @return {*}  {Promise<number>}
+   * @param {File} file
+   * @return {*}  {Promise<void>}
    * @memberof SnDB
    */
-  async putLabel(newData: Label): Promise<number> {
-    const now = new Date();
-
-    newData.updatedAt = now;
-    if (!newData.id) {
-      newData.createdAt = now;
-    }
-
-    return await snDB.transaction("rw", [snDB.labels], async () => {
-      const id = await snDB.labels.put(newData);
-      await snDB.updateLabelSelection(id, 1);
-      return id;
+  async importDatabase(file: File): Promise<void> {
+    await importInto(snDB, file, {
+      overwriteValues: true,
+      progressCallback: ({ totalRows, completedRows }) => {
+        console.log(`Progress: ${completedRows}/${totalRows}`);
+        return true;
+      },
     });
   }
 
-  /**
-   * 分類ラベルを検索します。
-   * 検索結果は名前の昇順でソートします。
-   *
-   * @param {string} [keyword]
-   * @return {*}  {Promise<Label[]>}
-   * @memberof SnDB
-   */
-  async selectLabelsAscName(keyword?: string): Promise<Label[]> {
-    const collection = this.labels.orderBy("name");
-
-    if (!keyword || !keyword.trim()) {
-      return await collection.toArray();
-    }
-
-    const lowerKeyword = keyword.toLowerCase();
-    return await collection
-      .filter((label) => {
-        return label.name?.toLowerCase().includes(lowerKeyword);
-      })
-      .toArray();
-  }
-
-  /**
-   * IDをキーとして、labelの選択状態を更新する。
-   * 選択済（true）は排他的に設定される。
-   *
-   * @param {number} id
-   * @param {boolean} isSelected
-   * @memberof SnDB
-   */
-  async updateLabelSelection(id: number, isSelected: number) {
-    try {
-      if (isSelected) {
-        // 全ての選択を解除
-        await this.labels.where("isSelected").equals(1).modify({
-          isSelected: 0,
-          updatedAt: new Date(),
-        });
-
-        // 指定したIDを選択状態とする
-        const updated = await this.labels.update(id, {
-          isSelected: 1,
-          updatedAt: new Date(),
-        });
-
-        if (!updated) {
-          console.log(`ID: ${id} が見つかりませんでした。`);
-        }
-      } else {
-        // 指定したIDの選択状態を解除する
-        const updated = await this.labels.update(id, {
-          isSelected: 0,
-          updatedAt: new Date(),
-        });
-
-        if (!updated) {
-          console.log(`ID: ${id} が見つかりませんでした。`);
-        }
-      }
-    } catch (error) {
-      console.error("update error:", error);
-    }
-  }
-
-  /**
-   * ラベルの選択状態を解除します。
-   *
-   * @memberof SnDB
-   */
-  async resetLabelSelected() {
-    await this.labels.where("isSelected").equals(1).modify({
-      isSelected: 0,
-      updatedAt: new Date(),
-    });
-  }
+  // -------------------------------------------------------------
+  // ▼ リファクタリング対象
+  // -------------------------------------------------------------
 
   /**
    * クイックアクセス設定データを追加または更新します。
@@ -243,7 +201,7 @@ export class SnDB extends Dexie {
         });
 
         await snDB.selectSingleTask(id);
-        await snDB.updateLabelSelection(newData.labelId, 1);
+        await snDB.labelRepo.selectLabel(newData.labelId);
         return id;
       },
     );
@@ -276,7 +234,7 @@ export class SnDB extends Dexie {
         });
 
         await snDB.selectSingleTask(id);
-        await snDB.updateLabelSelection(copiedTask.labelId, 1);
+        await snDB.labelRepo.selectLabel(copiedTask.labelId);
         return id;
       },
     );
@@ -395,7 +353,7 @@ export class SnDB extends Dexie {
           if (!isLabelSetting) return;
 
           // 指定したタスクのラベルを選択状態に変更
-          await this.updateLabelSelection(task.labelId, 1);
+          await this.labelRepo.selectLabel(task.labelId);
 
           // 指定したタスクのステータスを選択状態に変更
           const oldData = await this.getQuickAccess();
@@ -788,52 +746,6 @@ export class SnDB extends Dexie {
       .where("[taskId+id]")
       .between([taskId, Dexie.minKey], [taskId, Dexie.maxKey])
       .toArray();
-  }
-
-  /**
-   * データをエクスポートする
-   *
-   * @memberof SnDB
-   */
-  async exportDatabase() {
-    // 1. 各テーブルのデータ件数を取得
-    const tableCounts = await snDB.tasks.count();
-    if (tableCounts === 0) {
-      return; // タスク未登録の場合はエクスポート不要
-    }
-
-    // 2. エクスポート処理の実行
-    const blob = await snDB.export({
-      progressCallback: ({ totalRows, completedRows }) => {
-        console.log(`Progress: ${completedRows}/${totalRows}`);
-        return true;
-      },
-    });
-
-    // 3. ダウンロード処理
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `SnDB_backup_${formatDate(new Date(), "yyyyMMddHHmmss")}.json`;
-    a.click();
-
-    URL.revokeObjectURL(url);
-  }
-
-  /**
-   * データをインポートする
-   *
-   * @param {File} file
-   * @memberof SnDB
-   */
-  async importDatabase(file: File) {
-    await importInto(snDB, file, {
-      overwriteValues: true,
-      progressCallback: ({ totalRows, completedRows }) => {
-        console.log(`Progress: ${completedRows}/${totalRows}`);
-        return true;
-      },
-    });
   }
 }
 export const snDB = new SnDB();

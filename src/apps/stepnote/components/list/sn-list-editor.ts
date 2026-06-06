@@ -134,7 +134,10 @@ export class SnListEditor extends LitElement {
     this._dbSubscription?.unsubscribe();
 
     const observable = liveQuery(async () => {
-      const [_labelData] = await Promise.all([snDB.selectLabelsAscName(), ,]);
+      const [_labelData] = await Promise.all([
+        snDB.labelRepo.getLabelsAscName(),
+        ,
+      ]);
       return {
         _labelData,
       };

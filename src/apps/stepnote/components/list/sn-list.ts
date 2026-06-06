@@ -219,7 +219,7 @@ export class SnList extends LitElement {
       const [quickAccess, labels, tasks, activeFiscalYears] = await Promise.all(
         [
           snDB.getQuickAccess(),
-          snDB.selectLabelsAscName(),
+          snDB.labelRepo.getLabelsAscName(),
           snDB.selectTaskAscSortKey(keyword),
           snDB.getActiveFiscalYears(keyword),
         ],
@@ -314,13 +314,13 @@ export class SnList extends LitElement {
       case "find-all-mode":
         // 全検索モード切替
         await snDB.resetQuickAccessSelected();
-        await snDB.resetLabelSelected();
+        await snDB.labelRepo.deSelectAllLabel();
         break;
 
       case "show-in-progress":
         // 実行中タスク表示モード切替
         await snDB.showInProgress();
-        await snDB.resetLabelSelected();
+        await snDB.labelRepo.deSelectAllLabel();
         break;
 
       case "add":
