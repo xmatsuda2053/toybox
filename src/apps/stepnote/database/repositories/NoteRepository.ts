@@ -3,7 +3,9 @@ import { SnDB } from "@sn/database/SnDB";
 import { Note } from "@sn/models/Note";
 
 /**
- *
+ * タスクに紐づくノート（メモ）データの永続化およびデータアクセスを管理するリポジトリクラスです。
+ * データベースを介してノートの追加、更新、およびタスクIDをキーとした検索機能を提供します。
+ * （※現時点の仕様において、ノートは1つのタスクに対して1つのペアとして管理されます）
  *
  * @export
  * @class NoteRepository
