@@ -8,9 +8,10 @@ import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
 import { TaskStatus } from "@sn/code/TaskStatus";
 
-import { LabelRepository } from "./repositories/LabelRepository";
-import { QuickAccessRepository } from "./repositories/QuickAccessRepository";
-import { LogRepository } from "./repositories/LogRepository";
+import { LabelRepository } from "@sn/database/repositories/LabelRepository";
+import { QuickAccessRepository } from "@sn/database/repositories/QuickAccessRepository";
+import { LogRepository } from "@sn/database/repositories/LogRepository";
+import { NoteRepository } from "@sn/database/repositories/NoteRepository";
 
 import { formatDate } from "@utils/DateUtils";
 
@@ -33,6 +34,7 @@ export class SnDB extends Dexie {
   readonly labelRepo = new LabelRepository(this);
   readonly quickAccessRepo = new QuickAccessRepository(this);
   readonly logRepo = new LogRepository(this);
+  readonly noteRepo = new NoteRepository(this);
 
   // -------------------------------------------------------------
   // Lifecycle
@@ -135,7 +137,7 @@ export class SnDB extends Dexie {
           value: "#### 新規追加",
         });
 
-        await snDB.putNote({
+        await snDB.noteRepo.addNote({
           taskId: id,
           value: "",
         });
@@ -167,8 +169,8 @@ export class SnDB extends Dexie {
           value: "#### 新規追加",
         });
 
-        const notes: Note[] = await snDB.selectNotesAscId(sourceId);
-        await snDB.putNote({
+        const notes: Note[] = await snDB.noteRepo.getNotesAscId(sourceId);
+        await snDB.noteRepo.addNote({
           taskId: id,
           value: notes[0].value,
         });
@@ -587,57 +589,6 @@ export class SnDB extends Dexie {
       bookmark: task.bookmark === 0 ? 1 : 0,
       updatedAt: new Date(),
     });
-  }
-
-  /**
-   * ノートを追加/更新します。
-   *
-   * @param {Note} newNote
-   * @return {*}  {Promise<number>}
-   * @memberof SnDB
-   */
-  async putNote(newNote: Note): Promise<number> {
-    const now = new Date();
-
-    newNote.updatedAt = now;
-    if (!newNote.id) {
-      newNote.createdAt = now;
-    }
-
-    return await this.notes.put(newNote);
-  }
-
-  /**
-   * ノートを更新します。
-   *
-   * @param {Partial<Note>} newNote
-   * @return {*}
-   * @memberof SnDB
-   */
-  async updateNote(newNote: Partial<Note>): Promise<void> {
-    if (!newNote.id) return;
-
-    newNote.updatedAt = new Date();
-    await this.notes.update(newNote.id, newNote);
-  }
-
-  /**
-   * ログを検索します。
-   * 検索結果はIDの昇順でソートします。
-   * ※現時点でノートは、タスクに対して１つ
-   *
-   * @param {number} taskId
-   * @return {*}  {Promise<Note[]>}
-   * @memberof SnDB
-   */
-  async selectNotesAscId(taskId: number): Promise<Note[]> {
-    if (!this.notes) {
-      return [];
-    }
-    return this.notes
-      .where("[taskId+id]")
-      .between([taskId, Dexie.minKey], [taskId, Dexie.maxKey])
-      .toArray();
   }
 }
 export const snDB = new SnDB();

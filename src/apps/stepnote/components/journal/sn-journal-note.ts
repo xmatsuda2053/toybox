@@ -88,7 +88,7 @@ export class SnJournalNote extends LitElement {
    * @memberof SnJournalNote
    */
   private _updateNoteDatabase = debounce(async (newNote: Partial<Note>) => {
-    snDB.updateNote(newNote);
+    snDB.noteRepo.updateNote(newNote);
   }, 600);
 
   // -------------------------------------------------------------

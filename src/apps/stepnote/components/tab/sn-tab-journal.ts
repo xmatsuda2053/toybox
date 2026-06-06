@@ -1,5 +1,11 @@
 // Core Libraries (Lit & Dexie)
-import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
+import {
+  html,
+  LitElement,
+  unsafeCSS,
+  type HTMLTemplateResult,
+  nothing,
+} from "lit";
 import { liveQuery, type Subscription } from "dexie";
 
 // Lit Extensions (Decorators & Directives)
@@ -127,7 +133,7 @@ export class SnTabJournal extends LitElement {
       }
 
       const logs = await snDB.logRepo.getLogsAscId(task.id!);
-      const notes = await snDB.selectNotesAscId(task.id!);
+      const notes = await snDB.noteRepo.getNotesAscId(task.id!);
       return { task, logs, notes };
     });
 
@@ -204,12 +210,23 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabJournal
    */
   private _renderMain(): HTMLTemplateResult {
+    const hasNote = this.notes?.[0].value.trim() !== "";
+
     return html` <wa-tab-group
       .active=${this._activeTab}
       @wa-tab-show=${this._handleTabChange}
     >
       <wa-tab panel="log">Log</wa-tab>
-      <wa-tab panel="note">Note</wa-tab>
+      <wa-tab panel="note">
+        ${hasNote
+          ? html`<wa-icon
+              class="tab-dot"
+              library="my-icons"
+              name="circle-solid-full"
+            ></wa-icon>`
+          : nothing}
+        Note
+      </wa-tab>
       <wa-tab-panel name="log">
         <sn-journal-log
           .taskId=${this.taskId}
