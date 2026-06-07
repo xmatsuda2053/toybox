@@ -36,7 +36,7 @@ export class LabelRepository {
 
     return await this.db.transaction("rw", [this.db.labels], async () => {
       const id = await this.db.labels.put(data);
-      await this.changeLabelSelectionInTransaction(id);
+      await this.selectLabelInTransaction(id);
 
       return id;
     });
@@ -47,9 +47,9 @@ export class LabelRepository {
    * (既存の選択をすべて解除した上で、指定したラベルを選択します)
    * @param id
    */
-  async changeLabelSelection(id: number): Promise<void> {
+  async selectLabel(id: number): Promise<void> {
     await this.db.transaction("rw", [this.db.labels], async () => {
-      await this.changeLabelSelectionInTransaction(id);
+      await this.selectLabelInTransaction(id);
     });
   }
 
@@ -60,22 +60,30 @@ export class LabelRepository {
    *
    * @param id
    */
-  async changeLabelSelectionInTransaction(id: number): Promise<void> {
+  async selectLabelInTransaction(id: number): Promise<void> {
     await this.deSelectAllLabel();
-    await this.selectLabel(id);
-  }
-
-  /**
-   * IDをキーとして、対象のラベルを選択状態とする。
-   *
-   * @param {number} id
-   * @memberof LabelRepository
-   */
-  async selectLabel(id: number) {
     await this.db.labels.update(id, {
       isSelected: 1,
       updatedAt: new Date(),
     });
+  }
+
+  /**
+   * 指定したIDのラベルを選択状態とし、タスク選択状態を解除します。
+   *
+   * @param {number} id
+   * @return {*}  {Promise<void>}
+   * @memberof LabelRepository
+   */
+  async selectLabelAndDeSelectTask(id: number): Promise<void> {
+    await this.db.transaction(
+      "rw",
+      [this.db.labels, this.db.tasks],
+      async () => {
+        await this.selectLabelInTransaction(id);
+        await this.db.taskRepo.changeAllTaskUnSelection();
+      },
+    );
   }
 
   /**
@@ -88,6 +96,23 @@ export class LabelRepository {
       isSelected: 0,
       updatedAt: new Date(),
     });
+  }
+
+  /**
+   * 全てのラベルの選択状態を解除し、タスク選択状態を解除します。
+   *
+   * @return {*}  {Promise<void>}
+   * @memberof LabelRepository
+   */
+  async deSelectLabelAndDeSelectTask(): Promise<void> {
+    await this.db.transaction(
+      "rw",
+      [this.db.labels, this.db.tasks],
+      async () => {
+        await this.deSelectAllLabel();
+        await this.db.taskRepo.changeAllTaskUnSelection();
+      },
+    );
   }
 
   /**

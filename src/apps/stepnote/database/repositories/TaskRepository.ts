@@ -49,9 +49,7 @@ export class TaskRepository {
             value: "",
           }),
           await this.changeTaskSelectionInTransaction(id),
-          await this.db.labelRepo.changeLabelSelectionInTransaction(
-            data.labelId,
-          ),
+          await this.db.labelRepo.selectLabelInTransaction(data.labelId),
         ]);
 
         return id;
@@ -86,6 +84,24 @@ export class TaskRepository {
   ): Promise<void> {
     if (!data.id) return;
     await this.db.tasks.update(data.id, data);
+  }
+
+  /**
+   * タスクを更新する。
+   * このメソッドは、タスクに設定したラベル更新時に実行するため、ラベルの選択状態も変更する。
+   *
+   * @param {Partial<Task>} data
+   * @return {*}  {Promise<void>}
+   * @memberof TaskRepository
+   */
+  async updateTaskAndSelectLabel(data: Partial<Task>): Promise<void> {
+    if (!data.id) return;
+
+    this.db.transaction("rw", [this.db.tasks, this.db.labels], async () => {
+      await this.updateTask(data);
+      if (!data.labelId) return;
+      await this.db.labelRepo.selectLabelInTransaction(data.labelId);
+    });
   }
 
   /**
@@ -139,7 +155,7 @@ export class TaskRepository {
         await this.changeTaskSelectionInTransaction(id);
 
         // 指定したタスクのラベルを選択状態に変更
-        await this.db.labelRepo.changeLabelSelectionInTransaction(task.labelId);
+        await this.db.labelRepo.selectLabelInTransaction(task.labelId);
 
         // 指定したタスクのステータスを選択状態に変更
         const status = TaskStatus.fromCode(task.statusCode);

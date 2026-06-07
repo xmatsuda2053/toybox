@@ -304,11 +304,10 @@ export class SnNavSectionLabel extends LitElement {
   private _handleLabelClick = async (label: Label) => {
     if (label.id) {
       if (label.isSelected) {
-        await snDB.labelRepo.deSelectAllLabel();
+        await snDB.labelRepo.deSelectLabelAndDeSelectTask();
       } else {
-        await snDB.labelRepo.changeLabelSelection(label.id);
+        await snDB.labelRepo.selectLabelAndDeSelectTask(label.id);
       }
-      await snDB.taskRepo.changeAllTaskUnSelection();
     }
   };
 
