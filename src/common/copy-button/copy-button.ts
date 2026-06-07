@@ -1,5 +1,5 @@
 // Core Libraries
-import { css, html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
 // Lit Extensions (Decorators & Directives)
 import { customElement, state, property } from "lit/decorators.js";
@@ -33,7 +33,7 @@ export class CopyButton extends LitElement {
    * @type {("small" | "medium" | "large")}
    * @memberof CopyButton
    */
-  @property({ type: String }) size: "small" | "medium" | "large" = "medium";
+  @property({ type: String }) size: "small" | "medium" | "large" = "small";
 
   /**
    * ボタンスタイル
@@ -158,7 +158,7 @@ export class CopyButton extends LitElement {
           <wa-icon
             class="copy"
             library="my-icons"
-            name="copy-regular-full"
+            name="clipboard-regular-full"
           ></wa-icon>
         </div>
       </wa-button>

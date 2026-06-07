@@ -17,6 +17,7 @@ wa-button {
 
   wa-icon {
     grid-area: 1 / 1;
+    font-size: var(--wa-font-size-m);
 
     transition: all 0.2s ease-in-out; // ここでアニメーション時間を制御
 
