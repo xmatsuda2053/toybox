@@ -33,7 +33,7 @@ export class CopyButton extends LitElement {
    * @type {("small" | "medium" | "large")}
    * @memberof CopyButton
    */
-  @property({ type: String }) size: "small" | "medium" | "large" = "small";
+  @property({ type: String }) size: "small" | "medium" | "large" = "medium";
 
   /**
    * ボタンスタイル
