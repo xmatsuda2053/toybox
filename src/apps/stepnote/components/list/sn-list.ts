@@ -115,6 +115,14 @@ export class SnList extends LitElement {
   @state() private _activeFiscalYears: number[] = [];
 
   /**
+   * 折りたたまれている年度一覧
+   *
+   * @private
+   * @memberof SnList
+   */
+  @state() private _collapsedYears = new Set<number>();
+
+  /**
    * 編集ダイアログの開閉制御
    *
    * @private
@@ -239,6 +247,17 @@ export class SnList extends LitElement {
         this._tasks = data.tasks;
         this._activeFiscalYears = data.activeFiscalYears;
         this._labelMap = new Map(data.labels.map((l) => [l.id!, l.name]));
+
+        // 年度開閉の制御用配列から、検索結果に存在しない年度を削除する。
+        // ※メモリに不要な情報が残らないよう制御
+        const activeSet = new Set(data.activeFiscalYears);
+
+        for (const y of this._collapsedYears) {
+          if (!activeSet.has(y)) {
+            this._collapsedYears.delete(y);
+          }
+        }
+        this.requestUpdate();
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -285,6 +304,10 @@ export class SnList extends LitElement {
       const tasks = tasksByYear.get(year) ?? [];
 
       items.push({ type: "year", year, count: tasks.length });
+
+      if (this._collapsedYears.has(year)) {
+        continue; // 年度を閉じた状態の場合、タスクは表示しない。
+      }
 
       for (const task of tasks) {
         items.push({
@@ -333,17 +356,35 @@ export class SnList extends LitElement {
   };
 
   /**
+   * セクションクリック時の所為を制御します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnList
+   */
+  private _handleSectionClick = (e: CustomEvent) => {
+    const year = e.detail.year;
+
+    if (this._collapsedYears.has(year)) {
+      this._collapsedYears.delete(year);
+    } else {
+      this._collapsedYears.add(year);
+    }
+    this.requestUpdate();
+  };
+
+  /**
    * タスク複製画面を起動します。
    *
    * @private
    * @param {CustomEvent} e
    * @memberof SnList
    */
-  private _handleTaskCopyClick(e: CustomEvent) {
+  private _handleTaskCopyClick = (e: CustomEvent) => {
     this._dialogMode = "Copy";
     this._sourceTask = e.detail.task;
     this._isEditDialogOpen = true;
-  }
+  };
 
   /**
    * タスク内容の保存後の動作を制御します。
@@ -351,9 +392,9 @@ export class SnList extends LitElement {
    * @private
    * @memberof SnList
    */
-  private _handleTaskSaved(): void {
+  private _handleTaskSaved = (): void => {
     this._isEditDialogOpen = false;
-  }
+  };
 
   /**
    * 編集ダイアログ終了後の動作を制御します。
@@ -361,12 +402,12 @@ export class SnList extends LitElement {
    * @private
    * @memberof SnList
    */
-  private _handleAfterHideEditDialog(e: CustomEvent): void {
+  private _handleAfterHideEditDialog = (e: CustomEvent): void => {
     if (e.target !== e.currentTarget) {
       return;
     }
     this._isEditDialogOpen = false;
-  }
+  };
 
   // -------------------------------------------------------------
   // レンダリング
@@ -462,9 +503,12 @@ export class SnList extends LitElement {
   ): HTMLTemplateResult | typeof nothing => {
     switch (item.type) {
       case "year":
-        return html`<sn-list-section>
-          <span slot="year">${item.year}</span>
-          <span slot="count">${item.count}</span>
+        return html`<sn-list-section
+          .collapsed=${this._collapsedYears.has(item.year)}
+          .year=${item.year}
+          .count=${item.count}
+          @click-section=${this._handleSectionClick}
+        >
         </sn-list-section>`;
 
       case "task":

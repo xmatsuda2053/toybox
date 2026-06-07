@@ -2,18 +2,44 @@
   header {
     display: flex;
     align-items: center;
-    padding-block: var(--wa-space-2xs);
+    padding-block-end: var(--wa-space-3xs);
     margin-block-end: var(--wa-space-3xs);
 
     color: white;
 
     span {
+      flex: 1;
+      margin-inline-end: var(--wa-space-xs);
+      padding-block: var(--wa-space-2xs);
+      padding-inline-start: var(--wa-space-2xs);
+
       font-size: var(--wa-font-size-s);
-      margin-inline-end: auto;
+      border-radius: var(--wa-border-radius-m);
+
+      wa-icon {
+        font-size: var(--wa-font-size-m);
+
+        transition:
+          transform 0.2s ease-in-out,
+          color 0.2s;
+
+        &.collapsed {
+          transform: rotate(-90deg);
+        }
+      }
     }
 
     wa-badge {
       font-size: var(--wa-font-size-2xs);
+    }
+
+    &:hover {
+      cursor: pointer;
+      user-select: none;
+
+      span {
+        background-color: var(--wa-color-neutral-10);
+      }
     }
   }
 }

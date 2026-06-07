@@ -1,18 +1,21 @@
-// 1. Core Libraries
+// Core Libraries
 import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
-import { customElement } from "lit/decorators.js";
+// Lit Extensions (Decorators & Directives)
+import { customElement, property } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs
+// Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 4. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/list/sn-list-section.lit.scss?inline";
 
-// 5. Initializations
+// Internal Shared (Database, Models, Codes)
+import { emit } from "@/utils/EventUtils";
+
+// Initializations
 setBasePath("/");
 
 /**
@@ -32,8 +35,45 @@ export class SnListSection extends LitElement {
    */
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
+  /**
+   * 開閉状態
+   *
+   * @memberof SnListSection
+   */
+  @property({ type: Boolean, reflect: true }) collapsed = false;
+
+  /**
+   * 年度
+   *
+   * @type {number}
+   * @memberof SnListSection
+   */
+  @property({ type: Number }) year!: number;
+
+  /**
+   * 年度内のタスク件数
+   *
+   * @type {number}
+   * @memberof SnListSection
+   */
+  @property({ type: Number }) count!: number;
+
   // -------------------------------------------------------------
-  // レンダリング
+  // Event
+  // -------------------------------------------------------------
+
+  /**
+   * ヘッダークリック時の処理を制御します。
+   *
+   * @private
+   * @memberof SnListSection
+   */
+  private _handleHeaderClick = () => {
+    emit(this, "click-section", { detail: { year: this.year } });
+  };
+
+  // -------------------------------------------------------------
+  // Rendering
   // -------------------------------------------------------------
 
   /**
@@ -46,11 +86,16 @@ export class SnListSection extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
-      <header>
-        <span><slot name="year"></slot>年度</span>
-        <wa-badge variant="brand" pill>
-          <slot name="count"></slot>
-        </wa-badge>
+      <header @click=${this._handleHeaderClick}>
+        <span>
+          <wa-icon
+            library="my-icons"
+            name="angle-down-solid-full"
+            class=${this.collapsed ? "collapsed" : ""}
+          ></wa-icon>
+          ${this.year}年度
+        </span>
+        <wa-badge variant="brand" pill>${this.count}</wa-badge>
       </header>
     </div>`;
   }
