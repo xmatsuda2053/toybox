@@ -1,12 +1,12 @@
 // 1. Core Libraries
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
   type HTMLTemplateResult,
   type PropertyValues,
 } from "lit";
+import { map } from "lit/directives/map.js";
 
 // 2. Library Extensions & Third-party
 import { customElement, property, query, state } from "lit/decorators.js";
@@ -15,6 +15,7 @@ import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // 3. Internal Assets & Logic
 import { type ScheduledTime, ScheduleUtils } from "@/utils/ScheduleUtils";
+import { padZero } from "@/utils/CommonUtils";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -154,14 +155,7 @@ export class DataExporter extends LitElement {
    * @static
    * @memberof DatePickerInput
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
   /**
    * バックアップのスケジュール設定
@@ -219,33 +213,19 @@ export class DataExporter extends LitElement {
    */
   private _exportScheduler?: ScheduleUtils;
 
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
   /**
-   * Creates an instance of DataBackup.
+   * DOMの追加完了後、１回だけ実行する。
+   *
+   * @protected
+   * @param {PropertyValues<this>} changedProperties
    * @memberof DataExporter
    */
-  constructor() {
-    super();
-  }
-
-  /**
-   * データをエクスポートする
-   *
-   * @private
-   * @memberof DataBackup
-   */
-  private async _exportData() {
-    if (this.onExport) {
-      await this.onExport();
-    }
-  }
-
-  /**
-   * コンポーネント追加時
-   *
-   * @memberof DataExporter
-   */
-  connectedCallback() {
-    super.connectedCallback();
+  protected firstUpdated(changedProperties: PropertyValues<this>) {
+    super.firstUpdated(changedProperties);
+    this._getScheduledConfigs();
   }
 
   /**
@@ -258,18 +238,21 @@ export class DataExporter extends LitElement {
     this._exportScheduler?.stop();
   }
 
-  /**
-   * DOMの追加完了後、１回だけ実行する。
-   *
-   * @protected
-   * @param {PropertyValues<this>} changedProperties
-   * @memberof DataExporter
-   */
-  protected firstUpdated(changedProperties: PropertyValues<this>) {
-    super.firstUpdated(changedProperties);
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
 
-    this.getScheduledConfigs();
-  }
+  /**
+   * データをエクスポートする
+   *
+   * @private
+   * @memberof DataBackup
+   */
+  private _exportData = async () => {
+    if (this.onExport) {
+      await this.onExport();
+    }
+  };
 
   /**
    * スケジュールを更新して開始する
@@ -277,7 +260,7 @@ export class DataExporter extends LitElement {
    * @private
    * @memberof DataExporter
    */
-  private _reloadSchedule() {
+  private _reloadSchedule = () => {
     this._exportScheduler?.stop();
 
     const activeSchedule = this.exportSchedule
@@ -289,7 +272,7 @@ export class DataExporter extends LitElement {
     );
 
     this._exportScheduler.start();
-  }
+  };
 
   /**
    * スケジュールの設定情報を取得します。
@@ -298,7 +281,7 @@ export class DataExporter extends LitElement {
    * @return {*}  void
    * @memberof DataExporter
    */
-  private getScheduledConfigs(): void {
+  private _getScheduledConfigs = (): void => {
     const schedule = localStorage.getItem(this.storageKey);
     if (schedule) {
       this.exportSchedule = JSON.parse(schedule);
@@ -308,7 +291,7 @@ export class DataExporter extends LitElement {
     }
 
     this._reloadSchedule();
-  }
+  };
 
   /**
    * 指定したスケジュール日時の設定を反転させます。
@@ -317,7 +300,7 @@ export class DataExporter extends LitElement {
    * @param {ScheduleConfig} schedule
    * @memberof DataExporter
    */
-  private toggleScheduledConfig(schedule: ScheduleConfig) {
+  private _handleScheduleClick(schedule: ScheduleConfig) {
     const newSchedule = this.exportSchedule.map((s) => {
       if (s.id === schedule.id) {
         return { ...s, enabled: !s.enabled };
@@ -330,6 +313,10 @@ export class DataExporter extends LitElement {
     this._reloadSchedule();
   }
 
+  // -------------------------------------------------------------
+  // Rendering
+  // -------------------------------------------------------------
+
   /**
    * コンテンツをレンダリングします。
    *
@@ -339,8 +326,6 @@ export class DataExporter extends LitElement {
    * @memberof DataExporter
    */
   protected render(): HTMLTemplateResult {
-    const padZero = (num: number) => String(num).padStart(2, "0");
-
     return html` <wa-dialog
       light-dismiss
       label="BACKUP CONFIG (${this.label})"
@@ -349,15 +334,15 @@ export class DataExporter extends LitElement {
       @wa-hide=${() => (this.open = false)}
     >
       <div class="container">
-        ${this.exportSchedule.map((s) => {
+        ${map(this.exportSchedule, (s) => {
           return html`
             <wa-button
               size="small"
               variant="brand"
               appearance=${s.enabled ? "accent" : "outlined"}
-              @click=${() => this.toggleScheduledConfig(s)}
+              @click=${() => this._handleScheduleClick(s)}
             >
-              ${padZero(s.time.hour)}:${padZero(s.time.minute)}
+              ${padZero(s.time.hour, 2)}:${padZero(s.time.minute, 2)}
             </wa-button>
           `;
         })}

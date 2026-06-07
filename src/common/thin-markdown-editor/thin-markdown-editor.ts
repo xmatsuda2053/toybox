@@ -353,15 +353,14 @@ export class ThinMarkdownEditor extends LitElement {
           <!-----Markdown Preview Menu-->
           <div class="md-menu ${!this.isEditMode ? "" : "hidden"}">
             <div class="toolbar-root">
-              <wa-button
+              <copy-button
                 size="small"
                 appearance="plain"
                 variant="neutral"
-                title="Copy Raw"
                 @click=${this._copyMarkdownToClipboard}
               >
-                <wa-icon library="my-icons" name="copy-regular-full"></wa-icon>
-              </wa-button>
+                Copy Raw
+              </copy-button>
             </div>
           </div>
           <!--Markdown Menu-->

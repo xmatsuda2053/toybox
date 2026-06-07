@@ -1,21 +1,21 @@
-// 1. Core Libraries
+// Core Libraries
 import { css, html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, state, property } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs (WebAwesome)
+// Third-party UI & SDKs (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "./copy-button.lit.scss?inline";
 
-// 7. Initializations
+// Initializations
 setBasePath("/");
 
 /**
@@ -33,7 +33,7 @@ export class CopyButton extends LitElement {
    * @type {("small" | "medium" | "large")}
    * @memberof CopyButton
    */
-  @property({ type: String }) size: "small" | "medium" | "large" = "small";
+  @property({ type: String }) size: "small" | "medium" | "large" = "medium";
 
   /**
    * ボタンスタイル
@@ -78,14 +78,11 @@ export class CopyButton extends LitElement {
    * @static
    * @memberof SnTaskSummary
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * コンポーネント削除時
@@ -110,13 +107,16 @@ export class CopyButton extends LitElement {
     }
   }
 
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
   /**
    * クリックイベント
    *
    * @private
    * @memberof CopyButton
    */
-  private _handleClick() {
+  private _handleClick = () => {
     this._clearTimer();
 
     this._isCopied = true;
@@ -127,8 +127,11 @@ export class CopyButton extends LitElement {
     }, 1250);
 
     emit(this, "copy");
-  }
+  };
 
+  // -------------------------------------------------------------
+  // Rendering
+  // -------------------------------------------------------------
   /**
    * コンポーネントをレンダリングします。
    *
