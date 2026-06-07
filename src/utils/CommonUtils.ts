@@ -77,3 +77,15 @@ export function rotateElement(el: HTMLElement | null) {
 export function isNotBlank(val: string | null | undefined): boolean {
   return val !== null && val !== undefined && val !== "";
 }
+
+/**
+ * 数値を指定した桁数でゼロパディングします。
+ *
+ * @export
+ * @param {number} num - 対象の数値
+ * @param {number} length - 桁数
+ * @return {*}  {string} 編集後の数値文字列
+ */
+export function padZero(num: number, length: number): string {
+  return String(num).padStart(length, "0");
+}
