@@ -318,9 +318,12 @@ export class SnNavSectionQuick extends LitElement {
     // ON(1) / OFF(0) を切り替え
     const nextSelected = currentVal === 1 ? 0 : 1;
 
+    // 並列更新の準備
+    const promises: Promise<unknown>[] = [];
+
     // 期限切れ・期限当日・期限間近をONにした場合、ラベル選択状態をリセットする
     if (nextSelected === 1 && LABEL_CLEAR_TARGET_KEYS.includes(key)) {
-      await snDB.labelRepo.deSelectAllLabel();
+      promises.push(snDB.labelRepo.deSelectAllLabel());
 
       Object.assign(newQuickAccess, {
         isOverdueSelected: 0,
@@ -334,7 +337,9 @@ export class SnNavSectionQuick extends LitElement {
 
     // 対象のキーの状態を更新する
     newQuickAccess[key] = nextSelected;
-    await snDB.quickAccessRepo.putQuickAccess(newQuickAccess);
+    promises.push(snDB.quickAccessRepo.putQuickAccess(newQuickAccess));
+
+    await Promise.all(promises);
   };
 
   // -------------------------------------------------------------

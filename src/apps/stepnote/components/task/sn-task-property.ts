@@ -69,6 +69,21 @@ export class SnTaskProperty extends LitElement {
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
   // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
+
+  /**
+   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
+   *
+   * @override
+   * @memberof SnJournalLogItem
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._update.cancel();
+  }
+
+  // -------------------------------------------------------------
   // Database Actions (Dexie 連携)
   // -------------------------------------------------------------
 
@@ -81,6 +96,19 @@ export class SnTaskProperty extends LitElement {
   private _update = debounce(
     async (updateData: Partial<Task>): Promise<void> => {
       await snDB.taskRepo.updateTask(updateData);
+    },
+    100,
+  );
+
+  /**
+   * タスクデータを更新し、更新したラベルを選択状態とします。
+   *
+   * @private
+   * @memberof SnTaskProperty
+   */
+  private _updateAndSelectLabel = debounce(
+    async (updateData: Partial<Task>): Promise<void> => {
+      await snDB.taskRepo.updateTaskAndSelectLabel(updateData);
     },
     100,
   );
@@ -123,11 +151,10 @@ export class SnTaskProperty extends LitElement {
     const target = e.target as WaSelect;
     this.task["labelId"] = Number(target.value);
 
-    this._update({
+    this._updateAndSelectLabel({
       id: this.task.id,
       labelId: this.task.labelId,
     });
-    await snDB.labelRepo.changeLabelSelectionInTransaction(this.task.labelId);
   };
 
   /**

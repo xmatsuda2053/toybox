@@ -70,7 +70,15 @@ export class QuickAccessRepository {
       isProgressSelected: 1,
       isPendingSelected: 1,
     };
-    await this.putQuickAccess(newData);
+
+    return await this.db.transaction(
+      "rw",
+      [this.db.labels, this.db.quickAccesses],
+      async () => {
+        await this.putQuickAccess(newData);
+        await this.db.labelRepo.deSelectAllLabel();
+      },
+    );
   }
 
   /**
@@ -90,7 +98,15 @@ export class QuickAccessRepository {
       isProgressSelected: 1,
       isPendingSelected: 1,
     };
-    await this.putQuickAccess(newData);
+
+    return await this.db.transaction(
+      "rw",
+      [this.db.labels, this.db.quickAccesses],
+      async () => {
+        await this.putQuickAccess(newData);
+        await this.db.labelRepo.deSelectAllLabel();
+      },
+    );
   }
 
   /**

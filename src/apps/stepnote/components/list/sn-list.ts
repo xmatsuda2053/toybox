@@ -337,13 +337,11 @@ export class SnList extends LitElement {
       case "find-all-mode":
         // 全検索モード切替
         await snDB.quickAccessRepo.changeAllSearchMode();
-        await snDB.labelRepo.deSelectAllLabel();
         break;
 
       case "show-in-progress":
         // 実行中タスク表示モード切替
         await snDB.quickAccessRepo.changeInProgressMode();
-        await snDB.labelRepo.deSelectAllLabel();
         break;
 
       case "add":
