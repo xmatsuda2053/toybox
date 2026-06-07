@@ -532,6 +532,6 @@ export class SnList extends LitElement {
     if (item.type === "year") {
       return `year-${item.year}`;
     }
-    return `task-${item.task.id}`;
+    return `task-${item.task.id}-${item.task.fiscalYear}`;
   };
 }
