@@ -18,19 +18,18 @@ wa-input {
   display: flex;
   gap: var(--wa-space-2xs);
   align-items: center;
-
   margin-block-end: var(--wa-space-2xs);
 
   .ym {
-    font-weight: bold;
-    font-size: var(--wa-font-size-m);
-
     margin-inline-start: var(--wa-space-3xs);
     margin-inline-end: auto;
 
+    font-weight: bold;
+    font-size: var(--wa-font-size-m);
+
     span {
-      font-size: var(--wa-font-size-s);
       margin-inline-start: var(--wa-space-3xs);
+      font-size: var(--wa-font-size-s);
     }
   }
 
@@ -58,10 +57,10 @@ wa-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    border-radius: 50%;
     aspect-ratio: 1 / 1;
     min-width: 35px;
+
+    border-radius: 50%;
 
     &.holiday {
       color: var(--wa-color-pink-50);
@@ -73,12 +72,18 @@ wa-divider {
         background-color: var(--wa-color-neutral-90);
       }
     }
+
+    &.today {
+      background-color: var(--wa-color-neutral-90);
+    }
+
     &.current {
       background-color: var(--wa-color-brand-90);
       &:hover {
         background-color: var(--wa-color-brand-90);
       }
     }
+
     &.notSysYm {
       color: var(--wa-color-neutral-60);
     }
