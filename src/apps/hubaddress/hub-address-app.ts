@@ -450,8 +450,8 @@ export class HubAddressApp extends LitElement {
    * @memberof HubAddressApp
    */
   private async clearKeyword() {
-    this.keywordStaff.init();
-    this.keywordDiv.init();
+    this.keywordStaff.searchKeyword = "";
+    this.keywordDiv.searchKeyword = "";
     await haDB.clearSearchKeyword();
   }
 

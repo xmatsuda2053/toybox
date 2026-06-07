@@ -1,32 +1,23 @@
-// 1. Core Libraries (Lit & Dexie)
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+// Core Libraries (Lit & Dexie)
+import { html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
-// 2. Lit Extensions (Decorators & Directives)
-import { customElement, state, property, query } from "lit/decorators.js";
+// Lit Extensions (Decorators & Directives)
+import { customElement, state, property } from "lit/decorators.js";
 
-// 3. Third-party UI & SDKs (WebAwesome)
+// Third-party UI & SDKs (WebAwesome)
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
 
-// 4. Internal Shared (Database, Models)
-
-// 5. Internal Shared (Utils)
+// Internal Shared (Utils)
 import { debounce } from "@/utils/CommonUtils";
 import { emit } from "@/utils/EventUtils";
 
-// 6. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "./search-input.lit.scss?inline";
 
-// 7. Initializations
+// Initializations
 setBasePath("/");
 
 /**
@@ -54,27 +45,31 @@ export class SearchInput extends LitElement {
   @property({ type: String }) searchKeyword = "";
 
   /**
-   * 入力欄
-   *
-   * @type {WaInput}
-   * @memberof SearchInput
-   */
-  @query("#search-input") searchInput!: WaInput;
-
-  /**
    * スタイルシートを適用
    *
    * @static
    * @memberof SearchInput
    */
-  static styles = [
-    css`
-      ${unsafeCSS(sharedStyles)}
-    `,
-    css`
-      ${unsafeCSS(styles)}
-    `,
-  ];
+  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
+
+  /**
+   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
+   *
+   * @override
+   * @memberof SearchInput
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._debouncedSearch.cancel();
+  }
+
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
 
   /**
    * 検索欄の入力にデバウンスを設定します。
@@ -88,7 +83,7 @@ export class SearchInput extends LitElement {
     });
     this._loading = false;
     this.searchKeyword = keyword;
-  }, 150);
+  }, 250);
 
   /**
    * 検索欄の入力時にローディングを表示します。
@@ -96,32 +91,18 @@ export class SearchInput extends LitElement {
    * @private
    * @memberof SearchInput
    */
-  private async _inputKeyword() {
-    const keyword = this.searchInput.value ?? "";
-    if (keyword) this._loading = true;
+  private _handleKeywordInput = (e: Event) => {
+    const input = e.target as WaInput;
+    const keyword = input.value ?? "";
+    if (keyword) {
+      this._loading = true;
+    }
     this._debouncedSearch(keyword);
-  }
+  };
 
-  /**
-   * コンポーネントがドキュメントの DOM から削除されたときに実行されます。
-   *
-   * @override
-   * @memberof SearchInput
-   */
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
-  /**
-   * render直前に実行されます。
-   *
-   * @protected
-   * @param {PropertyValues} _changedProperties
-   * @memberof SearchInput
-   */
-  protected willUpdate(_changedProperties: PropertyValues) {
-    super.willUpdate(_changedProperties);
-  }
+  // -------------------------------------------------------------
+  // Rendering
+  // -------------------------------------------------------------
 
   /**
    * コンポーネントをレンダリングします。
@@ -133,13 +114,12 @@ export class SearchInput extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     return html` <wa-input
-      id="search-input"
       class=${this.searchKeyword !== "" ? "has-value" : ""}
       size="small"
       placeholder="filter inquiries..."
       .value=${this.searchKeyword}
+      @input=${this._handleKeywordInput}
       with-clear
-      @input=${this._inputKeyword}
     >
       ${this._loading
         ? html`<wa-spinner slot="start"></wa-spinner>`
@@ -149,18 +129,5 @@ export class SearchInput extends LitElement {
             name="magnifying-glass-solid-full"
           ></wa-icon>`}
     </wa-input>`;
-  }
-
-  /**
-   * 初期化します。
-   *
-   * @memberof SearchInput
-   */
-  public init() {
-    this._loading = false;
-    this.searchKeyword = "";
-    if (this.searchInput) {
-      this.searchInput.value = "";
-    }
   }
 }
