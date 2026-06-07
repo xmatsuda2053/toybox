@@ -218,10 +218,10 @@ export class SnList extends LitElement {
     const observable = liveQuery(async () => {
       const [quickAccess, labels, tasks, activeFiscalYears] = await Promise.all(
         [
-          snDB.getQuickAccess(),
-          snDB.selectLabelsAscName(),
-          snDB.selectTaskAscSortKey(keyword),
-          snDB.getActiveFiscalYears(keyword),
+          snDB.quickAccessRepo.getQuickAccess(),
+          snDB.labelRepo.getLabelsAscName(),
+          snDB.taskQuery.getTasksAscSortKey(keyword),
+          snDB.taskQuery.getActiveFiscalYears(keyword),
         ],
       );
 
@@ -313,14 +313,14 @@ export class SnList extends LitElement {
     switch (key) {
       case "find-all-mode":
         // 全検索モード切替
-        await snDB.resetQuickAccessSelected();
-        await snDB.resetLabelSelected();
+        await snDB.quickAccessRepo.changeAllSearchMode();
+        await snDB.labelRepo.deSelectAllLabel();
         break;
 
       case "show-in-progress":
         // 実行中タスク表示モード切替
-        await snDB.showInProgress();
-        await snDB.resetLabelSelected();
+        await snDB.quickAccessRepo.changeInProgressMode();
+        await snDB.labelRepo.deSelectAllLabel();
         break;
 
       case "add":

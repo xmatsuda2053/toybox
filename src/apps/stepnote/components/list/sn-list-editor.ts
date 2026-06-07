@@ -134,7 +134,10 @@ export class SnListEditor extends LitElement {
     this._dbSubscription?.unsubscribe();
 
     const observable = liveQuery(async () => {
-      const [_labelData] = await Promise.all([snDB.selectLabelsAscName(), ,]);
+      const [_labelData] = await Promise.all([
+        snDB.labelRepo.getLabelsAscName(),
+        ,
+      ]);
       return {
         _labelData,
       };
@@ -156,7 +159,7 @@ export class SnListEditor extends LitElement {
    * @memberof SnListEditor
    */
   private async _addTaskData(data: InputData) {
-    const task: Task = {
+    await snDB.taskRepo.addTask({
       statusCode: TaskStatus.PENDING.code,
       name: data.name,
       dueDate: data.dueDate,
@@ -166,9 +169,7 @@ export class SnListEditor extends LitElement {
       labelId: data.labelId,
       bookmark: 0,
       selected: 0,
-    };
-
-    await snDB.addNewTask(task);
+    });
   }
 
   /**
@@ -193,7 +194,7 @@ export class SnListEditor extends LitElement {
       selected: 0,
     };
 
-    await snDB.addCopiedTask(task, this.targetTask.id!);
+    await snDB.taskRepo.addTask(task);
   }
 
   // -------------------------------------------------------------

@@ -175,10 +175,10 @@ export class SnNavSectionQuick extends LitElement {
     const observable = liveQuery(async () => {
       const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
         [
-          snDB.getQuickAccess(),
-          snDB.hasOverdueTasks(),
-          snDB.hasAsapTasks(),
-          snDB.hasUpcomingTasks(),
+          snDB.quickAccessRepo.getQuickAccess(),
+          snDB.taskStats.hasOverdue(),
+          snDB.taskStats.hasAsap(),
+          snDB.taskStats.hasUpcoming(),
         ],
       );
 
@@ -320,7 +320,7 @@ export class SnNavSectionQuick extends LitElement {
 
     // 期限切れ・期限当日・期限間近をONにした場合、ラベル選択状態をリセットする
     if (nextSelected === 1 && LABEL_CLEAR_TARGET_KEYS.includes(key)) {
-      await snDB.resetLabelSelected();
+      await snDB.labelRepo.deSelectAllLabel();
 
       Object.assign(newQuickAccess, {
         isOverdueSelected: 0,
@@ -334,7 +334,7 @@ export class SnNavSectionQuick extends LitElement {
 
     // 対象のキーの状態を更新する
     newQuickAccess[key] = nextSelected;
-    await snDB.putQuickAccess(newQuickAccess);
+    await snDB.quickAccessRepo.putQuickAccess(newQuickAccess);
   };
 
   // -------------------------------------------------------------

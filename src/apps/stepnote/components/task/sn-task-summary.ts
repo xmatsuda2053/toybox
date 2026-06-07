@@ -108,7 +108,7 @@ export class SnTaskSummary extends LitElement {
    */
   private _update = debounce(
     async (updateData: Partial<Task>): Promise<void> => {
-      await snDB.updateTask(updateData);
+      await snDB.taskRepo.updateTask(updateData);
     },
     500,
   );

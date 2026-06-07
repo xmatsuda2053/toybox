@@ -155,6 +155,6 @@ export class StepNoteApp extends LitElement {
    * @memberof StepNoteApp
    */
   private async _taskSelect(id: number) {
-    await snDB.selectSingleTask(Number(id), true);
+    await snDB.taskRepo.changeTaskAndNavSelection(Number(id));
   }
 }

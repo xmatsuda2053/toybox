@@ -143,7 +143,7 @@ export class SnNavSectionLabel extends LitElement {
     this._dbSubscription?.unsubscribe();
 
     const observable = liveQuery(() =>
-      snDB.selectLabelsAscName(this._filterKeyword),
+      snDB.labelRepo.getLabelsAscName(this._filterKeyword),
     );
 
     this._dbSubscription = observable.subscribe({
@@ -224,15 +224,12 @@ export class SnNavSectionLabel extends LitElement {
     }
 
     const labelToSave: Label = {
+      id: this._editingLabel.id ?? undefined,
       name: this._editingLabel.name.trim(),
-      isSelected: this._editingLabel.isSelected ?? 0,
+      isSelected: 0,
     };
 
-    if (this._editingLabel.id) {
-      labelToSave.id = this._editingLabel.id;
-    }
-
-    await snDB.putLabel(labelToSave);
+    await snDB.labelRepo.putLabel(labelToSave);
 
     this._isAddDialogOpen = false;
     this._editingLabel = null;
@@ -306,8 +303,12 @@ export class SnNavSectionLabel extends LitElement {
    */
   private _handleLabelClick = async (label: Label) => {
     if (label.id) {
-      await snDB.updateLabelSelection(label.id, !label.isSelected ? 1 : 0);
-      await snDB.resetTaskSelected();
+      if (label.isSelected) {
+        await snDB.labelRepo.deSelectAllLabel();
+      } else {
+        await snDB.labelRepo.changeLabelSelection(label.id);
+      }
+      await snDB.taskRepo.changeAllTaskUnSelection();
     }
   };
 

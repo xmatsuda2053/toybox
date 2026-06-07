@@ -45,6 +45,11 @@
       }
 
       wa-tab {
+        .tab-dot {
+          font-size: var(--wa-space-xs);
+          color: var(--wa-color-success-50);
+        }
+
         &::part(base) {
           font-size: var(--wa-font-size-s);
         }
