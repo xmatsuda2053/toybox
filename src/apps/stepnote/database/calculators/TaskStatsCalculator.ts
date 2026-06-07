@@ -2,6 +2,12 @@ import { SnDB } from "../SnDB";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { isAsap, isWithinAnyDaysBefore } from "@utils/DateUtils";
 
+/**
+ * タスクデータの状態を取得するカリキュレータークラスです。
+ *
+ * @export
+ * @class TaskStatsCalculator
+ */
 export class TaskStatsCalculator {
   /**
    * Creates an instance of TaskStatsCalculator.

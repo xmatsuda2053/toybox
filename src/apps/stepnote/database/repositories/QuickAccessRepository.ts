@@ -92,4 +92,22 @@ export class QuickAccessRepository {
     };
     await this.putQuickAccess(newData);
   }
+
+  /**
+   * 状態ラベルがすべて未選択であるか否かをチェックする。
+   * (完了、実行中、未実行がすべて未選択)
+   *
+   * @return {*}  {Promise<boolean>}
+   * @memberof QuickAccessRepository
+   */
+  async deSelectAllStatusLabel(): Promise<boolean> {
+    const currentSettings = await this.getQuickAccess();
+    if (!currentSettings) return false;
+
+    return (
+      currentSettings.isDoneSelected === 0 &&
+      currentSettings.isProgressSelected === 0 &&
+      currentSettings.isPendingSelected === 0
+    );
+  }
 }

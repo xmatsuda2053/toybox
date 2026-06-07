@@ -1,7 +1,14 @@
-import { SnDB } from "../SnDB";
+import { SnDB } from "@sn/database/SnDB";
 import { Task } from "@sn/models/Task";
 import { TaskStatus } from "@sn/code/TaskStatus";
 
+/**
+ * タスクデータの永続化および状態変更を管理するリポジトリクラスです。
+ * データベースを介して、タスクの追加・更新および状態変更などの機能を提供します。
+ *
+ * @export
+ * @class TaskRepository
+ */
 export class TaskRepository {
   /**
    * Creates an instance of TaskRepository.
@@ -31,18 +38,22 @@ export class TaskRepository {
       async () => {
         const id = await this.db.tasks.add(data);
 
-        await this.db.logRepo.addLog({
-          taskId: id,
-          value: "#### 新規追加",
-        });
+        // 初期ログ、初期ノート、タスク選択状態設定、ラベル選択状態設定を平行で実施する。
+        await Promise.all([
+          await this.db.logRepo.addLog({
+            taskId: id,
+            value: "#### 新規追加",
+          }),
+          await this.db.noteRepo.addNote({
+            taskId: id,
+            value: "",
+          }),
+          await this.changeTaskSelectionInTransaction(id),
+          await this.db.labelRepo.changeLabelSelectionInTransaction(
+            data.labelId,
+          ),
+        ]);
 
-        await this.db.noteRepo.addNote({
-          taskId: id,
-          value: "",
-        });
-
-        await this.changeTaskSelectionInTransaction(id);
-        await this.db.labelRepo.changeLabelSelectionInTransaction(data.labelId);
         return id;
       },
     );
@@ -59,6 +70,21 @@ export class TaskRepository {
     if (!data.id) return;
 
     data.updatedAt = new Date();
+    await this.db.tasks.update(data.id, data);
+  }
+
+  /**
+   * タスクを更新する。※更新日の設定なし
+   *
+   * @private
+   * @param {Partial<Task>} data
+   * @return {*}  {Promise<void>}
+   * @memberof TaskRepository
+   */
+  private async updateTaskInternalWithoutTimestamp(
+    data: Partial<Task>,
+  ): Promise<void> {
+    if (!data.id) return;
     await this.db.tasks.update(data.id, data);
   }
 
@@ -124,10 +150,10 @@ export class TaskRepository {
         ];
         const matched = keyMap.find((item) => item.check());
 
-        const data = matched ? { [matched.key]: 1 } : undefined;
-
-        if (!data) return;
-        await this.db.quickAccessRepo.updateQuickAccess(data);
+        // 指定したタスクに合わせてクイックアクセスの状態を変更
+        const quickAccessData = matched ? { [matched.key]: 1 } : undefined;
+        if (!quickAccessData) return;
+        await this.db.quickAccessRepo.updateQuickAccess(quickAccessData);
       },
     );
   }
@@ -149,7 +175,7 @@ export class TaskRepository {
     await this.changeAllTaskUnSelection();
 
     // 指定したタスクを選択状態に変更
-    await this.updateTask({
+    await this.updateTaskInternalWithoutTimestamp({
       id: id,
       selected: 1,
     });
@@ -204,12 +230,13 @@ export class TaskRepository {
    * @memberof TaskRepository
    */
   async toggleBookmark(id: number): Promise<void> {
-    const task = await this.db.tasks.get(id);
-    if (!task) return;
-
-    await this.updateTask({
-      id: id,
-      bookmark: task.bookmark === 0 ? 1 : 0,
+    await this.db.transaction("rw", [this.db.tasks], async () => {
+      await this.db.tasks
+        .where("id")
+        .equals(id)
+        .modify((task) => {
+          task.bookmark = task.bookmark === 0 ? 1 : 0;
+        });
     });
   }
 }

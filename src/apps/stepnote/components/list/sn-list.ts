@@ -220,8 +220,8 @@ export class SnList extends LitElement {
         [
           snDB.quickAccessRepo.getQuickAccess(),
           snDB.labelRepo.getLabelsAscName(),
-          snDB.selectTaskAscSortKey(keyword),
-          snDB.getActiveFiscalYears(keyword),
+          snDB.taskQuery.getTasksAscSortKey(keyword),
+          snDB.taskQuery.getActiveFiscalYears(keyword),
         ],
       );
 
