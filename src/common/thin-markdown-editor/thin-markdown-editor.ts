@@ -1,6 +1,5 @@
-// 1. Core Libraries (Lit, Static HTML & Markdown)
+// Core Libraries (Lit, Static HTML & Markdown)
 import {
-  css,
   html,
   LitElement,
   unsafeCSS,
@@ -10,18 +9,17 @@ import {
 import { unsafeStatic, withStatic } from "lit/static-html.js";
 import { marked } from "marked";
 
-// 2. Lit Extensions (Decorators & Directives)
+// Lit Extensions (Decorators & Directives)
 import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
-// 3. Third-party UI & Elements (WebAwesome & GitHub Toolbar)
+// Third-party UI & Elements (WebAwesome & GitHub Toolbar)
 import "@github/markdown-toolbar-element";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
-import type WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
 import type WaTextarea from "@awesome.me/webawesome/dist/components/textarea/textarea.js";
 import type WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
-// 4. Internal Shared (Extensions & Utils)
+// Internal Shared (Extensions & Utils)
 import { IdTagExtension } from "./extension/id-tag";
 import {
   ColorTagExtension,
@@ -34,7 +32,7 @@ import {
 import { addTimeStamp } from "./extension/timestamp";
 import { emit } from "@utils/EventUtils";
 
-// 5. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import githubMarkdownStyles from "github-markdown-css/github-markdown-light.css?inline";
 import styles from "./thin-markdown-editor.lit.scss?inline";
@@ -85,14 +83,6 @@ setBasePath("/");
 @customElement("thin-markdown-editor")
 export class ThinMarkdownEditor extends LitElement {
   /**
-   * ラベル
-   *
-   * @type {string}
-   * @memberof MarkdownEditor
-   */
-  @property({ type: String }) label: string = "";
-
-  /**
    * 初期値
    *
    * @type {string}
@@ -137,22 +127,6 @@ export class ThinMarkdownEditor extends LitElement {
   @query("#table-dialog") tableDialog!: WaDialog;
 
   /**
-   * 作成するテーブルの行
-   *
-   * @type {WaInput}
-   * @memberof MarkdownEditor
-   */
-  @query("#table-row") tableRow!: WaInput;
-
-  /**
-   * 作成するテーブルの列
-   *
-   * @type {WaInput}
-   * @memberof MarkdownEditor
-   */
-  @query("#table-col") tableCol!: WaInput;
-
-  /**
    * エディタ領域
    *
    * @type {*}
@@ -174,14 +148,11 @@ export class ThinMarkdownEditor extends LitElement {
    * @static
    * @memberof ThinMarkdownEditor
    */
-  static styles = [
-    css`
-      ${unsafeCSS(styles)}
-    `,
-    css`
-      ${unsafeCSS(githubMarkdownStyles)};
-    `,
-  ];
+  static styles = [unsafeCSS(styles), unsafeCSS(githubMarkdownStyles)];
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
 
   /**
    * Creates an instance of ThinMarkdownEditor.
@@ -292,9 +263,250 @@ export class ThinMarkdownEditor extends LitElement {
     super.updated(_changedProperties);
 
     if (_changedProperties.has("value")) {
-      this._renderMarkdown();
+      this._convertMarkdownToHtml();
     }
   }
+
+  // -------------------------------------------------------------
+  // Private Method
+  // -------------------------------------------------------------
+
+  /**
+   * MarkdownをHTMLに変換する。
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _convertMarkdownToHtml() {
+    this.previewHtml = marked.parse(this.value, {
+      renderer: this.renderer,
+    }) as string;
+  }
+
+  /**
+   * UI操作のイベントが伝播することを防止する。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof MarkdownEditor
+   */
+  private _stopPropagation = (e: Event) => {
+    e.stopPropagation();
+  };
+
+  // -------------------------------------------------------------
+  // Event
+  // -------------------------------------------------------------
+
+  /**
+   * エディタの入力イベントを処理する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleMarkdownInput = (e: Event) => {
+    const textarea = e.target as WaTextarea;
+    this.value = textarea.value ?? "";
+    emit(this, "input");
+  };
+
+  /**
+   * HTMLプレビュー画面に切り替える。
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _handleChangePreviewModeClick = () => {
+    this.isEditMode = false;
+    emit(this, "md-mode-change-preview");
+  };
+
+  /**
+   * 編集に切り替え。
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _handleChangeEditModeClick() {
+    this.isEditMode = true;
+    emit(this, "md-mode-change-edit");
+  }
+
+  /**
+   * コールアウトタグを追加する。
+   *
+   * @private
+   * @param {("info" | "check" | "gear" | "warn" | "alert")} type
+   * @return {*}
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddCalloutClick(
+    type: "info" | "check" | "gear" | "warn" | "alert",
+  ): void {
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+
+    formatCalloutMarkdown(nativeTextarea, type);
+
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /**
+   * 文字色を追加する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddColorClick() {
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    formatColorMarkdown(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /**
+   * テーブル追加ダイアログを表示する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleOpenTableDialogClick() {
+    this.tableDialog.open = true;
+  }
+
+  /**
+   * テーブルを追加する
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _handleAddTableClick() {
+    const inputs = this.tableDialog.getElementsByTagName("wa-input");
+
+    const row = Number(inputs[0].value);
+    const col = Number(inputs[1].value);
+
+    /**
+     * テーブルMarkdownを作成するためのヘルパー関数
+     *
+     * @param {number} c - セル数
+     * @param {string} v - セルの値
+     * @return {*}  {string}
+     */
+    const createRow = (c: number, v: string): string => {
+      return `| ${Array(c).fill(v).join(" | ")} |`;
+    };
+
+    const headerRow = createRow(col, "Header");
+    const separatorRow = createRow(col, "------");
+    const dataRow = createRow(col, "Cell  ");
+    const dataRows = Array(row).fill(dataRow).join("\n");
+
+    const tableTemplate = `${headerRow}\n${separatorRow}\n${dataRows}\n`;
+
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+
+    // 挿入処理
+    const start = nativeTextarea.selectionStart;
+    const end = nativeTextarea.selectionEnd;
+    const oldText = nativeTextarea.value;
+
+    nativeTextarea.value =
+      oldText.substring(0, start) + tableTemplate + oldText.substring(end);
+
+    // カーソルを挿入したテーブルの直後に移動
+    nativeTextarea.selectionStart = nativeTextarea.selectionEnd =
+      start + tableTemplate.length;
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+
+    this.tableDialog.open = false;
+  }
+
+  /**
+   * カーソル位置にタイムスタンプを挿入する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddTimeStampClick() {
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    addTimeStamp(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /**
+   * Markdownの値をクリップボードにコピーする。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof ThinMarkdownEditor
+   */
+  private async _handleCopyRawClick(e: Event) {
+    e.preventDefault();
+    try {
+      const raw = this.value;
+      await navigator.clipboard.writeText(raw);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  }
+
+  /**
+   * リンククリック時のハンドラ。
+   * hrefの内容をコンソールに出力し、デフォルトの遷移を無効化する。
+   *
+   * @private
+   * @param {MouseEvent} event
+   * @memberof MarkdownEditor
+   */
+  private async _handleLinkClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+
+    const anchor = target.closest("a");
+    const idTag = target.closest(".id-tag");
+
+    if (anchor) {
+      // リンククリック時、URLをクリップボードにコピー
+      event.preventDefault();
+      const href = anchor.getAttribute("href");
+      if (href) {
+        try {
+          const rawHref = href.replace(/%5C/g, "\\");
+          await navigator.clipboard.writeText(rawHref);
+        } catch (err) {
+          console.error("Failed to copy text: ", err);
+        }
+      }
+    } else if (idTag) {
+      // IDクリック時、対応するイベントを発生させる
+      event.preventDefault();
+      const id = (idTag as HTMLSpanElement).dataset.id;
+      emit(idTag as HTMLSpanElement, "id-click", { detail: { id: id } });
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Rendering
+  // -------------------------------------------------------------
 
   /**
    * markdownエディタをレンダリングします。
@@ -305,150 +517,142 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   protected render(): HTMLTemplateResult {
-    const previewClasses = classMap({
-      tab: true,
-      "preview-button": true,
-      active: !this.isEditMode,
-    });
-    const editClasses = classMap({
-      tab: true,
-      "edit-button": true,
-      active: this.isEditMode,
-    });
-
     return html` <div id="contents-root">
       <div class="sticky">
-        ${this.label ? html`<div class="label">${this.label}</div>` : null}
         <div class="header">
           <div class="md-tab-group">
             <!--プレビューボタン-->
-            <div class=${previewClasses}>
-              <wa-button
-                size="small"
-                appearance="plain"
-                variant="neutral"
-                @click=${this._changePreview}
-              >
-                <wa-icon
-                  library="my-icons"
-                  name="html5-brands-solid-full"
-                ></wa-icon>
-              </wa-button>
-            </div>
+            ${this._renderPreviewButton()}
             <!--編集ボタン-->
-            <div class=${editClasses}>
-              <wa-button
-                size="small"
-                appearance="plain"
-                variant="neutral"
-                @click=${this._changeEdit}
-              >
-                <wa-icon
-                  library="my-icons"
-                  name="markdown-brands-solid-full"
-                ></wa-icon>
-              </wa-button>
-            </div>
+            ${this._renderEditButton()}
           </div>
-          <!-----Markdown Preview Menu-->
-          <div class="md-menu ${!this.isEditMode ? "" : "hidden"}">
-            <div class="toolbar-root">
-              <copy-button
-                size="small"
-                appearance="plain"
-                variant="neutral"
-                @click=${this._copyMarkdownToClipboard}
-              >
-                Copy Raw
-              </copy-button>
-            </div>
-          </div>
-          <!--Markdown Menu-->
-          <div class="md-menu ${this.isEditMode ? "" : "hidden"}">
-            <markdown-toolbar for="markdown-editor" class="toolbar-root">
-              ${Buttons.map((key) => {
-                const config = TOOLBAR_MASTER[key];
-                if (!config) return null;
-                return withStatic(html)`
-                              <${unsafeStatic(config.tag)}>
-                                <wa-button size="small" appearance="plain" variant="neutral" title="${config.label}">
-                                  <wa-icon library="my-icons" name="${config.icon}"></wa-icon>
-                                </wa-button>
-                              </${unsafeStatic(config.tag)}>
-                          `;
-              })}
-              <!--拡張機能-->
-              <wa-dropdown size="small">
-                <wa-button
-                  size="small"
-                  appearance="plain"
-                  variant="neutral"
-                  title="Extensions"
-                  slot="trigger"
-                >
-                  <wa-icon
-                    library="my-icons"
-                    name="ellipsis-solid-full"
-                  ></wa-icon>
-                </wa-button>
-                ${this._renderCalloutButton()} ${this._renderColorButton()}
-                ${this._renderTableButton()} ${this._renderTimeStampButton()}
-              </wa-dropdown>
-            </markdown-toolbar>
+          <div class="md-menu">
+            <!--メニューボタン-->
+            ${this.isEditMode
+              ? this._renderEditMenu()
+              : this._renderPreviewMenu()}
           </div>
         </div>
       </div>
       <div class="contents">
-        <wa-textarea
-          id="markdown-editor"
-          size="small"
-          resize="auto"
-          class=${this.isEditMode ? "" : "hidden"}
-          spellcheck="false"
-          placeholder="Markdown enabled..."
-          .value=${this.value}
-          @input=${this._inputEditor}
-        ></wa-textarea>
-        <div
-          class="markdown-body ${this.isEditMode ? "hidden" : ""}"
-          .innerHTML=${this.previewHtml}
-          @click=${this._handleClick}
-        ></div>
+        <!--コンテンツ-->
+        ${this.isEditMode
+          ? this._renderMarkdownEditor()
+          : this._renderMarkdownBody()}
       </div>
-      <!--テーブル追加用ダイアログ-->
-      <wa-dialog label="Table" id="table-dialog">
-        <div class="inner-item">
-          <wa-input
-            id="table-row"
-            size="small"
-            type="number"
-            min="1"
-            max="5"
-            value="2"
-            label="Row"
-            @click=${this._stopPropagation}
-          ></wa-input>
-          <wa-icon
-            library="my-icons"
-            name="xmark-solid-full"
-            class="symbol"
-          ></wa-icon>
-          <wa-input
-            id="table-col"
-            size="small"
-            type="number"
-            min="1"
-            max="5"
-            value="3"
-            label="Col"
-            @click=${this._stopPropagation}
-          ></wa-input>
-        </div>
-        <wa-button slot="footer" variant="brand" @click=${this._addTable}>
-          Add
-        </wa-button>
-      </wa-dialog>
+      ${this._renderAddTableDialog()}
     </div>`;
+  }
+
+  /**
+   * プレビューボタンをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderPreviewButton(): HTMLTemplateResult {
+    const previewClasses = classMap({
+      tab: true,
+      active: !this.isEditMode,
+    });
+
+    return html` <div class=${previewClasses}>
+      <wa-button
+        size="small"
+        appearance="plain"
+        variant="neutral"
+        @click=${this._handleChangePreviewModeClick}
+      >
+        <wa-icon library="my-icons" name="html5-brands-solid-full"></wa-icon>
+      </wa-button>
+    </div>`;
+  }
+
+  /**
+   * 編集ボタンをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderEditButton(): HTMLTemplateResult {
+    const editClasses = classMap({
+      tab: true,
+      active: this.isEditMode,
+    });
+
+    return html`<div class=${editClasses}>
+      <wa-button
+        size="small"
+        appearance="plain"
+        variant="neutral"
+        @click=${this._handleChangeEditModeClick}
+      >
+        <wa-icon library="my-icons" name="markdown-brands-solid-full"></wa-icon>
+      </wa-button>
+    </div> `;
+  }
+
+  /**
+   * プレビュー時のメニュー機能をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderPreviewMenu(): HTMLTemplateResult {
+    return html` <div class="toolbar-root">
+      <copy-button
+        size="small"
+        appearance="plain"
+        variant="neutral"
+        @click=${this._handleCopyRawClick}
+      >
+        Copy Raw
+      </copy-button>
+    </div>`;
+  }
+
+  /**
+   * 編集時のメニュー機能をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderEditMenu(): HTMLTemplateResult {
+    return html` <markdown-toolbar for="markdown-editor" class="toolbar-root">
+      ${Buttons.map((key) => {
+        const config = TOOLBAR_MASTER[key];
+        return withStatic(html)`
+          <${unsafeStatic(config.tag)}>
+            <wa-button size="small" appearance="plain" variant="neutral" title="${config.label}">
+              <wa-icon library="my-icons" name="${config.icon}"></wa-icon>
+            </wa-button>
+          </${unsafeStatic(config.tag)}>`;
+      })}
+      <!--拡張機能-->
+      <wa-dropdown size="small">
+        <wa-button
+          size="small"
+          appearance="plain"
+          variant="neutral"
+          title="Extensions"
+          slot="trigger"
+        >
+          <wa-icon library="my-icons" name="ellipsis-solid-full"></wa-icon>
+        </wa-button>
+        <!-- Callout -->
+        ${this._renderCalloutButton()}
+        <!-- Color -->
+        ${this._renderColorButton()}
+        <!-- Table-->
+        ${this._renderTableButton()}
+        <!-- TimeStamp -->
+        ${this._renderTimeStampButton()}
+      </wa-dropdown>
+    </markdown-toolbar>`;
   }
 
   /**
@@ -502,7 +706,7 @@ export class ThinMarkdownEditor extends LitElement {
         (p) =>
           html` <wa-dropdown-item
             slot="submenu"
-            @click=${() => this._addCallout(p.class)}
+            @click=${() => this._handleAddCalloutClick(p.class)}
           >
             <wa-icon
               class=${p.class}
@@ -525,7 +729,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderColorButton(): HTMLTemplateResult {
-    return html` <wa-dropdown-item @click=${this._addColorText}>
+    return html` <wa-dropdown-item @click=${this._handleAddColorClick}>
       <wa-icon library="my-icons" name="palette-solid-full"></wa-icon>
       <span>Color</span>
     </wa-dropdown-item>`;
@@ -541,7 +745,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderTableButton(): HTMLTemplateResult {
-    return html`<wa-dropdown-item @click=${this._openTableDialog}>
+    return html`<wa-dropdown-item @click=${this._handleOpenTableDialogClick}>
       <wa-icon library="my-icons" name="table-solid-full"></wa-icon>
       <span>Table</span>
     </wa-dropdown-item>`;
@@ -555,229 +759,88 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderTimeStampButton(): HTMLTemplateResult {
-    return html`<wa-dropdown-item @click=${this._addTimeStamp}>
+    return html`<wa-dropdown-item @click=${this._handleAddTimeStampClick}>
       <wa-icon library="my-icons" name="clock-regular-full"></wa-icon>
       <span>TimeStamp</span>
     </wa-dropdown-item>`;
   }
 
   /**
-   * エディタの入力イベントを処理する。
+   * Markdownの編集領域をレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof ThinMarkdownEditor
    */
-  private _inputEditor() {
-    this.value = this.markdownEditor.value!;
-    emit(this, "input");
+  private _renderMarkdownEditor(): HTMLTemplateResult {
+    return html` <wa-textarea
+      id="markdown-editor"
+      size="small"
+      resize="auto"
+      spellcheck="false"
+      placeholder="Markdown enabled..."
+      .value=${this.value}
+      @input=${this._handleMarkdownInput}
+    ></wa-textarea>`;
   }
 
   /**
-   * MarkdownをHTMLとしてレンダリングする。
+   * MarkdownのHTML表示領域をレンダリングします。
    *
    * @private
-   * @memberof MarkdownEditor
-   */
-  private _renderMarkdown() {
-    const rawValue = this.markdownEditor.value!;
-
-    this.previewHtml = marked.parse(rawValue, {
-      renderer: this.renderer,
-    }) as string;
-  }
-
-  /**
-   * イベントの伝播を停止する。
-   *
-   * @private
-   * @param {Event} e
-   * @memberof MarkdownEditor
-   */
-  private _stopPropagation(e: Event) {
-    e.stopPropagation();
-  }
-
-  /**
-   * プレビューに切り替え。
-   *
-   * @private
-   * @memberof MarkdownEditor
-   */
-  private _changePreview() {
-    this.isEditMode = false;
-    emit(this, "md-mode-change-preview");
-  }
-
-  /**
-   * 編集に切り替え。
-   *
-   * @private
-   * @memberof MarkdownEditor
-   */
-  private _changeEdit() {
-    this.isEditMode = true;
-    emit(this, "md-mode-change-edit");
-  }
-
-  /**
-   * コールアウトタグを追加する。
-   *
-   * @private
-   * @param {("info" | "check" | "gear" | "warn" | "alert")} type
-   * @return {*}
+   * @return {*}  {HTMLTemplateResult}
    * @memberof ThinMarkdownEditor
    */
-  private _addCallout(
-    type: "info" | "check" | "gear" | "warn" | "alert",
-  ): void {
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-
-    formatCalloutMarkdown(nativeTextarea, type);
-
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  private _renderMarkdownBody(): HTMLTemplateResult {
+    return html` <div
+      class="markdown-body"
+      .innerHTML=${this.previewHtml}
+      @click=${this._handleLinkClick}
+    ></div>`;
   }
-
   /**
-   * 文字色を追加する。
+   * テーブル追加ダイアログをレンダリングします。
    *
    * @private
+   * @return {*}  {HTMLTemplateResult}
    * @memberof ThinMarkdownEditor
    */
-  private _addColorText() {
-    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-    formatColorMarkdown(nativeTextarea);
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  }
-
-  /**
-   * テーブル追加ダイアログを表示する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _openTableDialog() {
-    this.tableDialog.open = true;
-  }
-
-  /**
-   * テーブルを追加する
-   *
-   * @private
-   * @memberof MarkdownEditor
-   */
-  private _addTable() {
-    const row = Number(this.tableRow.value);
-    const col = Number(this.tableCol.value);
-
-    const header = `| ${Array(col).fill("Header").join(" | ")} |`;
-    const separator = `| ${Array(col).fill("------").join(" | ")} |`;
-    const record = `| ${Array(col).fill("Cell  ").join(" | ")} |`;
-
-    const tableTemplate = `
-${header}
-${separator}
-${Array(row).fill(record).join("\n")}\n`;
-
-    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-
-    // 挿入処理
-    const start = nativeTextarea.selectionStart;
-    const end = nativeTextarea.selectionEnd;
-    const oldText = nativeTextarea.value;
-
-    nativeTextarea.value =
-      oldText.substring(0, start) + tableTemplate + oldText.substring(end);
-
-    // カーソルを挿入したテーブルの直後に移動
-    nativeTextarea.selectionStart = nativeTextarea.selectionEnd =
-      start + tableTemplate.length;
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-
-    this.tableDialog.open = false;
-  }
-
-  /**
-   * カーソル位置にタイムスタンプを挿入する。
-   *
-   * @private
-   * @return {*}
-   * @memberof ThinMarkdownEditor
-   */
-  private _addTimeStamp() {
-    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-    addTimeStamp(nativeTextarea);
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  }
-
-  /**
-   * Markdownの値をクリップボードにコピーする。
-   *
-   * @private
-   * @param {Event} e
-   * @memberof ThinMarkdownEditor
-   */
-  private async _copyMarkdownToClipboard(e: Event) {
-    e.preventDefault();
-    try {
-      const raw = this.value;
-      await navigator.clipboard.writeText(raw);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  }
-
-  /**
-   * リンククリック時のハンドラ。
-   * hrefの内容をコンソールに出力し、デフォルトの遷移を無効化する。
-   *
-   * @private
-   * @param {MouseEvent} event
-   * @memberof MarkdownEditor
-   */
-  private async _handleClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-
-    const anchor = target.closest("a");
-    const idTag = target.closest(".id-tag");
-
-    if (anchor) {
-      // リンククリック時、URLをクリップボードにコピー
-      event.preventDefault();
-      const href = anchor.getAttribute("href");
-      if (href) {
-        try {
-          const rawHref = href.replace(/%5C/g, "\\");
-          await navigator.clipboard.writeText(rawHref);
-        } catch (err) {
-          console.error("Failed to copy text: ", err);
-        }
-      }
-    } else if (idTag) {
-      // IDクリック時、対応するイベントを発生させる
-      event.preventDefault();
-      const id = (idTag as HTMLSpanElement).dataset.id;
-      emit(idTag as HTMLSpanElement, "id-click", { detail: { id: id } });
-    }
+  private _renderAddTableDialog(): HTMLTemplateResult {
+    return html` <wa-dialog label="Table" id="table-dialog">
+      <div class="inner-item">
+        <wa-input
+          id="table-row"
+          size="small"
+          type="number"
+          min="1"
+          max="5"
+          value="2"
+          label="Row"
+          @click=${this._stopPropagation}
+        ></wa-input>
+        <wa-icon
+          library="my-icons"
+          name="xmark-solid-full"
+          class="symbol"
+        ></wa-icon>
+        <wa-input
+          id="table-col"
+          size="small"
+          type="number"
+          min="1"
+          max="5"
+          value="3"
+          label="Col"
+          @click=${this._stopPropagation}
+        ></wa-input>
+      </div>
+      <wa-button
+        slot="footer"
+        variant="brand"
+        @click=${this._handleAddTableClick}
+      >
+        Add
+      </wa-button>
+    </wa-dialog>`;
   }
 }
