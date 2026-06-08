@@ -100,9 +100,8 @@
   }
 
   .contents {
-    border-block-start: none;
-
     border: 1px solid var(--wa-color-neutral-80);
+    border-block-start: none;
     border-end-start-radius: var(--wa-border-radius-m);
     border-end-end-radius: var(--wa-border-radius-m);
     background: white;
