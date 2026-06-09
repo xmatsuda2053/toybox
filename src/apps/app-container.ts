@@ -109,7 +109,7 @@ export class AppContainer extends LitElement {
         <div class="app-icon">
           <wa-icon library="my-icons" name="cubes-stacked-solid-full"></wa-icon>
         </div>
-        <ap-file></ap-file>
+        <ap-file .selectedApp=${this.selectedApp}></ap-file>
         <ap-selector @set-app=${this._setApp}></ap-selector>
         <ap-tool></ap-tool>
       </header>
