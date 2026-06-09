@@ -8,12 +8,21 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // 3. Internal Assets & Logic
 import "@/library";
 import { registerIcons } from "@/utils/CommonUtils";
+import { AppItem } from "@ap/models/AppItem";
 
 // 4. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 
 // 5. Initializations (Side Effects)
 setBasePath("/");
+
+const selectedApp: AppItem = {
+  code: "",
+  icon: "",
+  label: "Step-Note",
+  tag: html``,
+  key: "F1",
+};
 
 /**
  * アプリケーションコンテナー
@@ -109,7 +118,7 @@ export class StepNote extends LitElement {
         <div class="app-icon">
           <wa-icon library="my-icons" name="cubes-solid-full"></wa-icon>
         </div>
-        <ap-file></ap-file>
+        <ap-file .selectedApp=${selectedApp}></ap-file>
         <ap-tool></ap-tool>
       </header>
       <main>
