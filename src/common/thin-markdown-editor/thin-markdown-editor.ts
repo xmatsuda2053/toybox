@@ -327,10 +327,10 @@ export class ThinMarkdownEditor extends LitElement {
    * @private
    * @memberof MarkdownEditor
    */
-  private _handleChangeEditModeClick() {
+  private _handleChangeEditModeClick = () => {
     this.isEditMode = true;
     emit(this, "md-mode-change-edit");
-  }
+  };
 
   /**
    * コールアウトタグを追加する。
@@ -340,9 +340,9 @@ export class ThinMarkdownEditor extends LitElement {
    * @return {*}
    * @memberof ThinMarkdownEditor
    */
-  private _handleAddCalloutClick(
+  private _handleAddCalloutClick = (
     type: "info" | "check" | "gear" | "warn" | "alert",
-  ): void {
+  ): void => {
     const nativeTextarea = this.toolbar.field;
     if (!nativeTextarea) return;
 
@@ -351,7 +351,7 @@ export class ThinMarkdownEditor extends LitElement {
     formatCalloutMarkdown(nativeTextarea, type);
 
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  }
+  };
 
   /**
    * 文字色を追加する。
@@ -359,7 +359,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @private
    * @memberof ThinMarkdownEditor
    */
-  private _handleAddColorClick() {
+  private _handleAddColorClick = () => {
     // textarea を取得 (firstUpdated で toolbar.field にセットされている)
     const nativeTextarea = this.toolbar.field;
     if (!nativeTextarea) return;
@@ -369,7 +369,7 @@ export class ThinMarkdownEditor extends LitElement {
 
     // 内容の変更を通知
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  }
+  };
 
   /**
    * テーブル追加ダイアログを表示する。
@@ -377,9 +377,9 @@ export class ThinMarkdownEditor extends LitElement {
    * @private
    * @memberof ThinMarkdownEditor
    */
-  private _handleOpenTableDialogClick() {
+  private _handleOpenTableDialogClick = () => {
     this.tableDialog.open = true;
-  }
+  };
 
   /**
    * テーブルを追加する
@@ -387,7 +387,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @private
    * @memberof MarkdownEditor
    */
-  private _handleAddTableClick() {
+  private _handleAddTableClick = () => {
     const inputs = this.tableDialog.getElementsByTagName("wa-input");
 
     const row = Number(inputs[0].value);
@@ -433,7 +433,7 @@ export class ThinMarkdownEditor extends LitElement {
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
 
     this.tableDialog.open = false;
-  }
+  };
 
   /**
    * カーソル位置にタイムスタンプを挿入する。
@@ -441,7 +441,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @private
    * @memberof ThinMarkdownEditor
    */
-  private _handleAddTimeStampClick() {
+  private _handleAddTimeStampClick = () => {
     // textarea を取得 (firstUpdated で toolbar.field にセットされている)
     const nativeTextarea = this.toolbar.field;
     if (!nativeTextarea) return;
@@ -451,7 +451,7 @@ export class ThinMarkdownEditor extends LitElement {
 
     // 内容の変更を通知
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  }
+  };
 
   /**
    * Markdownの値をクリップボードにコピーする。
@@ -460,7 +460,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @param {Event} e
    * @memberof ThinMarkdownEditor
    */
-  private async _handleCopyRawClick(e: Event) {
+  private _handleCopyRawClick = async (e: Event) => {
     e.preventDefault();
     try {
       const raw = this.value;
@@ -468,7 +468,7 @@ export class ThinMarkdownEditor extends LitElement {
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
-  }
+  };
 
   /**
    * リンククリック時のハンドラ。
@@ -478,7 +478,7 @@ export class ThinMarkdownEditor extends LitElement {
    * @param {MouseEvent} event
    * @memberof MarkdownEditor
    */
-  private async _handleLinkClick(event: MouseEvent) {
+  private _handleLinkClick = async (event: MouseEvent) => {
     const target = event.target as HTMLElement;
 
     const anchor = target.closest("a");
@@ -502,7 +502,7 @@ export class ThinMarkdownEditor extends LitElement {
       const id = (idTag as HTMLSpanElement).dataset.id;
       emit(idTag as HTMLSpanElement, "id-click", { detail: { id: id } });
     }
-  }
+  };
 
   // -------------------------------------------------------------
   // Rendering
@@ -527,18 +527,18 @@ export class ThinMarkdownEditor extends LitElement {
             ${this._renderEditButton()}
           </div>
           <div class="md-menu">
-            <!--メニューボタン-->
-            ${this.isEditMode
-              ? this._renderEditMenu()
-              : this._renderPreviewMenu()}
+            <!--編集メニュー-->
+            ${this._renderEditMenu()}
+            <!--プレビューメニュー-->
+            ${this._renderPreviewMenu()}
           </div>
         </div>
       </div>
       <div class="contents">
-        <!--コンテンツ-->
-        ${this.isEditMode
-          ? this._renderMarkdownEditor()
-          : this._renderMarkdownBody()}
+        <!--編集画面-->
+        ${this._renderMarkdownEditor()}
+        <!--プレビュー画面-->
+        ${this._renderMarkdownBody()}
       </div>
       ${this._renderAddTableDialog()}
     </div>`;
@@ -602,15 +602,22 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderPreviewMenu(): HTMLTemplateResult {
-    return html` <div class="toolbar-root">
-      <copy-button
-        size="small"
-        appearance="plain"
-        variant="neutral"
-        @click=${this._handleCopyRawClick}
-      >
-        Copy Raw
-      </copy-button>
+    const baseClassMap = classMap({
+      "md-menu": true,
+      hidden: this.isEditMode,
+    });
+
+    return html` <div class=${baseClassMap}>
+      <div class="toolbar-root">
+        <copy-button
+          size="small"
+          appearance="plain"
+          variant="neutral"
+          @click=${this._handleCopyRawClick}
+        >
+          Copy Raw
+        </copy-button>
+      </div>
     </div>`;
   }
 
@@ -622,37 +629,44 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderEditMenu(): HTMLTemplateResult {
-    return html` <markdown-toolbar for="markdown-editor" class="toolbar-root">
-      ${Buttons.map((key) => {
-        const config = TOOLBAR_MASTER[key];
-        return withStatic(html)`
+    const baseClassMap = classMap({
+      "md-menu": true,
+      hidden: !this.isEditMode,
+    });
+
+    return html` <div class=${baseClassMap}>
+      <markdown-toolbar for="markdown-editor" class="toolbar-root">
+        ${Buttons.map((key) => {
+          const config = TOOLBAR_MASTER[key];
+          return withStatic(html)`
           <${unsafeStatic(config.tag)}>
             <wa-button size="small" appearance="plain" variant="neutral" title="${config.label}">
               <wa-icon library="my-icons" name="${config.icon}"></wa-icon>
             </wa-button>
           </${unsafeStatic(config.tag)}>`;
-      })}
-      <!--拡張機能-->
-      <wa-dropdown size="small">
-        <wa-button
-          size="small"
-          appearance="plain"
-          variant="neutral"
-          title="Extensions"
-          slot="trigger"
-        >
-          <wa-icon library="my-icons" name="ellipsis-solid-full"></wa-icon>
-        </wa-button>
-        <!-- Callout -->
-        ${this._renderCalloutButton()}
-        <!-- Color -->
-        ${this._renderColorButton()}
-        <!-- Table-->
-        ${this._renderTableButton()}
-        <!-- TimeStamp -->
-        ${this._renderTimeStampButton()}
-      </wa-dropdown>
-    </markdown-toolbar>`;
+        })}
+        <!--拡張機能-->
+        <wa-dropdown size="small">
+          <wa-button
+            size="small"
+            appearance="plain"
+            variant="neutral"
+            title="Extensions"
+            slot="trigger"
+          >
+            <wa-icon library="my-icons" name="ellipsis-solid-full"></wa-icon>
+          </wa-button>
+          <!-- Callout -->
+          ${this._renderCalloutButton()}
+          <!-- Color -->
+          ${this._renderColorButton()}
+          <!-- Table-->
+          ${this._renderTableButton()}
+          <!-- TimeStamp -->
+          ${this._renderTimeStampButton()}
+        </wa-dropdown>
+      </markdown-toolbar>
+    </div>`;
   }
 
   /**
@@ -773,8 +787,13 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderMarkdownEditor(): HTMLTemplateResult {
+    const baseClassMap = classMap({
+      hidden: !this.isEditMode,
+    });
+
     return html` <wa-textarea
       id="markdown-editor"
+      class=${baseClassMap}
       size="small"
       resize="auto"
       spellcheck="false"
@@ -792,8 +811,13 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _renderMarkdownBody(): HTMLTemplateResult {
+    const baseClassMap = classMap({
+      "markdown-body": true,
+      hidden: this.isEditMode,
+    });
+
     return html` <div
-      class="markdown-body"
+      class=${baseClassMap}
       .innerHTML=${this.previewHtml}
       @click=${this._handleLinkClick}
     ></div>`;
