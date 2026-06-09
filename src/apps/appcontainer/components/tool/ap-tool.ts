@@ -1,12 +1,5 @@
 // 1. Core Libraries
-import {
-  css,
-  html,
-  LitElement,
-  unsafeCSS,
-  type HTMLTemplateResult,
-  type PropertyValues,
-} from "lit";
+import { css, html, LitElement, unsafeCSS, type HTMLTemplateResult } from "lit";
 
 // 2. Library Extensions & Third-party
 import { customElement, query } from "lit/decorators.js";
@@ -70,7 +63,7 @@ export class ApTool extends LitElement {
           日付Utility
         </wa-dropdown-item>
       </wa-dropdown>
-      <wa-dialog id="ad-jpc-converter" label="日付Utility">
+      <wa-dialog id="ad-jpc-converter" class="utils-dialog" label="日付Utility">
         <ap-tool-date-utility></ap-tool-date-utility>
       </wa-dialog>`;
   }

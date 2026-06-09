@@ -1,0 +1,50 @@
+#version-dialog {
+  .record {
+    .version {
+      font-size: var(--wa-font-size-xl);
+    }
+
+    wa-badge {
+      font-size: var(--wa-font-size-xs);
+      margin-block-end: var(--wa-space-s);
+
+      &.oss-lit {
+        background-color: #4c64ff;
+      }
+
+      &.oss-ts {
+        background-color: #3178c6;
+      }
+
+      &.oss-sass {
+        background-color: #cf649a;
+      }
+
+      &.oss-vite {
+        background-color: #a150ff;
+      }
+
+      &.oss-md {
+        background-color: #000000;
+      }
+
+      &.oss-idb {
+        background-color: #000000;
+      }
+      &.oss-dexie {
+        background-color: #000000;
+      }
+
+      &.oss-fa {
+        background-color: #418fde;
+      }
+      &.oss-wa {
+        background-color: #f36944;
+      }
+
+      &.oss-nodejs {
+        background-color: #63b447;
+      }
+    }
+  }
+}

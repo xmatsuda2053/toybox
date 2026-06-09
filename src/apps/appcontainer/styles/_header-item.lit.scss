@@ -19,15 +19,15 @@
 wa-dropdown-item {
   &::part(label),
   &::part(details) {
-    font-size: var(--wa-font-size-xs);
+    font-size: var(--wa-font-size-s);
   }
 
   span {
-    font-size: var(--wa-font-size-xs);
+    font-size: var(--wa-font-size-s);
   }
 }
 
-wa-dialog {
+.utils-dialog {
   --width: 70%;
 
   &::part(dialog) {

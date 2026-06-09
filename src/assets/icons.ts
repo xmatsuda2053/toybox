@@ -43,6 +43,7 @@ import code_solid_full from "@assets/icons/code-solid-full.svg?raw";
 import copy_regular_full from "@assets/icons/copy-regular-full.svg?raw";
 import cubes_solid_full from "@assets/icons/cubes-solid-full.svg?raw";
 import cubes_stacked_solid_full from "@assets/icons/cubes-stacked-solid-full.svg?raw";
+import database_solid_full from "@assets/icons/database-solid-full.svg?raw";
 import dice_one_solid_full from "@assets/icons/dice-one-solid-full.svg?raw";
 import download_solid_full from "@assets/icons/download-solid-full.svg?raw";
 import ellipsis_solid_full from "@assets/icons/ellipsis-solid-full.svg?raw";
@@ -58,6 +59,7 @@ import fire_solid_full from "@assets/icons/fire-solid-full.svg?raw";
 import floppy_disk_solid_full from "@assets/icons/floppy-disk-solid-full.svg?raw";
 import folder_open_solid_full from "@assets/icons/folder-open-solid-full.svg?raw";
 import folder_regular_full from "@assets/icons/folder-regular-full.svg?raw";
+import font_awesome_solid_full from "@assets/icons/font-awesome-solid-full.svg?raw";
 import gear_solid_full from "@assets/icons/gear-solid-full.svg?raw";
 import globe_solid_full from "@assets/icons/globe-solid-full.svg?raw";
 import hashtag_solid_full from "@assets/icons/hashtag-solid-full.svg?raw";
@@ -74,6 +76,11 @@ import location_dot_solid_full from "@assets/icons/location-dot-solid-full.svg?r
 import magnifying_glass_solid_full from "@assets/icons/magnifying-glass-solid-full.svg?raw";
 import markdown_brands_solid_full from "@assets/icons/markdown-brands-solid-full.svg?raw";
 import note_sticky_solid_full from "@assets/icons/note-sticky-solid-full.svg?raw";
+import oss_lit from "@assets/icons/oss-lit.svg?raw";
+import oss_nodejs from "@assets/icons/oss-nodejs.svg?raw";
+import oss_sass from "@assets/icons/oss-sass.svg?raw";
+import oss_ts from "@assets/icons/oss-ts.svg?raw";
+import oss_vite from "@assets/icons/oss-vite.svg?raw";
 import palette_solid_full from "@assets/icons/palette-solid-full.svg?raw";
 import pen_to_square_solid_full from "@assets/icons/pen-to-square-solid-full.svg?raw";
 import phone_flip_solid_full from "@assets/icons/phone-flip-solid-full.svg?raw";
@@ -89,6 +96,7 @@ import tag_solid_full from "@assets/icons/tag-solid-full.svg?raw";
 import trash_solid_full from "@assets/icons/trash-solid-full.svg?raw";
 import triangle_exclamation_solid_full from "@assets/icons/triangle-exclamation-solid-full.svg?raw";
 import upload_solid_full from "@assets/icons/upload-solid-full.svg?raw";
+import web_awesome_solid_full from "@assets/icons/web-awesome-solid-full.svg?raw";
 import xmark_solid_full from "@assets/icons/xmark-solid-full.svg?raw";
 
 export const icons: Record<string, string> = {
@@ -137,6 +145,7 @@ export const icons: Record<string, string> = {
   "copy-regular-full": copy_regular_full,
   "cubes-solid-full": cubes_solid_full,
   "cubes-stacked-solid-full": cubes_stacked_solid_full,
+  "database-solid-full": database_solid_full,
   "dice-one-solid-full": dice_one_solid_full,
   "download-solid-full": download_solid_full,
   "ellipsis-solid-full": ellipsis_solid_full,
@@ -152,6 +161,7 @@ export const icons: Record<string, string> = {
   "floppy-disk-solid-full": floppy_disk_solid_full,
   "folder-open-solid-full": folder_open_solid_full,
   "folder-regular-full": folder_regular_full,
+  "font-awesome-solid-full": font_awesome_solid_full,
   "gear-solid-full": gear_solid_full,
   "globe-solid-full": globe_solid_full,
   "hashtag-solid-full": hashtag_solid_full,
@@ -168,6 +178,11 @@ export const icons: Record<string, string> = {
   "magnifying-glass-solid-full": magnifying_glass_solid_full,
   "markdown-brands-solid-full": markdown_brands_solid_full,
   "note-sticky-solid-full": note_sticky_solid_full,
+  "oss-lit": oss_lit,
+  "oss-nodejs": oss_nodejs,
+  "oss-sass": oss_sass,
+  "oss-ts": oss_ts,
+  "oss-vite": oss_vite,
   "palette-solid-full": palette_solid_full,
   "pen-to-square-solid-full": pen_to_square_solid_full,
   "phone-flip-solid-full": phone_flip_solid_full,
@@ -183,5 +198,6 @@ export const icons: Record<string, string> = {
   "trash-solid-full": trash_solid_full,
   "triangle-exclamation-solid-full": triangle_exclamation_solid_full,
   "upload-solid-full": upload_solid_full,
+  "web-awesome-solid-full": web_awesome_solid_full,
   "xmark-solid-full": xmark_solid_full,
 };
