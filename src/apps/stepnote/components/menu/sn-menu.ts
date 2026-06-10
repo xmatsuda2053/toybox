@@ -7,6 +7,7 @@ import {
   nothing,
 } from "lit";
 import { map } from "lit/directives/map.js";
+import { classMap } from "lit/directives/class-map.js";
 
 // Lit Extensions (Decorators & Directives)
 import { customElement, state } from "lit/decorators.js";
@@ -38,37 +39,54 @@ import mdLists from "./help/list.md?raw";
 import mdTasks from "./help/task.md?raw";
 import mdJournal from "./help/journal.md?raw";
 
+// --- Types ---
+export type features = "main" | "dashboard" | "config";
+
 /**
  * メニューボタンの定義
  */
 const MENU_BUTTONS = [
   {
     id: "btn-explore",
-    className: "field active",
     tooltip: "Explore",
     iconName: "file-regular-full",
-    key: "explore",
+    key: "main",
+    bottom: false,
+  },
+  {
+    id: "btn-dashboard",
+    tooltip: "Dashboard",
+    iconName: "chart-column-solid-full",
+    key: "dashboard",
+    bottom: false,
   },
   {
     id: "btn-import",
-    className: "field bottom",
     tooltip: "Import",
     iconName: "upload-solid-full",
     key: "import",
+    bottom: false,
   },
   {
     id: "btn-export",
-    className: "field",
     tooltip: "Export",
     iconName: "download-solid-full",
     key: "export",
+    bottom: false,
   },
   {
     id: "btn-help",
-    className: "field",
     tooltip: "Help",
     iconName: "circle-question-regular-full",
     key: "help",
+    bottom: true,
+  },
+  {
+    id: "btn-config",
+    tooltip: "Config",
+    iconName: "gear-solid-full",
+    key: "config",
+    bottom: false,
   },
 ] as const;
 type MenuButtonKey = (typeof MENU_BUTTONS)[number]["key"];
@@ -132,6 +150,14 @@ export class SnMenu extends LitElement {
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
   /**
+   * 選択中の機能
+   *
+   * @type {features}
+   * @memberof StepNoteApp
+   */
+  @state() selectedFeature: features = "main";
+
+  /**
    * インポートダイアログの開閉制御
    *
    * @type {boolean}
@@ -168,8 +194,13 @@ export class SnMenu extends LitElement {
    */
   private _handleButtonClick = (key: MenuButtonKey) => {
     switch (key) {
-      case "explore":
-        emit(this, "click-menu-explore");
+      case "main":
+        emit(this, "click-menu-main");
+        this.selectedFeature = "main";
+        break;
+      case "dashboard":
+        emit(this, "click-menu-dashboard");
+        this.selectedFeature = "dashboard";
         break;
       case "import":
         this._isImportDialogOpen = true;
@@ -180,6 +211,11 @@ export class SnMenu extends LitElement {
       case "help":
         this._isHelpDialogOpen = true;
         break;
+      case "config":
+        emit(this, "click-menu-config");
+        this.selectedFeature = "config";
+        break;
+      default:
     }
   };
 
@@ -246,7 +282,13 @@ export class SnMenu extends LitElement {
   protected render(): HTMLTemplateResult {
     return html`<div id="contents-root">
         ${map(MENU_BUTTONS, (button) => {
-          return html`<div class=${button.className}>
+          return html`<div
+            class=${classMap({
+              field: true,
+              active: this.selectedFeature === button.key,
+              bottom: button.bottom,
+            })}
+          >
             <wa-tooltip for=${button.id} placement="right">
               ${button.tooltip}
             </wa-tooltip>

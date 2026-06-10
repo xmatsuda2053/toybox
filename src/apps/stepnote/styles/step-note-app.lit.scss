@@ -15,52 +15,25 @@ $width-list: 310px;
   display: block;
   height: 100%;
 
-  wa-drawer {
-    --size: calc($width-nav + $width-list);
-    --spacing: 0px;
+  // 共通定義
+  .base {
+    display: grid;
+    overflow: hidden;
+    height: 100%;
 
-    &::part(body) {
-      height: 100%;
-      overflow: hidden;
-    }
+    .panel {
+      min-width: 0;
+      overflow-y: auto;
 
-    &::part(dialog) {
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .drawer-contents {
-      display: grid;
-      grid-template-columns: $width-nav $width-list;
-      height: 100%;
-      overflow: hidden;
-
-      .nav {
-        display: grid;
-        grid-template-rows: auto 1fr;
-        height: 100%;
-        overflow: hidden;
-        border-right: 1px solid var(--wa-color-surface-border);
-
-        .label {
-          overflow-y: auto;
-        }
-      }
-
-      .list {
-        height: 100%;
-        overflow: hidden;
+      &.menu {
+        border-right: 1px solid var(--wa-color-neutral-50);
       }
     }
   }
 
-  .content {
-    display: grid;
+  // メインコンテンツ
+  .main-content {
     grid-template-columns: $width-menu $width-nav $width-list 1fr 1fr;
-    overflow: hidden;
-
-    height: 100%;
-
     transition: grid-template-columns 0.4s ease-in-out;
 
     &.thin {
@@ -73,13 +46,6 @@ $width-list: 310px;
     }
 
     .panel {
-      min-width: 0;
-      overflow-y: auto;
-
-      &.menu {
-        border-right: 1px solid var(--wa-color-neutral-50);
-      }
-
       &.nav {
         display: grid;
         grid-template-rows: auto 1fr;
@@ -96,5 +62,15 @@ $width-list: 310px;
         border-right: 0;
       }
     }
+  }
+
+  // ダッシュボード
+  .dashboard-content {
+    grid-template-columns: $width-menu 1fr;
+  }
+
+  // 設定画面
+  .config-content {
+    grid-template-columns: $width-menu 1fr;
   }
 }
