@@ -7,9 +7,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // Internal Assets & Logic
-import { snDB } from "@/apps/stepnote/database/SnDB";
 import { AppItem } from "@ap/models/AppItem";
-import { DataExporter } from "@/common/data-exporter/data-exporter";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -51,14 +49,6 @@ export class ApFile extends LitElement {
   };
 
   /**
-   * SnDBのバックアップ
-   *
-   * @type {DataExporter}
-   * @memberof ApFile
-   */
-  @query("#data-exporter-sndb") dataExporterSnDB!: DataExporter;
-
-  /**
    * バージョン画面
    *
    * @type {WaDialog}
@@ -69,16 +59,6 @@ export class ApFile extends LitElement {
   // -------------------------------------------------------------
   // Event
   // -------------------------------------------------------------
-
-  /**
-   * バックアップ設定画面を開きます。
-   *
-   * @private
-   * @memberof ApFile
-   */
-  private _handleBackupClick = () => {
-    this.dataExporterSnDB.open = true;
-  };
 
   /**
    * バージョン画面を開きます。
@@ -105,40 +85,15 @@ export class ApFile extends LitElement {
   protected render(): HTMLTemplateResult {
     return html`<wa-dropdown>
         <div class="menu-header" slot="trigger">
-          <span>File(F)</span>
+          <span>File</span>
           <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
         </div>
-        <wa-dropdown-item>
-          バックアップ
-          <wa-dropdown-item slot="submenu" @click=${this._handleBackupClick}>
-            Step-Note
-          </wa-dropdown-item>
-        </wa-dropdown-item>
         <wa-dropdown-item @click=${this._handleVersionClick}>
           バージョン情報
         </wa-dropdown-item>
       </wa-dropdown>
-      <!--データのバックアップ-->
-      ${this._renderExporterSN()}
       <!--バージョン情報-->
       ${this._renderVersion()}`;
-  }
-
-  /**
-   * Step-Noteのバックアップ画面をレンダリングします。
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof ApFile
-   */
-  private _renderExporterSN(): HTMLTemplateResult {
-    return html` <data-exporter
-      id="data-exporter-sndb"
-      label="Step-Note"
-      storageKey="sndb"
-      .onExport=${async () => await snDB.exportDatabase()}
-    >
-    </data-exporter>`;
   }
 
   /**
