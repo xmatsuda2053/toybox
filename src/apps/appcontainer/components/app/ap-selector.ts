@@ -170,7 +170,7 @@ export class ApSelector extends LitElement {
       @wa-select=${this._appDropDownSelect}
     >
       <div class="menu-header" slot="trigger">
-        <span>App(A)</span>
+        <span>App</span>
         <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
       </div>
       ${this.APP_LIST.map((app) => {

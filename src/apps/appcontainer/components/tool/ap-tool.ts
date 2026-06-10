@@ -56,7 +56,7 @@ export class ApTool extends LitElement {
   protected render(): HTMLTemplateResult {
     return html`<wa-dropdown @wa-select=${this._selectTool}>
         <div class="menu-header" slot="trigger">
-          <span>Tool(T)</span>
+          <span>Tool</span>
           <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
         </div>
         <wa-dropdown-item value="ad-jpc-converter">
