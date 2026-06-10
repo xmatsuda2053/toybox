@@ -1,4 +1,4 @@
-// 1. Core Libraries
+// Core Libraries
 import {
   html,
   LitElement,
@@ -8,21 +8,21 @@ import {
 } from "lit";
 import { map } from "lit/directives/map.js";
 
-// 2. Library Extensions & Third-party
+// Library Extensions & Third-party
 import { customElement, property, query, state } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
-// 3. Internal Assets & Logic
+// Internal Assets & Logic
 import { type ScheduledTime, ScheduleUtils } from "@/utils/ScheduleUtils";
 import { padZero } from "@/utils/CommonUtils";
 
-// 4. Styles
+// Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "./data-exporter.lit.scss?inline";
 
-// 5. Initializations (Side Effects)
+// Initializations (Side Effects)
 setBasePath("/");
 
 /**
@@ -328,18 +328,22 @@ export class DataExporter extends LitElement {
   protected render(): HTMLTemplateResult {
     return html` <wa-dialog
       light-dismiss
-      label="BACKUP CONFIG (${this.label})"
+      label="バックアップ設定 (${this.label})"
       id="dialog-config"
       .open=${this.open}
       @wa-hide=${() => (this.open = false)}
     >
+      <div class="howto">
+        バックアックを実行する時刻を選択してください（複数選択可）
+      </div>
+      <wa-divider></wa-divider>
       <div class="container">
         ${map(this.exportSchedule, (s) => {
           return html`
             <wa-button
               size="small"
               variant="brand"
-              appearance=${s.enabled ? "accent" : "outlined"}
+              appearance=${s.enabled ? "filled-outlined" : "outlined"}
               @click=${() => this._handleScheduleClick(s)}
             >
               ${padZero(s.time.hour, 2)}:${padZero(s.time.minute, 2)}
@@ -347,6 +351,18 @@ export class DataExporter extends LitElement {
           `;
         })}
       </div>
+      <div class="description">
+        <wa-icon library="my-icons" name="asterisk-solid-full"></wa-icon>
+        指定時刻にバックアップデータが自動的にダウンロードされます。
+      </div>
+      <wa-button
+        appearance="accent"
+        slot="footer"
+        variant="brand"
+        data-dialog="close"
+      >
+        Close
+      </wa-button>
     </wa-dialog>`;
   }
 }
