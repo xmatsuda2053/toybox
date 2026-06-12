@@ -130,6 +130,7 @@ export class StepNoteApp extends LitElement {
   private _renderMenu(): HTMLTemplateResult {
     return html` <div class="panel menu">
       <sn-menu
+        .selectedFeature=${this.selectedFeature}
         @click-menu-main=${this._handleMainClick}
         @click-menu-dashboard=${this._handleDashboardClick}
         @click-menu-config=${this._handleConfigClick}
@@ -232,7 +233,7 @@ export class StepNoteApp extends LitElement {
 
     return html` <div class=${baseClassMap}>
       ${this._renderMenu()}
-      <div>dashboard</div>
+      <sn-dashboard-container></sn-dashboard-container>
     </div>`;
   }
 

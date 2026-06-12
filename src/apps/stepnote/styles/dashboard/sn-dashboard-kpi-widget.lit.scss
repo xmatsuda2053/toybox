@@ -1,0 +1,90 @@
+@use "sass:map";
+
+#content-root {
+  padding: var(--wa-space-s);
+
+  border: 1px solid var(--wa-color-neutral-80);
+  border-radius: var(--wa-border-radius-m);
+
+  $status-styles: (
+    "total": (
+      bg: #fffffc,
+      text: #00000c,
+    ),
+    "pending": (
+      bg: var(--wa-color-neutral-50),
+      text: #fffffc,
+    ),
+    "progress": (
+      bg: var(--wa-color-brand-50),
+      text: #fffffc,
+    ),
+    "done": (
+      bg: var(--wa-color-success-50),
+      text: #fffffc,
+    ),
+    "upcoming": (
+      bg: var(--wa-color-cyan-50),
+      text: #fffffc,
+    ),
+    "asap": (
+      bg: var(--wa-color-yellow-50),
+      text: #fffffc,
+    ),
+    "overdue": (
+      bg: var(--wa-color-danger-50),
+      text: #fffffc,
+    ),
+  );
+
+  @each $name, $style in $status-styles {
+    &.#{$name} {
+      background-color: map.get($style, bg);
+      color: map.get($style, text);
+    }
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    margin-block-end: var(--wa-space-2xs);
+
+    .label {
+      margin-inline-end: auto;
+    }
+
+    wa-icon {
+      font-size: var(--wa-font-size-xl);
+    }
+  }
+
+  main {
+    display: flex;
+    align-items: center;
+
+    font-weight: bold;
+
+    .value {
+      margin-inline-start: var(--wa-space-2xs);
+      margin-inline-end: auto;
+      font-size: var(--wa-font-size-xl);
+
+      .unit {
+        font-size: var(--wa-font-size-l);
+      }
+    }
+    .percent {
+      margin-block-start: var(--wa-font-size-2xs);
+      font-size: var(--wa-font-size-m);
+    }
+  }
+
+  footer {
+    height: var(--wa-space-2xs);
+
+    wa-progress-bar {
+      --track-height: var(--wa-space-2xs);
+      --indicator-color: var(--wa-color-neutral-30);
+    }
+  }
+}

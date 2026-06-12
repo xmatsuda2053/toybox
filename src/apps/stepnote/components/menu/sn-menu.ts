@@ -10,7 +10,7 @@ import { map } from "lit/directives/map.js";
 import { classMap } from "lit/directives/class-map.js";
 
 // Lit Extensions (Decorators & Directives)
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 // Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -153,9 +153,9 @@ export class SnMenu extends LitElement {
    * 選択中の機能
    *
    * @type {features}
-   * @memberof StepNoteApp
+   * @memberof SnMenu
    */
-  @state() selectedFeature: features = "main";
+  @property({ type: String }) selectedFeature: features = "main";
 
   /**
    * インポートダイアログの開閉制御

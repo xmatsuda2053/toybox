@@ -8,6 +8,7 @@ import "@awesome.me/webawesome/dist/components/drawer/drawer.js";
 import "@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js";
 import "@awesome.me/webawesome/dist/components/dropdown/dropdown.js";
 import "@awesome.me/webawesome/dist/components/format-bytes/format-bytes.js";
+import "@awesome.me/webawesome/dist/components/format-number/format-number.js";
 import "@awesome.me/webawesome/dist/components/input/input.js";
 import "@awesome.me/webawesome/dist/components/option/option.js";
 import "@awesome.me/webawesome/dist/components/popover/popover.js";
@@ -62,6 +63,9 @@ import "@sn/components/task/sn-task-deletion";
 import "@sn/components/journal/sn-journal-note";
 import "@sn/components/journal/sn-journal-log";
 import "@sn/components/journal/sn-journal-log-item";
+
+import "@sn/components/dashboard/sn-dashboard-container";
+import "@sn/components/dashboard/sn-dashboard-kpi-widget";
 
 import "@ha/hub-address-app";
 import "@ha/components/menu/ha-menu";
