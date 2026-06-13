@@ -45,11 +45,17 @@
 
     .row {
       margin-block-end: var(--wa-space-s);
-    }
 
-    sn-dashboard-status-chart {
-      width: 400px;
-      height: 300px;
+      &.flex {
+        display: flex;
+        gap: var(--wa-space-s);
+
+        &.chart {
+          sn-dashboard-chart-burnup {
+            flex: 1;
+          }
+        }
+      }
     }
   }
 }

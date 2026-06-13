@@ -17,6 +17,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // Internal Shared (Codes, Models, Database)
 import { snDB } from "@sn/database/SnDB";
 import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
+import { BurnupValue } from "@sn/models/BurnupValue";
 
 // Internal Shared (Utils)
 import { getCurrentFiscalYear } from "@/utils/DateUtils";
@@ -64,6 +65,22 @@ export class SnDashboardContainer extends LitElement {
    */
   @state() kpiWidgetValues?: KpiWidgetValue;
 
+  /**
+   * バーンアップチャート用の作成件数推移
+   *
+   * @type {BurnupValue[]}
+   * @memberof SnDashboardContainer
+   */
+  @state() burnupCreateCountValues?: BurnupValue[];
+
+  /**
+   * バーンアップチャート用の完了件数推移
+   *
+   * @type {BurnupValue[]}
+   * @memberof SnDashboardContainer
+   */
+  @state() burnupDoneCountValues?: BurnupValue[];
+
   // -------------------------------------------------------------
   // Lifecycle
   // -------------------------------------------------------------
@@ -93,9 +110,11 @@ export class SnDashboardContainer extends LitElement {
    * @memberof SnDashboardContainer
    */
   private _getDashboardData = async () => {
-    [this.kpiWidgetValues] = await snDB.dashboardQuery.getDashboardData(
-      this.fiscalYear,
-    );
+    [
+      this.kpiWidgetValues,
+      this.burnupCreateCountValues,
+      this.burnupDoneCountValues,
+    ] = await snDB.dashboardQuery.getDashboardData(this.fiscalYear);
   };
 
   // -------------------------------------------------------------
@@ -137,10 +156,15 @@ export class SnDashboardContainer extends LitElement {
           class="row"
           .kpiWidgetValues=${this.kpiWidgetValues}
         ></sn-dashboard-kpi-container>
-        <sn-dashboard-status-chart
-          class="row"
-          .kpiWidgetValues=${this.kpiWidgetValues}
-        ></sn-dashboard-status-chart>
+        <div class="row flex chart">
+          <sn-dashboard-chart-status
+            .kpiWidgetValues=${this.kpiWidgetValues}
+          ></sn-dashboard-chart-status>
+          <sn-dashboard-chart-burnup
+            .burnupCreateCountValues=${this.burnupCreateCountValues}
+            .burnupDoneCountValues=${this.burnupDoneCountValues}
+          ></sn-dashboard-chart-burnup>
+        </div>
       </div>
     </div>`;
   }

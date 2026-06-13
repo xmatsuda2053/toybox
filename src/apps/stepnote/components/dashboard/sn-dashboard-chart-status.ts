@@ -23,7 +23,7 @@ import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/dashboard/sn-dashboard-status-chart.lit.scss?inline";
+import styles from "@sn/styles/dashboard/sn-dashboard-chart-status.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 
@@ -33,16 +33,16 @@ setBasePath("/");
  * ステータスのチャート表示機能
  *
  * @export
- * @class SnDashboardStatusChart
+ * @class SnDashboardChartStatus
  * @extends {LitElement}
  */
-@customElement("sn-dashboard-status-chart")
-export class SnDashboardStatusChart extends LitElement {
+@customElement("sn-dashboard-chart-status")
+export class SnDashboardChartStatus extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof SnDashboardStatusChart
+   * @memberof SnDashboardChartStatus
    */
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
@@ -50,7 +50,7 @@ export class SnDashboardStatusChart extends LitElement {
    * KPI要素の値
    *
    * @type {KpiWidgetValue | undefined}
-   * @memberof SnDashboardStatusChart
+   * @memberof SnDashboardChartStatus
    */
   @property({ type: Object }) kpiWidgetValues?: KpiWidgetValue;
 
@@ -58,7 +58,7 @@ export class SnDashboardStatusChart extends LitElement {
    * タスク状態のグラフ
    *
    * @type {HTMLDivElement}
-   * @memberof SnDashboardStatusChart
+   * @memberof SnDashboardChartStatus
    */
   @query("#status-chart") statusChart!: HTMLDivElement;
 
@@ -67,7 +67,7 @@ export class SnDashboardStatusChart extends LitElement {
    *
    * @private
    * @type {ApexCharts | null}
-   * @memberof SnDashboardStatusChart
+   * @memberof SnDashboardChartStatus
    */
   private chart: ApexCharts | null = null;
 
@@ -80,7 +80,7 @@ export class SnDashboardStatusChart extends LitElement {
    *
    * @protected
    * @param {PropertyValues} changedProperties
-   * @memberof SnDashboardStatusChart
+   * @memberof SnDashboardChartStatus
    */
   protected async updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
@@ -94,9 +94,13 @@ export class SnDashboardStatusChart extends LitElement {
         ],
         chart: {
           type: "donut",
+          height: 350,
         },
         legend: {
-          fontSize: "16px",
+          show: true,
+          fontSize: "13px",
+          position: "top",
+          horizontalAlign: "center",
         },
         plotOptions: {
           pie: {
@@ -117,7 +121,11 @@ export class SnDashboardStatusChart extends LitElement {
         },
 
         labels: ["開始待ち", "対応中", "完了"],
-        colors: ["#717584", "#0071ec", "#00883c"],
+        colors: [
+          "var(--wa-color-neutral-50)",
+          "var(--wa-color-brand-50)",
+          "var(--wa-color-success-50)",
+        ],
       };
 
       if (this.chart) {
@@ -132,7 +140,7 @@ export class SnDashboardStatusChart extends LitElement {
   /**
    * 要素が DOM から削除されたときの処理を実行します。
    *
-   * @memberof SnDashboardStatusChart
+   * @memberof SnDashboardChartStatus
    */
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -146,6 +154,13 @@ export class SnDashboardStatusChart extends LitElement {
   // Rendering
   // -------------------------------------------------------------
 
+  /**
+   * チャートをレンダリングします。
+   *
+   * @protected
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnDashboardChartStatus
+   */
   protected render(): HTMLTemplateResult {
     return html`<div class="container">
       <div class="title">ステータス別内訳</div>
