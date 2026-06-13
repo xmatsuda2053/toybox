@@ -37,8 +37,7 @@ export type variants =
   | "done"
   | "upcoming"
   | "asap"
-  | "overdue"
-  | "separator";
+  | "overdue";
 
 /**
  * アイコン定義

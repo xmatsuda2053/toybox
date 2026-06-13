@@ -38,22 +38,6 @@
       var(--wa-color-neutral-70)
     );
 
-    .row {
-      display: flex;
-      gap: var(--wa-space-xs);
-
-      &.kpi {
-        sn-dashboard-kpi-widget {
-          flex: 1;
-        }
-
-        wa-divider {
-          --spacing: var(--wa-space-2xs);
-          --color: var(--wa-color-neutral-80);
-        }
-      }
-    }
-
     &:hover {
       --sb-thumb-color: var(--wa-color-neutral-20);
     }

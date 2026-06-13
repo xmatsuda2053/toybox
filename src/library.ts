@@ -65,6 +65,8 @@ import "@sn/components/journal/sn-journal-log";
 import "@sn/components/journal/sn-journal-log-item";
 
 import "@sn/components/dashboard/sn-dashboard-container";
+import "@sn/components/dashboard/sn-dashboard-header";
+import "@sn/components/dashboard/sn-dashboard-kpi-container";
 import "@sn/components/dashboard/sn-dashboard-kpi-widget";
 
 import "@ha/hub-address-app";
