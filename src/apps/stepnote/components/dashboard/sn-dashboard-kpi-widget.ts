@@ -140,7 +140,7 @@ export class SnDashboardKpiWidget extends LitElement {
    */
   private _calcPercent(): number {
     if (this.total === 0) return 0;
-    return Number(financial(String((this.value / this.total) * 100), 1));
+    return Number(financial((this.value / this.total) * 100, 1));
   }
 
   // -------------------------------------------------------------

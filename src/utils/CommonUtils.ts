@@ -94,10 +94,10 @@ export function padZero(num: number, length: number): string {
  * 指定された数値を固定小数点表記で表します。
  *
  * @export
- * @param {string} value
+ * @param {number} value
  * @param {number} digits
  * @return {*}
  */
-export function financial(value: string, digits: number): string {
-  return Number.parseFloat(value).toFixed(digits);
+export function financial(value: number, digits: number): string {
+  return Number.parseFloat(String(value)).toFixed(digits);
 }

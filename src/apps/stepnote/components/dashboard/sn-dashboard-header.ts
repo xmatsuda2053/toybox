@@ -25,7 +25,7 @@ const yearList = getYearList(2024, new Date().getFullYear() + 1);
 setBasePath("/");
 
 /**
- * ダッシュボード本体
+ * ダッシュボードのヘッダー機能
  *
  * @export
  * @class SnDashboardHeader

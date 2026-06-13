@@ -40,10 +40,12 @@ const kpiParams: kpiParam[] = [
   {
     label: "開始待ち",
     variant: "pending",
+    hasTotal: true,
   },
   {
     label: "対応中",
     variant: "progress",
+    hasTotal: true,
   },
   {
     label: "完了",
@@ -71,7 +73,7 @@ const kpiParams: kpiParam[] = [
 setBasePath("/");
 
 /**
- * ダッシュボード本体
+ * ダッシュボードのKPIコンテナ
  *
  * @export
  * @class SnDashboardKpiContainer
