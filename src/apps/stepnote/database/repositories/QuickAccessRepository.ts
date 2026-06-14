@@ -38,7 +38,6 @@ export class QuickAccessRepository {
     if (!data.id) {
       data.id = 1;
     }
-    console.log(data);
     await this.db.quickAccesses.update(data.id, data);
   }
 
