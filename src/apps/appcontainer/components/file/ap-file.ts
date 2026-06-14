@@ -106,7 +106,12 @@ export class ApFile extends LitElement {
   private _renderVersion(): HTMLTemplateResult {
     return html`<wa-dialog id="version-dialog" label=${this.selectedApp.label}>
       <div class="record">
-        <span class="version">version : 0.3.6</span>
+        <span class="version">version : 0.3.7</span>
+      </div>
+      <div class="record">
+        <span class="motto">
+          Always Standard, Forever Standalone, All in One.
+        </span>
       </div>
       <wa-divider></wa-divider>
       <div class="record">
@@ -118,34 +123,6 @@ export class ApFile extends LitElement {
           <wa-icon library="my-icons" name="oss-sass" slot="start"></wa-icon>
           Sass
         </wa-badge>
-        <wa-badge class="oss-md">
-          <wa-icon
-            library="my-icons"
-            name="markdown-brands-solid-full"
-            slot="start"
-          ></wa-icon>
-          Markdown
-        </wa-badge>
-        <wa-badge class="oss-lit">
-          <wa-icon library="my-icons" name="oss-lit" slot="start"></wa-icon>
-          Lit
-        </wa-badge>
-        <wa-badge class="oss-wa">
-          <wa-icon
-            library="my-icons"
-            name="web-awesome-solid-full"
-            slot="start"
-          ></wa-icon>
-          Web Awesome
-        </wa-badge>
-        <wa-badge class="oss-fa">
-          <wa-icon
-            library="my-icons"
-            name="font-awesome-solid-full"
-            slot="start"
-          ></wa-icon>
-          Font Awesome
-        </wa-badge>
         <wa-badge class="oss-idb">
           <wa-icon
             library="my-icons"
@@ -153,22 +130,6 @@ export class ApFile extends LitElement {
             slot="start"
           ></wa-icon>
           IndexedDB
-        </wa-badge>
-        <wa-badge class="oss-dexie">
-          <wa-icon
-            library="my-icons"
-            name="database-solid-full"
-            slot="start"
-          ></wa-icon>
-          Dexie.js
-        </wa-badge>
-        <wa-badge class="oss-nodejs">
-          <wa-icon library="my-icons" name="oss-nodejs" slot="start"></wa-icon>
-          Node.js
-        </wa-badge>
-        <wa-badge class="oss-vite">
-          <wa-icon library="my-icons" name="oss-vite" slot="start"></wa-icon>
-          Vite
         </wa-badge>
       </div>
     </wa-dialog>`;
