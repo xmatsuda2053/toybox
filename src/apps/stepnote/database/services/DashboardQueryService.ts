@@ -41,6 +41,9 @@ export class DashboardQueryService {
    * @memberof DashboardQueryService
    */
   private _getKpiWidgetValues(tasks: Task[]): KpiWidgetValue {
+    const isDone = (code: string): boolean => {
+      return TaskStatus.fromCode(code).isDone();
+    };
     const kpiResult: KpiWidgetValue = {
       total: tasks.length,
       pending: tasks.filter((t) =>
@@ -49,12 +52,13 @@ export class DashboardQueryService {
       progress: tasks.filter((t) =>
         TaskStatus.fromCode(t.statusCode).isProgress(),
       ).length,
-      done: tasks.filter((t) => TaskStatus.fromCode(t.statusCode).isDone())
+      done: tasks.filter((t) => isDone(t.statusCode)).length,
+      upcoming: tasks.filter((t) =>
+        isWithinAnyDaysBefore(isDone(t.statusCode), t.dueDate, 3),
+      ).length,
+      asap: tasks.filter((t) => isAsap(isDone(t.statusCode), t.dueDate)).length,
+      overdue: tasks.filter((t) => isOverdue(isDone(t.statusCode), t.dueDate))
         .length,
-      upcoming: tasks.filter((t) => isWithinAnyDaysBefore(false, t.dueDate, 3))
-        .length,
-      asap: tasks.filter((t) => isAsap(false, t.dueDate)).length,
-      overdue: tasks.filter((t) => isOverdue(false, t.dueDate)).length,
     };
 
     return kpiResult;
