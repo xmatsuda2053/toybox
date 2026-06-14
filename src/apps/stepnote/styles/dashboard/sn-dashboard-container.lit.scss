@@ -9,21 +9,6 @@
 
   background-color: var(--wa-color-neutral-95);
 
-  .header {
-    display: flex;
-    align-items: center;
-
-    .title {
-      margin-inline-end: var(--wa-space-m);
-      font-size: var(--wa-font-size-l);
-      font-weight: bold;
-    }
-
-    #task-fiscal-year {
-      width: 150px;
-    }
-  }
-
   .main {
     display: flex;
     gap: var(--wa-space-s);

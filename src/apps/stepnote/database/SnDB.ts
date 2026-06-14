@@ -7,12 +7,14 @@ import { Label } from "@sn/models/Label";
 import { Task } from "@sn/models/Task";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
+import { Config } from "@sn/models/Config";
 
 import { LabelRepository } from "@sn/database/repositories/LabelRepository";
 import { QuickAccessRepository } from "@sn/database/repositories/QuickAccessRepository";
 import { LogRepository } from "@sn/database/repositories/LogRepository";
 import { TaskRepository } from "./repositories/TaskRepository";
 import { NoteRepository } from "@sn/database/repositories/NoteRepository";
+import { ConfigRepository } from "./repositories/ConfigRepository";
 
 import { TaskQueryService } from "@sn/database/services/TaskQueryService";
 import { TaskStatsCalculator } from "./calculators/TaskStatsCalculator";
@@ -33,12 +35,14 @@ export class SnDB extends Dexie {
   tasks!: Table<Task>;
   logs!: Table<Log>;
   notes!: Table<Note>;
+  config!: Table<Config>;
 
   readonly labelRepo = new LabelRepository(this);
   readonly quickAccessRepo = new QuickAccessRepository(this);
   readonly logRepo = new LogRepository(this);
   readonly taskRepo = new TaskRepository(this);
   readonly noteRepo = new NoteRepository(this);
+  readonly configRepo = new ConfigRepository(this);
 
   readonly taskQuery = new TaskQueryService(this);
   readonly taskStats = new TaskStatsCalculator(this);
@@ -55,12 +59,13 @@ export class SnDB extends Dexie {
    */
   constructor() {
     super("SnDB");
-    this.version(3).stores({
+    this.version(4).stores({
       labels: "++id, name, fiscalYear, isSelected",
       quickAccesses: "++id",
       tasks: "++id, statusCode, name, dueDate, fiscalYear, selected",
       logs: "++id, taskId, [taskId+id]",
       notes: "++id, taskId, [taskId+id]",
+      config: "id, group, name",
     });
 
     this.on("populate", () => {

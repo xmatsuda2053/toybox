@@ -252,7 +252,7 @@ export class StepNoteApp extends LitElement {
 
     return html` <div class=${baseClassMap}>
       ${this._renderMenu()}
-      <div>config</div>
+      <sn-config-container></sn-config-container>
     </div>`;
   }
 }

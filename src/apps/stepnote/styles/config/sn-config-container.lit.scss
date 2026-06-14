@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  gap: var(--wa-space-s);
+  flex-direction: column;
+  padding: var(--wa-space-s);
+  height: 100%;
+
+  background-color: var(--wa-color-indigo-95);
+
+  header {
+    .title {
+      margin-inline-end: var(--wa-space-m);
+      font-size: var(--wa-font-size-l);
+      font-weight: bold;
+    }
+  }
+}
