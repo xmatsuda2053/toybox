@@ -184,7 +184,7 @@ export class TaskQueryService {
           },
           {
             selected: qa.isUpcomingSelected,
-            check: () => isWithinAnyDaysBefore(isDone, task.dueDate, 3),
+            check: () => isWithinAnyDaysBefore(isDone, task.dueDate),
           },
         ];
 

@@ -63,7 +63,7 @@ export class TaskStatsCalculator {
       (await this.db.tasks
         .where("statusCode")
         .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
-        .filter((task) => isWithinAnyDaysBefore(false, task.dueDate, 3)) // 当日(00:00)より前
+        .filter((task) => isWithinAnyDaysBefore(false, task.dueDate)) // 当日(00:00)より前
         .count()) > 0
     );
   }
