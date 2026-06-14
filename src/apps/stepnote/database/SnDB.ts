@@ -16,6 +16,7 @@ import { NoteRepository } from "@sn/database/repositories/NoteRepository";
 
 import { TaskQueryService } from "@sn/database/services/TaskQueryService";
 import { TaskStatsCalculator } from "./calculators/TaskStatsCalculator";
+import { DashboardQueryService } from "./services/DashboardQueryService";
 
 import { formatDate } from "@utils/DateUtils";
 
@@ -41,6 +42,8 @@ export class SnDB extends Dexie {
 
   readonly taskQuery = new TaskQueryService(this);
   readonly taskStats = new TaskStatsCalculator(this);
+
+  readonly dashboardQuery = new DashboardQueryService(this);
 
   // -------------------------------------------------------------
   // Lifecycle

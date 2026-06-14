@@ -89,3 +89,15 @@ export function isNotBlank(val: string | null | undefined): boolean {
 export function padZero(num: number, length: number): string {
   return String(num).padStart(length, "0");
 }
+
+/**
+ * 指定された数値を固定小数点表記で表します。
+ *
+ * @export
+ * @param {number} value
+ * @param {number} digits
+ * @return {*}
+ */
+export function financial(value: number, digits: number): string {
+  return Number.parseFloat(String(value)).toFixed(digits);
+}

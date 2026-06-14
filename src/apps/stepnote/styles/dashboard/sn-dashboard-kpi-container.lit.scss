@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  gap: var(--wa-space-xs);
+  height: 100%;
+
+  sn-dashboard-kpi-widget {
+    flex: 1;
+  }
+
+  wa-divider {
+    --spacing: var(--wa-space-2xs);
+    --color: var(--wa-color-neutral-80);
+  }
+}

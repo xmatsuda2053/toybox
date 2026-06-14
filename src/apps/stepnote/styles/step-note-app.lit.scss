@@ -67,6 +67,10 @@ $width-list: 310px;
   // ダッシュボード
   .dashboard-content {
     grid-template-columns: $width-menu 1fr;
+
+    sn-dashboard-container {
+      min-height: 0;
+    }
   }
 
   // 設定画面

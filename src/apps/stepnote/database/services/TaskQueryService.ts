@@ -26,6 +26,17 @@ export class TaskQueryService {
   constructor(private db: SnDB) {}
 
   /**
+   * 対象年度のタスク一覧を取得する。
+   *
+   * @param {number} fiscalYear
+   * @return {*}  {Promise<Task[]>}
+   * @memberof TaskQueryService
+   */
+  async getTasksByFiscalYear(fiscalYear: number): Promise<Task[]> {
+    return await this.db.tasks.where("fiscalYear").equals(fiscalYear).toArray();
+  }
+
+  /**
    * タスクに登録されている年度のリストを降順で取得する。
    *
    * @param {string} [keyword]
