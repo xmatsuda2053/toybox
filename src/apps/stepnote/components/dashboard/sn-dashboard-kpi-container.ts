@@ -40,12 +40,10 @@ const kpiParams: kpiParam[] = [
   {
     label: "開始待ち",
     variant: "pending",
-    hasTotal: true,
   },
   {
     label: "対応中",
     variant: "progress",
-    hasTotal: true,
   },
   {
     label: "完了",
