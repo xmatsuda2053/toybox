@@ -9,4 +9,5 @@ export interface LabelBreakdownValue {
   pending: number;
   progress: number;
   done: number;
+  total: number;
 }

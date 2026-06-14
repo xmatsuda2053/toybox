@@ -89,6 +89,11 @@ export class SnDashboardChartLabelBreakdown extends LitElement {
       changedProperties.has("labelBreakdownValues") &&
       this.labelBreakdownValues
     ) {
+      const maxVal =
+        this.labelBreakdownValues.length > 0
+          ? Math.max(...this.labelBreakdownValues.map((v) => v.total))
+          : 0;
+
       var options: ApexOptions = {
         series: [
           {
@@ -141,6 +146,14 @@ export class SnDashboardChartLabelBreakdown extends LitElement {
         ],
         xaxis: {
           categories: this.labelBreakdownValues?.map((v) => v.label),
+          tickAmount: maxVal <= 20 ? maxVal : undefined,
+        },
+        yaxis: {
+          labels: {
+            style: {
+              fontSize: "13px",
+            },
+          },
         },
         tooltip: {
           y: {
