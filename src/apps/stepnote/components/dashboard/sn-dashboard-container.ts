@@ -18,6 +18,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { snDB } from "@sn/database/SnDB";
 import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
 import { BurnupValue } from "@sn/models/BurnupValue";
+import { LabelBreakdownValue } from "@sn/models/LabelBreakdownValue";
 
 // Internal Shared (Utils)
 import { getCurrentFiscalYear } from "@/utils/DateUtils";
@@ -81,6 +82,14 @@ export class SnDashboardContainer extends LitElement {
    */
   @state() burnupDoneCountValues?: BurnupValue[];
 
+  /**
+   * ラベル内訳用のデータ件数
+   *
+   * @type {LabelBreakdownValue[]}
+   * @memberof SnDashboardContainer
+   */
+  @state() labelBreakdownValues?: LabelBreakdownValue[];
+
   // -------------------------------------------------------------
   // Lifecycle
   // -------------------------------------------------------------
@@ -114,6 +123,7 @@ export class SnDashboardContainer extends LitElement {
       this.kpiWidgetValues,
       this.burnupCreateCountValues,
       this.burnupDoneCountValues,
+      this.labelBreakdownValues,
     ] = await snDB.dashboardQuery.getDashboardData(this.fiscalYear);
   };
 
@@ -164,6 +174,11 @@ export class SnDashboardContainer extends LitElement {
             .burnupCreateCountValues=${this.burnupCreateCountValues}
             .burnupDoneCountValues=${this.burnupDoneCountValues}
           ></sn-dashboard-chart-burnup>
+        </div>
+        <div class="row">
+          <sn-dashboard-chart-label-breakdown
+            .labelBreakdownValues=${this.labelBreakdownValues}
+          ></sn-dashboard-chart-label-breakdown>
         </div>
       </div>
     </div>`;

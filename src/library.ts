@@ -70,6 +70,7 @@ import "@sn/components/dashboard/sn-dashboard-kpi-container";
 import "@sn/components/dashboard/sn-dashboard-kpi-widget";
 import "@/apps/stepnote/components/dashboard/sn-dashboard-chart-status";
 import "@/apps/stepnote/components/dashboard/sn-dashboard-chart-burnup";
+import "@/apps/stepnote/components/dashboard/sn-dashboard-chart-label-breakdown";
 
 import "@ha/hub-address-app";
 import "@ha/components/menu/ha-menu";

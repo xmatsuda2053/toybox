@@ -1,7 +1,9 @@
 import { SnDB } from "@sn/database/SnDB";
 import { Task } from "@sn/models/Task";
+import { Label } from "@sn/models/Label";
 import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
 import { BurnupValue } from "@sn/models/BurnupValue";
+import { LabelBreakdownValue } from "@sn/models/LabelBreakdownValue";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { isOverdue, isAsap, isWithinAnyDaysBefore } from "@utils/DateUtils";
 
@@ -21,14 +23,18 @@ export class DashboardQueryService {
 
   async getDashboardData(
     fiscalYear: number,
-  ): Promise<[KpiWidgetValue, BurnupValue[], BurnupValue[]]> {
+  ): Promise<
+    [KpiWidgetValue, BurnupValue[], BurnupValue[], LabelBreakdownValue[]]
+  > {
     const tasks: Task[] =
       await this.db.taskQuery.getTasksByFiscalYear(fiscalYear);
+    const labels: Label[] = await this.db.labelRepo.getLabelsAscName();
 
     return [
       this._getKpiWidgetValues(tasks),
       this._getBurnupCreateCountValue(tasks),
       this._getBurnupDoneCountValue(tasks),
+      this._getLabelBreakdownValues(tasks, labels),
     ];
   }
 
@@ -99,6 +105,14 @@ export class DashboardQueryService {
     return result;
   }
 
+  /**
+   * バーンチャートに出力する「タスクの月ごとの完了数（総数）」を取得します。
+   *
+   * @private
+   * @param {Task[]} tasks
+   * @return {*}  {BurnupValue[]}
+   * @memberof DashboardQueryService
+   */
   private _getBurnupDoneCountValue(tasks: Task[]): BurnupValue[] {
     const monthlyCount = tasks
       .filter((t) => TaskStatus.fromCode(t.statusCode).isDone())
@@ -126,5 +140,35 @@ export class DashboardQueryService {
     );
 
     return result;
+  }
+
+  /**
+   * ラベル内訳用の値を取得する。
+   *
+   * @private
+   * @param {Task[]} tasks
+   * @param {Label[]} labels
+   * @return {*}  {LabelBreakdownValue[]}
+   * @memberof DashboardQueryService
+   */
+  private _getLabelBreakdownValues(
+    tasks: Task[],
+    labels: Label[],
+  ): LabelBreakdownValue[] {
+    return labels.map((label) => {
+      const labelTasks = tasks.filter((t) => t.labelId === label.id);
+      return {
+        label: label.name,
+        pending: labelTasks.filter((t) =>
+          TaskStatus.fromCode(t.statusCode).isPending(),
+        ).length,
+        progress: labelTasks.filter((t) =>
+          TaskStatus.fromCode(t.statusCode).isProgress(),
+        ).length,
+        done: labelTasks.filter((t) =>
+          TaskStatus.fromCode(t.statusCode).isDone(),
+        ).length,
+      } as LabelBreakdownValue;
+    });
   }
 }
