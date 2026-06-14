@@ -60,7 +60,7 @@ export class DashboardQueryService {
       ).length,
       done: tasks.filter((t) => isDone(t.statusCode)).length,
       upcoming: tasks.filter((t) =>
-        isWithinAnyDaysBefore(isDone(t.statusCode), t.dueDate, 3),
+        isWithinAnyDaysBefore(isDone(t.statusCode), t.dueDate),
       ).length,
       asap: tasks.filter((t) => isAsap(isDone(t.statusCode), t.dueDate)).length,
       overdue: tasks.filter((t) => isOverdue(isDone(t.statusCode), t.dueDate))

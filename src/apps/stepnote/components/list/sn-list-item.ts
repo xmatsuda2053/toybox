@@ -93,7 +93,7 @@ export class SnListItem extends LitElement {
 
     if (isOverdue(isDone, dueDate)) return "overdue";
     if (isAsap(isDone, dueDate)) return "asap";
-    if (isWithinAnyDaysBefore(isDone, dueDate, 3)) return "upcoming";
+    if (isWithinAnyDaysBefore(isDone, dueDate)) return "upcoming";
     return "normal";
   }
 

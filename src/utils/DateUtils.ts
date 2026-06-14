@@ -1,4 +1,5 @@
 import * as kanjidate from "kanjidate";
+import { configUtils } from "@/utils/ConfigUtils";
 
 /**
  * 日付オブジェクトを指定されたフォーマットの文字列に変換します。
@@ -101,13 +102,11 @@ export const isAsap = (isDone: boolean, expiryDate: Date): boolean => {
  * システム日付が基準日から見て指定日付前（当日除く）であるかを判定します。
  * * @param {boolean} isDone - 完了済みか否か
  * * @param {Date} referenceDate - 判定のベースとなる基準日
- * * @param {number} dayCount - 計算日数
  * @returns {boolean} 当日+1〜any日前なら true、それ以外は false
  */
 export const isWithinAnyDaysBefore = (
   isDone: boolean,
   referenceDate: Date,
-  dayCount: number,
 ): boolean => {
   // 完了済みの場合は判定不要なのでfalse
   if (isDone) {
@@ -124,6 +123,8 @@ export const isWithinAnyDaysBefore = (
 
   // 日付を計算するためのミリ秒（1日 = 24h * 60m * 60s * 1000ms）
   const oneDayMs = 24 * 60 * 60 * 1000;
+
+  const dayCount = configUtils.getG01_0001();
 
   const todayBefore = new Date(targetDate.getTime());
   const anyDaysBefore = new Date(targetDate.getTime() - dayCount * oneDayMs);

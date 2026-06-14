@@ -18,6 +18,9 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { snDB } from "@sn/database/SnDB";
 import { features } from "./components/menu/sn-menu";
 
+// Internal Shared (Utils)
+import { configUtils } from "@/utils/ConfigUtils";
+
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import styles from "@sn/styles/step-note-app.lit.scss?inline";
@@ -50,6 +53,20 @@ export class StepNoteApp extends LitElement {
    * @memberof StepNoteApp
    */
   static styles = [unsafeCSS(styles)];
+
+  // -------------------------------------------------------------
+  // Lifecycle
+  // -------------------------------------------------------------
+  /**
+   * コンポーネントがドキュメントの DOM に追加されたときに実行されます。
+   *
+   * @override
+   * @memberof StepNoteApp
+   */
+  connectedCallback() {
+    super.connectedCallback();
+    configUtils.initialize();
+  }
 
   // -------------------------------------------------------------
   // Event
