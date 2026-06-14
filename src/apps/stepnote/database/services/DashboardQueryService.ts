@@ -168,6 +168,7 @@ export class DashboardQueryService {
         done: labelTasks.filter((t) =>
           TaskStatus.fromCode(t.statusCode).isDone(),
         ).length,
+        total: labelTasks.length,
       } as LabelBreakdownValue;
     });
   }
