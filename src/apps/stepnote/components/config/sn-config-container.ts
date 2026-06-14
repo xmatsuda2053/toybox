@@ -179,7 +179,7 @@ export class SnConfigContainer extends LitElement {
               ></sn-config-task-limit-day>
             </div>
           </wa-tab-panel>
-          <wa-tab-panel name="storage">ストレージ</wa-tab-panel>
+          <wa-tab-panel name="storage">開発中</wa-tab-panel>
         </wa-tab-group>
       </main>
     </div>`;
