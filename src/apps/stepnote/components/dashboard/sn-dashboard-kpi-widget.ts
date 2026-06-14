@@ -123,6 +123,14 @@ export class SnDashboardKpiWidget extends LitElement {
    */
   @property({ type: Number }) total: number = 0;
 
+  /**
+   * アニメーションの実行を制御する
+   *
+   * @type {boolean}
+   * @memberof SnDashboardKpiWidget
+   */
+  @property({ type: Boolean }) animation: boolean = false;
+
   // -------------------------------------------------------------
   // Event
   // -------------------------------------------------------------
@@ -178,6 +186,7 @@ export class SnDashboardKpiWidget extends LitElement {
         library="my-icons"
         name=${icons.find((i) => i.variant === this.variant)?.name ??
         "sliders-solid-full"}
+        .animation=${this.animation && this.value > 0 ? "bounce" : undefined}
       ></wa-icon>`;
   }
 

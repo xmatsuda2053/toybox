@@ -48,6 +48,7 @@
     display: flex;
     align-items: center;
     margin-block-end: var(--wa-space-2xs);
+    padding-block: var(--wa-space-3xs);
 
     .label {
       margin-inline-end: auto;
@@ -55,7 +56,9 @@
     }
 
     wa-icon {
-      font-size: var(--wa-font-size-xl);
+      font-size: var(--wa-font-size-l);
+      --animation-duration: 2s;
+      --fade-opacity: 0.6;
     }
   }
 

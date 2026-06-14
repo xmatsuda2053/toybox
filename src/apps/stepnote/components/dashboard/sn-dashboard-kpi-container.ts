@@ -27,6 +27,7 @@ type kpiParam = {
   label: string;
   variant?: variants;
   hasTotal?: boolean;
+  animation?: boolean;
 };
 
 /**
@@ -57,14 +58,17 @@ const kpiParams: kpiParam[] = [
   {
     label: "期限間近",
     variant: "upcoming",
+    animation: true,
   },
   {
     label: "期限当日",
     variant: "asap",
+    animation: true,
   },
   {
     label: "期限切れ",
     variant: "overdue",
+    animation: true,
   },
 ];
 
@@ -132,6 +136,7 @@ export class SnDashboardKpiContainer extends LitElement {
           .variant=${param.variant}
           .value=${this.kpiWidgetValues[param.variant]}
           .total=${param.hasTotal ? this.kpiWidgetValues.total : 0}
+          .animation=${param.animation ?? false}
         >
           ${param.label}
         </sn-dashboard-kpi-widget>`;
