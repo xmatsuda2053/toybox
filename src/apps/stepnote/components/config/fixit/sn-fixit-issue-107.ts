@@ -87,7 +87,7 @@ export class SnFixitIssue107 extends LitElement {
         const newTask: Partial<Task> = {
           id: target.id,
           createdAt: firstLog.createdAt,
-          updatedAt: firstLog.createdAt,
+          updatedAt: target.updatedAt ?? firstLog.createdAt,
         };
 
         await snDB.taskRepo.updateTaskInternalWithoutTimestamp(newTask);
