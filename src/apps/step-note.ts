@@ -119,7 +119,7 @@ export class StepNote extends LitElement {
           <wa-icon library="my-icons" name="cubes-solid-full"></wa-icon>
         </div>
         <ap-file .selectedApp=${selectedApp}></ap-file>
-        <ap-tool></ap-tool>
+        <ap-storage></ap-storage>
       </header>
       <main>
         <step-note-app></step-note-app>
