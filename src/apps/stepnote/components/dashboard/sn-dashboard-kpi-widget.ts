@@ -9,6 +9,7 @@ import {
 
 // Lit Extensions (Decorators & Directives)
 import { customElement, property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 
 // Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -17,6 +18,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Internal Shared (Utils)
 import { financial } from "@/utils/CommonUtils";
+import { emit } from "@/utils/EventUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -131,9 +133,35 @@ export class SnDashboardKpiWidget extends LitElement {
    */
   @property({ type: Boolean }) animation: boolean = false;
 
+  /**
+   * クリック可否を制御する
+   *
+   * @type {boolean}
+   * @memberof SnDashboardKpiWidget
+   */
+  @property({ type: Boolean }) clickable: boolean = false;
+
   // -------------------------------------------------------------
   // Event
   // -------------------------------------------------------------
+
+  /**
+   * ウィジェットのクリック処理を制御します。
+   *
+   * @private
+   * @memberof SnDashboardKpiWidget
+   */
+  private _handleWidgetClick = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!this.clickable) return;
+
+    emit(this, "click-kpi-widget", {
+      detail: {
+        variant: this.variant,
+      },
+    });
+  };
 
   // -------------------------------------------------------------
   // Method
@@ -164,8 +192,16 @@ export class SnDashboardKpiWidget extends LitElement {
    */
   protected render(): HTMLTemplateResult {
     const percent = this._calcPercent();
+    const baseClassMap = classMap({
+      [this.variant]: true,
+      clickable: this.clickable,
+    });
 
-    return html`<div id="content-root" class=${this.variant}>
+    return html`<div
+      id="content-root"
+      class=${baseClassMap}
+      @click=${this._handleWidgetClick}
+    >
       <header>${this._renderHeaderItem()}</header>
       <main>${this._renderMainItem(percent)}</main>
       <footer>${this._renderFooterItem(percent)}</footer>

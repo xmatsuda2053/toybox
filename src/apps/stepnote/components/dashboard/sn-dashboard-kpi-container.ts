@@ -8,15 +8,18 @@ import { customElement, property } from "lit/decorators.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // Internal Shared (Codes, Models, Database)
+import { snDB } from "@sn/database/SnDB";
 import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
 import { variants } from "@sn/components/dashboard/sn-dashboard-kpi-widget";
 
 // Internal Shared (Utils)
+import { emit } from "@/utils/EventUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/dashboard/sn-dashboard-kpi-container.lit.scss?inline";
+import { defaultKeyFunction } from "@lit-labs/virtualizer/virtualize.js";
 
 // --- Configuration & Initialization ---
 
@@ -28,6 +31,7 @@ type kpiParam = {
   variant?: variants;
   hasTotal?: boolean;
   animation?: boolean;
+  clickable?: boolean;
 };
 
 /**
@@ -59,16 +63,19 @@ const kpiParams: kpiParam[] = [
     label: "期限間近",
     variant: "upcoming",
     animation: true,
+    clickable: true,
   },
   {
     label: "期限当日",
     variant: "asap",
     animation: true,
+    clickable: true,
   },
   {
     label: "期限切れ",
     variant: "overdue",
     animation: true,
+    clickable: true,
   },
 ];
 
@@ -115,6 +122,31 @@ export class SnDashboardKpiContainer extends LitElement {
   // Event
   // -------------------------------------------------------------
 
+  /**
+   * ウィジェットのクリック処理を制御します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnDashboardKpiContainer
+   */
+  private _handleKpiWidgetClick = async (e: CustomEvent) => {
+    switch (e.detail.variant) {
+      case "upcoming":
+        await snDB.dashboardRepo.changeUpcomingMode();
+        break;
+      case "asap":
+        await snDB.dashboardRepo.changeAsapMode();
+        break;
+      case "overdue":
+        await snDB.dashboardRepo.changeOverdueMode();
+        break;
+      default:
+        break;
+    }
+
+    emit(this, "to-main-content");
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -137,6 +169,8 @@ export class SnDashboardKpiContainer extends LitElement {
           .value=${this.kpiWidgetValues[param.variant]}
           .total=${param.hasTotal ? this.kpiWidgetValues.total : 0}
           .animation=${param.animation ?? false}
+          .clickable=${param.clickable ?? false}
+          @click-kpi-widget=${this._handleKpiWidgetClick}
         >
           ${param.label}
         </sn-dashboard-kpi-widget>`;

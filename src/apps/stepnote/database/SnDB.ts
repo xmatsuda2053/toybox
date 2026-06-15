@@ -15,6 +15,7 @@ import { LogRepository } from "@sn/database/repositories/LogRepository";
 import { TaskRepository } from "./repositories/TaskRepository";
 import { NoteRepository } from "@sn/database/repositories/NoteRepository";
 import { ConfigRepository } from "./repositories/ConfigRepository";
+import { DashboardRepository } from "./repositories/DashboardRepository";
 
 import { TaskQueryService } from "@sn/database/services/TaskQueryService";
 import { TaskStatsCalculator } from "./calculators/TaskStatsCalculator";
@@ -43,6 +44,7 @@ export class SnDB extends Dexie {
   readonly taskRepo = new TaskRepository(this);
   readonly noteRepo = new NoteRepository(this);
   readonly configRepo = new ConfigRepository(this);
+  readonly dashboardRepo = new DashboardRepository(this);
 
   readonly taskQuery = new TaskQueryService(this);
   readonly taskStats = new TaskStatsCalculator(this);

@@ -21,6 +21,15 @@ export class DashboardQueryService {
    */
   constructor(private db: SnDB) {}
 
+  /**
+   * ダッシュボード用データを検索します。
+   *
+   * @param {number} fiscalYear
+   * @return {*}  {Promise<
+   *     [KpiWidgetValue, BurnupValue[], BurnupValue[], LabelBreakdownValue[]]
+   *   >}
+   * @memberof DashboardQueryService
+   */
   async getDashboardData(
     fiscalYear: number,
   ): Promise<

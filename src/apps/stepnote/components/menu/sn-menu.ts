@@ -189,18 +189,20 @@ export class SnMenu extends LitElement {
    * メニューボタンクリック処理を統合する。
    *
    * @private
+   * @param {Event} e
    * @param {MenuButtonKey} key
    * @memberof SnMenu
    */
-  private _handleButtonClick = (key: MenuButtonKey) => {
+  private _handleButtonClick = (e: Event, key: MenuButtonKey) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     switch (key) {
       case "main":
-        emit(this, "click-menu-main");
-        this.selectedFeature = "main";
+        emit(this, "select-menu-main");
         break;
       case "dashboard":
-        emit(this, "click-menu-dashboard");
-        this.selectedFeature = "dashboard";
+        emit(this, "select-menu-dashboard");
         break;
       case "import":
         this._isImportDialogOpen = true;
@@ -212,10 +214,10 @@ export class SnMenu extends LitElement {
         this._isHelpDialogOpen = true;
         break;
       case "config":
-        emit(this, "click-menu-config");
-        this.selectedFeature = "config";
+        emit(this, "select-menu-config");
         break;
       default:
+        break;
     }
   };
 
@@ -296,7 +298,7 @@ export class SnMenu extends LitElement {
               variant="neutral"
               appearance="accent"
               id=${button.id}
-              @click=${() => this._handleButtonClick(button.key)}
+              @click=${(e: Event) => this._handleButtonClick(e, button.key)}
             >
               <wa-icon library="my-icons" name=${button.iconName}></wa-icon>
             </wa-button>
