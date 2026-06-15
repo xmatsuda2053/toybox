@@ -81,3 +81,6 @@ import "@ha/components/menu/ha-menu";
 import "@ha/components/uploader/wa-uploader";
 import "@ha/components/viewer/ha-viewer-staff";
 import "@ha/components/viewer/ha-viewer-div";
+
+// Fixit
+import "@sn/components/config/fixit/sn-fixit-issue-107";
