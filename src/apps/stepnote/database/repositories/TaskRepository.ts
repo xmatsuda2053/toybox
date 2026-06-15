@@ -88,9 +88,7 @@ export class TaskRepository {
    * @return {*}  {Promise<void>}
    * @memberof TaskRepository
    */
-  private async updateTaskInternalWithoutTimestamp(
-    data: Partial<Task>,
-  ): Promise<void> {
+  async updateTaskInternalWithoutTimestamp(data: Partial<Task>): Promise<void> {
     if (!data.id) return;
     await this.db.tasks.update(data.id, data);
   }

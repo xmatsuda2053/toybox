@@ -170,16 +170,20 @@ export class SnConfigContainer extends LitElement {
           placement="start"
           @update-config=${this._handleUpdateConfig}
         >
-          <wa-tab panel="management">タスク管理</wa-tab>
-          <wa-tab panel="storage">ストレージ</wa-tab>
-          <wa-tab-panel name="management">
+          <wa-tab panel="g01">タスク管理</wa-tab>
+          <wa-tab panel="g02">ストレージ</wa-tab>
+          <wa-tab panel="fixit">Fixit</wa-tab>
+          <wa-tab-panel name="g01">
             <div class="item">
               <sn-config-task-limit-day
                 .config=${this.configs.find((c) => c.id === "g01_0001")!}
               ></sn-config-task-limit-day>
             </div>
           </wa-tab-panel>
-          <wa-tab-panel name="storage">開発中</wa-tab-panel>
+          <wa-tab-panel name="g02">開発中</wa-tab-panel>
+          <wa-tab-panel name="fixit">
+            <sn-fixit-issue-107></sn-fixit-issue-107>
+          </wa-tab-panel>
         </wa-tab-group>
       </main>
     </div>`;
