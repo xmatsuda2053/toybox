@@ -3,6 +3,20 @@ import { snDB } from "@sn/database/SnDB";
 import { Config } from "@/apps/stepnote/models/Config";
 
 /**
+ * 設定データの初期値
+ */
+const DEFAULT_CONFIG: Config[] = [
+  {
+    id: "g01_0001",
+    group: "g01",
+    name: "TaskLimitDayCount",
+    value: {
+      day: 3,
+    },
+  },
+];
+
+/**
  * アプリ全体の設定値をメモリ上にキャッシュするマネージャー
  */
 class ConfigUtils {
@@ -13,25 +27,33 @@ class ConfigUtils {
    *
    * @template T
    * @param {string} id
-   * @param {T} fallback DBからロードされる前や、データがない場合のデフォルト値
    * @return {*}  {T} 型定義されたvalueオブジェクト
    * @memberof ConfigUtils
    */
-  fetch<T>(id: string, fallback: T): T {
+  private fetch<T>(id: string): Config<T> {
+    const defaultConfig = DEFAULT_CONFIG.find((c) => c.id === id)! as Config<T>;
     const config = this._config.find((c) => c.id === id) as Config<T>;
-    return config?.value ?? fallback;
+    return config ?? defaultConfig;
   }
 
   /**
    * タスク期日の通知を行う際の基準日数
    *
+   * @return {*}  {(Config | undefined)}
+   * @memberof ConfigUtils
+   */
+  get_g01_0001(): Config {
+    return this.fetch<{ day: number }>("g01_0001");
+  }
+
+  /**
+   * タスク期日の通知を行う際の基準日数（valueのみ)
+   *
    * @return {*}  {number}
    * @memberof ConfigUtils
    */
-  getG01_0001(): number {
-    return this.fetch<{ day: number }>("g01_0001", {
-      day: 3,
-    }).day;
+  get_g01_0001_value(): { day: number } {
+    return this.get_g01_0001().value;
   }
 
   /**
@@ -40,10 +62,9 @@ class ConfigUtils {
    *
    * @memberof ConfigUtils
    */
-  initialize() {
+  async initialize() {
     // liveQueryで「TaskLimitDay」の変更を永続的に監視
     liveQuery(async () => {
-      // id: 1 の設定データを取得 (前回の実装に基づき)
       return await snDB.configRepo.getConfigAll();
     }).subscribe({
       next: (config) => {
@@ -51,6 +72,8 @@ class ConfigUtils {
       },
       error: (err) => console.error("[Cache] 監視エラー:", err),
     });
+
+    await snDB.configRepo.initializeDefaultConfig(DEFAULT_CONFIG);
   }
 }
 

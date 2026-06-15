@@ -97,11 +97,11 @@ export class SnConfigTaskLimitDay extends LitElement {
    */
   protected render(): HTMLTemplateResult | typeof nothing {
     return html`<header>
-        期日の ${this.config.value.day ?? "3"} 日前から通知する
+        期日の ${this.config.value.day} 日前から通知する
       </header>
       <main>
         <wa-number-input
-          .value=${this.config.value.day ?? "3"}
+          .value=${this.config.value.day}
           min="3"
           size="small"
           style="max-width: 180px;"
