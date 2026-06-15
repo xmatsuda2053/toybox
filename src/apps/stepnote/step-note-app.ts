@@ -148,9 +148,9 @@ export class StepNoteApp extends LitElement {
     return html` <div class="panel menu">
       <sn-menu
         .selectedFeature=${this.selectedFeature}
-        @click-menu-main=${this._handleMainClick}
-        @click-menu-dashboard=${this._handleDashboardClick}
-        @click-menu-config=${this._handleConfigClick}
+        @select-menu-main=${this._handleMainClick}
+        @select-menu-dashboard=${this._handleDashboardClick}
+        @select-menu-config=${this._handleConfigClick}
       ></sn-menu>
     </div>`;
   }
@@ -250,7 +250,9 @@ export class StepNoteApp extends LitElement {
 
     return html` <div class=${baseClassMap}>
       ${this._renderMenu()}
-      <sn-dashboard-container></sn-dashboard-container>
+      <sn-dashboard-container
+        @to-main-content=${this._handleMainClick}
+      ></sn-dashboard-container>
     </div>`;
   }
 

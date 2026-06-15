@@ -71,7 +71,7 @@ export class SnFixitIssue107 extends LitElement {
    * @private
    * @memberof SnFixitIssue107
    */
-  private async _handleExecuteClick() {
+  private _handleExecuteClick = async () => {
     //CreatedAtが存在しないタスクを検索
     const tasks = await snDB.tasks.toArray();
     const targets = tasks.filter((task) => {
@@ -95,7 +95,7 @@ export class SnFixitIssue107 extends LitElement {
     });
 
     this.count = targets.length;
-  }
+  };
 
   // -------------------------------------------------------------
   // Rendering

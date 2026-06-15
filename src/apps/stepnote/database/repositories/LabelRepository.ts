@@ -109,10 +109,21 @@ export class LabelRepository {
       "rw",
       [this.db.labels, this.db.tasks],
       async () => {
-        await this.deSelectAllLabel();
-        await this.db.taskRepo.changeAllTaskUnSelection();
+        await this.deSelectLabelAndDeSelectTaskInTransaction();
       },
     );
+  }
+
+  /**
+   * 全てのラベルの選択状態を解除し、タスク選択状態を解除します。
+   * (トランザクション呼び出し用)
+   *
+   * @return {*}  {Promise<void>}
+   * @memberof LabelRepository
+   */
+  async deSelectLabelAndDeSelectTaskInTransaction(): Promise<void> {
+    await this.deSelectAllLabel();
+    await this.db.taskRepo.changeAllTaskUnSelection();
   }
 
   /**

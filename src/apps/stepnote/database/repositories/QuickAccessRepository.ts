@@ -86,6 +86,22 @@ export class QuickAccessRepository {
    * @memberof QuickAccessRepository
    */
   async changeInProgressMode() {
+    return await this.db.transaction(
+      "rw",
+      [this.db.labels, this.db.quickAccesses],
+      async () => {
+        await this.changeInProgressModeInTransaction();
+      },
+    );
+  }
+
+  /**
+   * クイックアクセスの選択状態を実行中タスク表示モードに変更します。
+   * (トランザクション内呼び出し)
+   *
+   * @memberof QuickAccessRepository
+   */
+  async changeInProgressModeInTransaction() {
     const newData: QuickAccess = {
       id: 1,
       isBookmarkSelected: 0,
@@ -98,14 +114,8 @@ export class QuickAccessRepository {
       isPendingSelected: 1,
     };
 
-    return await this.db.transaction(
-      "rw",
-      [this.db.labels, this.db.quickAccesses],
-      async () => {
-        await this.putQuickAccess(newData);
-        await this.db.labelRepo.deSelectAllLabel();
-      },
-    );
+    await this.putQuickAccess(newData);
+    await this.db.labelRepo.deSelectAllLabel();
   }
 
   /**
