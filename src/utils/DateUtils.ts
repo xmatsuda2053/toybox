@@ -124,7 +124,7 @@ export const isWithinAnyDaysBefore = (
   // 日付を計算するためのミリ秒（1日 = 24h * 60m * 60s * 1000ms）
   const oneDayMs = 24 * 60 * 60 * 1000;
 
-  const dayCount = configUtils.getG01_0001();
+  const dayCount = configUtils.get_g01_0001_value().day;
 
   const todayBefore = new Date(targetDate.getTime());
   const anyDaysBefore = new Date(targetDate.getTime() - dayCount * oneDayMs);

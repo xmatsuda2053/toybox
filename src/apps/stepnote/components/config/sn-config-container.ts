@@ -19,6 +19,7 @@ import { snDB } from "@sn/database/SnDB";
 import { Config } from "@sn/models/Config";
 
 // Internal Shared (Utils)
+import { configUtils } from "@/utils/ConfigUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -27,20 +28,6 @@ import styles from "@sn/styles/config/sn-config-container.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");
-
-/**
- * 設定データの初期値
- */
-const DEFAULT_CONFIG: Config[] = [
-  {
-    id: "g01_0001",
-    group: "g01",
-    name: "TaskLimitDayCount",
-    value: {
-      day: 3,
-    },
-  },
-];
 
 /**
  * 設定画面本体
@@ -87,7 +74,6 @@ export class SnConfigContainer extends LitElement {
    */
   async connectedCallback() {
     super.connectedCallback();
-    await snDB.configRepo.initializeDefaultConfig(DEFAULT_CONFIG);
     this._subscribeLabels();
   }
 
@@ -176,7 +162,7 @@ export class SnConfigContainer extends LitElement {
           <wa-tab-panel name="g01">
             <div class="item">
               <sn-config-task-limit-day
-                .config=${this.configs.find((c) => c.id === "g01_0001")!}
+                .config=${configUtils.get_g01_0001()}
               ></sn-config-task-limit-day>
             </div>
           </wa-tab-panel>
