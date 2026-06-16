@@ -216,7 +216,14 @@ export class SnDashboardKpiWidget extends LitElement {
    * @memberof SnDashboardKpiWidget
    */
   private _renderHeaderItem(): HTMLTemplateResult {
-    return html` <div class="label"><slot></slot></div>
+    return html` <div class="label">
+        <slot></slot>${this.clickable
+          ? html`<wa-icon
+              library="my-icons"
+              name="arrow-up-right-from-square-solid-full"
+            ></wa-icon>`
+          : nothing}
+      </div>
       <wa-icon
         slot="icon"
         library="my-icons"

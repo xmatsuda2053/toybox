@@ -52,6 +52,34 @@ export class DashboardRepository {
   }
 
   /**
+   * 開始待ちタスクのみ表示するモードに切り替える。
+   *
+   * @return {*}  {Promise<void>}
+   * @memberof DashboardRepository
+   */
+  async changePendingMode(): Promise<void> {
+    await this.changeMode({
+      isPendingSelected: 1,
+      isProgressSelected: 0,
+      isDoneSelected: 0,
+    });
+  }
+
+  /**
+   * 実行待ちタスクのみ表示するモードに切り替える。
+   *
+   * @return {*}  {Promise<void>}
+   * @memberof DashboardRepository
+   */
+  async changeProgressMode(): Promise<void> {
+    await this.changeMode({
+      isPendingSelected: 0,
+      isProgressSelected: 1,
+      isDoneSelected: 0,
+    });
+  }
+
+  /**
    * フィルタリングモードを切り替えます。
    *
    * @private

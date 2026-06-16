@@ -45,10 +45,12 @@ const kpiParams: kpiParam[] = [
   {
     label: "開始待ち",
     variant: "pending",
+    clickable: true,
   },
   {
     label: "対応中",
     variant: "progress",
+    clickable: true,
   },
   {
     label: "完了",
@@ -139,6 +141,12 @@ export class SnDashboardKpiContainer extends LitElement {
         break;
       case "overdue":
         await snDB.dashboardRepo.changeOverdueMode();
+        break;
+      case "pending":
+        await snDB.dashboardRepo.changePendingMode();
+        break;
+      case "progress":
+        await snDB.dashboardRepo.changeProgressMode();
         break;
       default:
         break;
