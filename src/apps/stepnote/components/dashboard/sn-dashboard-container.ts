@@ -59,6 +59,14 @@ export class SnDashboardContainer extends LitElement {
   @state() fiscalYear: number = currentFiscalYear;
 
   /**
+   * 選択中のラベル
+   *
+   * @type {(number | undefined)}
+   * @memberof SnDashboardContainer
+   */
+  @state() labelId: number | undefined = undefined;
+
+  /**
    * KPI要素の値
    *
    * @type {KpiWidgetValue | undefined}
@@ -103,7 +111,10 @@ export class SnDashboardContainer extends LitElement {
   protected willUpdate(_changedProperties: PropertyValues) {
     super.willUpdate(_changedProperties);
 
-    if (_changedProperties.has("fiscalYear")) {
+    if (
+      _changedProperties.has("fiscalYear") ||
+      _changedProperties.has("labelId")
+    ) {
       this._getDashboardData();
     }
   }
@@ -124,7 +135,10 @@ export class SnDashboardContainer extends LitElement {
       this.burnupCreateCountValues,
       this.burnupDoneCountValues,
       this.labelBreakdownValues,
-    ] = await snDB.dashboardQuery.getDashboardData(this.fiscalYear);
+    ] = await snDB.dashboardQuery.getDashboardData(
+      this.fiscalYear,
+      this.labelId,
+    );
   };
 
   // -------------------------------------------------------------
@@ -140,6 +154,17 @@ export class SnDashboardContainer extends LitElement {
    */
   private _handleFiscalYearChange = (e: CustomEvent) => {
     this.fiscalYear = e.detail.fiscalYear;
+  };
+
+  /**
+   * ラベルの変更イベントを処理します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnDashboardContainer
+   */
+  private _handleLabelChange = (e: CustomEvent) => {
+    this.labelId = e.detail.id;
   };
 
   // -------------------------------------------------------------
@@ -160,11 +185,13 @@ export class SnDashboardContainer extends LitElement {
       <sn-dashboard-header
         .fiscalYear=${this.fiscalYear}
         @change-fiscal-year=${this._handleFiscalYearChange}
+        @change-label=${this._handleLabelChange}
       ></sn-dashboard-header>
       <div class="main">
         <sn-dashboard-kpi-container
           class="row"
           .kpiWidgetValues=${this.kpiWidgetValues}
+          .labelId=${this.labelId}
         ></sn-dashboard-kpi-container>
         <div class="row flex chart">
           <sn-dashboard-chart-status

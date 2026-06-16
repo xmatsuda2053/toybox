@@ -19,7 +19,6 @@ import { emit } from "@/utils/EventUtils";
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import styles from "@sn/styles/dashboard/sn-dashboard-kpi-container.lit.scss?inline";
-import { defaultKeyFunction } from "@lit-labs/virtualizer/virtualize.js";
 
 // --- Configuration & Initialization ---
 
@@ -116,6 +115,14 @@ export class SnDashboardKpiContainer extends LitElement {
     overdue: 0,
   };
 
+  /**
+   * 選択中のラベルID
+   *
+   * @type {(number | undefined)}
+   * @memberof SnDashboardKpiContainer
+   */
+  @property({ type: Number }) labelId: number | undefined = undefined;
+
   // -------------------------------------------------------------
   // Lifecycle
   // -------------------------------------------------------------
@@ -134,19 +141,19 @@ export class SnDashboardKpiContainer extends LitElement {
   private _handleKpiWidgetClick = async (e: CustomEvent) => {
     switch (e.detail.variant) {
       case "upcoming":
-        await snDB.dashboardRepo.changeUpcomingMode();
+        await snDB.dashboardRepo.changeUpcomingMode(this.labelId);
         break;
       case "asap":
-        await snDB.dashboardRepo.changeAsapMode();
+        await snDB.dashboardRepo.changeAsapMode(this.labelId);
         break;
       case "overdue":
-        await snDB.dashboardRepo.changeOverdueMode();
+        await snDB.dashboardRepo.changeOverdueMode(this.labelId);
         break;
       case "pending":
-        await snDB.dashboardRepo.changePendingMode();
+        await snDB.dashboardRepo.changePendingMode(this.labelId);
         break;
       case "progress":
-        await snDB.dashboardRepo.changeProgressMode();
+        await snDB.dashboardRepo.changeProgressMode(this.labelId);
         break;
       default:
         break;
