@@ -106,7 +106,7 @@ export class ApFile extends LitElement {
   private _renderVersion(): HTMLTemplateResult {
     return html`<wa-dialog id="version-dialog" label=${this.selectedApp.label}>
       <div class="record">
-        <span class="version">version : 0.4.2</span>
+        <span class="version">version : 0.4.3</span>
       </div>
       <div class="record">
         <span class="motto">

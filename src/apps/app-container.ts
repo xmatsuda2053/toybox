@@ -111,7 +111,6 @@ export class AppContainer extends LitElement {
         </div>
         <ap-file .selectedApp=${this.selectedApp}></ap-file>
         <ap-selector @set-app=${this._setApp}></ap-selector>
-        <ap-tool></ap-tool>
         <ap-storage></ap-storage>
       </header>
       <main>${this.selectedApp.tag}</main>
