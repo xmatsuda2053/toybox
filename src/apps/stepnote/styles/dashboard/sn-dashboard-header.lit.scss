@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  gap: var(--wa-space-s);
   align-items: center;
 
   .title {

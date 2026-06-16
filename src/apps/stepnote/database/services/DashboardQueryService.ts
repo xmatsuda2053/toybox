@@ -25,6 +25,7 @@ export class DashboardQueryService {
    * ダッシュボード用データを検索します。
    *
    * @param {number} fiscalYear
+   * @param {(number | undefined)} labelId
    * @return {*}  {Promise<
    *     [KpiWidgetValue, BurnupValue[], BurnupValue[], LabelBreakdownValue[]]
    *   >}
@@ -32,12 +33,18 @@ export class DashboardQueryService {
    */
   async getDashboardData(
     fiscalYear: number,
+    labelId: number | undefined,
   ): Promise<
     [KpiWidgetValue, BurnupValue[], BurnupValue[], LabelBreakdownValue[]]
   > {
-    const tasks: Task[] =
+    let tasks: Task[] =
       await this.db.taskQuery.getTasksByFiscalYear(fiscalYear);
-    const labels: Label[] = await this.db.labelRepo.getLabelsAscName();
+    let labels: Label[] = await this.db.labelRepo.getLabelsAscName();
+
+    if (labelId) {
+      tasks = tasks.filter((t) => t.labelId === labelId);
+      labels = labels.filter((l) => l.id === labelId);
+    }
 
     return [
       this._getKpiWidgetValues(tasks),

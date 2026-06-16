@@ -18,65 +18,93 @@ export class DashboardRepository {
   /**
    * 期限間近タスクのみ表示するモードに切り替える。
    *
+   * @param {(number | undefined)} [labelId=undefined]
    * @return {*}  {Promise<void>}
    * @memberof DashboardRepository
    */
-  async changeUpcomingMode(): Promise<void> {
-    await this.changeMode({
-      isUpcomingSelected: 1,
-    });
+  async changeUpcomingMode(
+    labelId: number | undefined = undefined,
+  ): Promise<void> {
+    await this.changeMode(
+      {
+        isUpcomingSelected: 1,
+      },
+      labelId,
+    );
   }
 
   /**
    * 期限当日タスクのみ表示するモードに切り替える。
    *
+   * @param {(number | undefined)} [labelId=undefined]
    * @return {*}  {Promise<void>}
    * @memberof DashboardRepository
    */
-  async changeAsapMode(): Promise<void> {
-    await this.changeMode({
-      isAsapSelected: 1,
-    });
+  async changeAsapMode(labelId: number | undefined = undefined): Promise<void> {
+    await this.changeMode(
+      {
+        isAsapSelected: 1,
+      },
+      labelId,
+    );
   }
 
   /**
    * 期限超過タスクのみ表示するモードに切り替える。
    *
+   * @param {(number | undefined)} [labelId=undefined]
    * @return {*}  {Promise<void>}
    * @memberof DashboardRepository
    */
-  async changeOverdueMode(): Promise<void> {
-    await this.changeMode({
-      isOverdueSelected: 1,
-    });
+  async changeOverdueMode(
+    labelId: number | undefined = undefined,
+  ): Promise<void> {
+    await this.changeMode(
+      {
+        isOverdueSelected: 1,
+      },
+      labelId,
+    );
   }
 
   /**
    * 開始待ちタスクのみ表示するモードに切り替える。
    *
+   * @param {(number | undefined)} [labelId=undefined]
    * @return {*}  {Promise<void>}
    * @memberof DashboardRepository
    */
-  async changePendingMode(): Promise<void> {
-    await this.changeMode({
-      isPendingSelected: 1,
-      isProgressSelected: 0,
-      isDoneSelected: 0,
-    });
+  async changePendingMode(
+    labelId: number | undefined = undefined,
+  ): Promise<void> {
+    await this.changeMode(
+      {
+        isPendingSelected: 1,
+        isProgressSelected: 0,
+        isDoneSelected: 0,
+      },
+      labelId,
+    );
   }
 
   /**
    * 実行待ちタスクのみ表示するモードに切り替える。
    *
+   * @param {(number | undefined)} [labelId=undefined]
    * @return {*}  {Promise<void>}
    * @memberof DashboardRepository
    */
-  async changeProgressMode(): Promise<void> {
-    await this.changeMode({
-      isPendingSelected: 0,
-      isProgressSelected: 1,
-      isDoneSelected: 0,
-    });
+  async changeProgressMode(
+    labelId: number | undefined = undefined,
+  ): Promise<void> {
+    await this.changeMode(
+      {
+        isPendingSelected: 0,
+        isProgressSelected: 1,
+        isDoneSelected: 0,
+      },
+      labelId,
+    );
   }
 
   /**
@@ -84,9 +112,13 @@ export class DashboardRepository {
    *
    * @private
    * @param {Partial<QuickAccess>} data
+   * @param {(number | undefined)} [labelId=undefined]
    * @memberof DashboardRepository
    */
-  private async changeMode(data: Partial<QuickAccess>) {
+  private async changeMode(
+    data: Partial<QuickAccess>,
+    labelId: number | undefined = undefined,
+  ) {
     await this.db.transaction(
       "rw",
       [this.db.quickAccesses, this.db.labels, this.db.tasks],
@@ -94,6 +126,9 @@ export class DashboardRepository {
         await snDB.labelRepo.deSelectLabelAndDeSelectTaskInTransaction();
         await snDB.quickAccessRepo.changeInProgressModeInTransaction();
         await snDB.quickAccessRepo.updateQuickAccess(data);
+        if (labelId) {
+          await snDB.labelRepo.selectLabelInTransaction(labelId);
+        }
       },
     );
   }
