@@ -97,7 +97,16 @@ export class SnConfigTaskLimitDay extends LitElement {
    */
   protected render(): HTMLTemplateResult | typeof nothing {
     return html`<header>
-        期日の ${this.config.value.day} 日前から通知する
+        <span>期日の ${this.config.value.day} 日前から通知する</span>
+        <wa-tooltip for="help" placement="right">
+          期限日が近づいていることを通知する際の基準日数
+        </wa-tooltip>
+        <wa-icon
+          id="help"
+          class="help-icon"
+          library="my-icons"
+          name="circle-question-regular-full"
+        ></wa-icon>
       </header>
       <main>
         <wa-number-input

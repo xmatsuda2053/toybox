@@ -1,9 +1,22 @@
 header {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-xs);
   padding-inline-start: var(--wa-space-s);
   margin-block-end: var(--wa-space-xs);
 
   font-weight: bold;
   border-inline-start: 6px solid var(--wa-color-indigo-50);
+
+  .help-icon {
+    cursor: pointer;
+    font-size: var(--wa-font-size-l);
+    color: var(--wa-color-neutral-60);
+
+    &:hover {
+      color: var(--wa-color-indigo-50);
+    }
+  }
 }
 
 main {
