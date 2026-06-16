@@ -7,6 +7,7 @@ import angles_left_solid_full from "@assets/icons/angles-left-solid-full.svg?raw
 import angles_right_solid_full from "@assets/icons/angles-right-solid-full.svg?raw";
 import arrow_down_solid_full from "@assets/icons/arrow-down-solid-full.svg?raw";
 import arrow_rotate_right_solid_full from "@assets/icons/arrow-rotate-right-solid-full.svg?raw";
+import arrow_up_right_from_square_solid_full from "@assets/icons/arrow-up-right-from-square-solid-full.svg?raw";
 import arrow_up_solid_full from "@assets/icons/arrow-up-solid-full.svg?raw";
 import asterisk_solid_full from "@assets/icons/asterisk-solid-full.svg?raw";
 import bars_solid_full from "@assets/icons/bars-solid-full.svg?raw";
@@ -111,6 +112,7 @@ export const icons: Record<string, string> = {
   "angles-right-solid-full": angles_right_solid_full,
   "arrow-down-solid-full": arrow_down_solid_full,
   "arrow-rotate-right-solid-full": arrow_rotate_right_solid_full,
+  "arrow-up-right-from-square-solid-full": arrow_up_right_from_square_solid_full,
   "arrow-up-solid-full": arrow_up_solid_full,
   "asterisk-solid-full": asterisk_solid_full,
   "bars-solid-full": bars_solid_full,
