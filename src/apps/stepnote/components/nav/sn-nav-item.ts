@@ -45,6 +45,15 @@ export type navVariants =
  */
 @customElement("sn-nav-item")
 export class SnNavItem extends LitElement {
+
+  /**
+   * ラベル
+   *
+   * @type {string}
+   * @memberof SnNavItem
+   */
+  @property({ type: String }) label: string ="";
+
   /**
    * アイコン名
    *
@@ -108,6 +117,14 @@ export class SnNavItem extends LitElement {
    * @memberof SnNavItem
    */
   @property({ type: Boolean }) animation: boolean = false;
+
+  /**
+   * ツールチップの表示有無を制御する。
+   *
+   * @type {boolean}
+   * @memberof SnNavItem
+   */
+  @property({ type: Boolean }) tooltip: boolean = false;
 
   /**
    * スタイルシートを適用
@@ -175,13 +192,28 @@ export class SnNavItem extends LitElement {
     });
 
     return html`<div id="contents-root" class=${baseClassMap}>
+      ${this._renderTooltip()}
       <div class="button-area" @click=${this._handleItemClick}>
         <div class="icon">${this._renderIcon()}</div>
-        <div class="label">${this._renderCaret()}<slot></slot></div>
+        <div class="label">${this._renderCaret()}${this.label}</div>
       </div>
       <div class="end">${this._renderDot()} ${this._renderEyeIcon()}</div>
       ${this._renderMenu()}
     </div>`;
+  }
+
+  /**
+   * ツールチップをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof SnNavItem
+   */
+  private _renderTooltip(): HTMLTemplateResult | typeof nothing {
+    if (!this.tooltip) return nothing;
+    return html`<wa-tooltip for="contents-root" placement="right" without-arrow>
+      ${this.label}
+    </wa-tooltip>`;
   }
 
   /**
