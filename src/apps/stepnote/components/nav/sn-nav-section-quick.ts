@@ -403,9 +403,10 @@ export class SnNavSectionQuick extends LitElement {
           }
 
           return html` <sn-nav-item
-            icon=${item.icon as string}
-            eventName="click-qa-item"
-            variants=${item.variants!}
+            .label=${item.label as string}
+            .icon=${item.icon as string}
+            .eventName="click-qa-item"
+            .variants=${item.variants!}
             ?selected=${item.isSelected}
             ?viewable=${item.isViewable}
             ?animation=${item.hasAlert}
@@ -414,7 +415,6 @@ export class SnNavSectionQuick extends LitElement {
               this._toggleSelected(item.key!);
             }}
           >
-            ${item.label}
           </sn-nav-item>`;
         })}
       </div>
