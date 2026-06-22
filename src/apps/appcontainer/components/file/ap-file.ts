@@ -18,6 +18,13 @@ import styles from "@ap/styles/file/ap-file.lit.scss?inline";
 setBasePath("/");
 
 /**
+ * バージョン
+ * 
+ * @type {string}
+ */
+const VERSION: string = "0.4.4";
+
+/**
  * アプリケーションコンテナー
  *
  * @export
@@ -106,7 +113,7 @@ export class ApFile extends LitElement {
   private _renderVersion(): HTMLTemplateResult {
     return html`<wa-dialog id="version-dialog" label=${this.selectedApp.label}>
       <div class="record">
-        <span class="version">version : 0.4.3</span>
+        <span class="version">version : ${VERSION}</span>
       </div>
       <div class="record">
         <span class="motto">
