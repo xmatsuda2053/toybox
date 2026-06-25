@@ -45,14 +45,13 @@ export type navVariants =
  */
 @customElement("sn-nav-item")
 export class SnNavItem extends LitElement {
-
   /**
    * ラベル
    *
    * @type {string}
    * @memberof SnNavItem
    */
-  @property({ type: String }) label: string ="";
+  @property({ type: String }) label: string = "";
 
   /**
    * アイコン名
@@ -61,14 +60,6 @@ export class SnNavItem extends LitElement {
    * @memberof SnNavItem
    */
   @property({ type: String }) icon: string = "tag-solid-full";
-
-  /**
-   * イベント名
-   *
-   * @type {string}
-   * @memberof SnNavItem
-   */
-  @property({ type: String }) eventName: string = "click-nav-item";
 
   /**
    * 編集可否
@@ -145,7 +136,7 @@ export class SnNavItem extends LitElement {
    * @memberof SnNavItem
    */
   private _handleItemClick = (): void => {
-    emit(this, this.eventName);
+    emit(this, "click-nav-item");
   };
 
   /**
