@@ -405,13 +405,12 @@ export class SnNavSectionQuick extends LitElement {
           return html` <sn-nav-item
             .label=${item.label as string}
             .icon=${item.icon as string}
-            .eventName="click-qa-item"
             .variants=${item.variants!}
             ?selected=${item.isSelected}
             ?viewable=${item.isViewable}
             ?animation=${item.hasAlert}
             ?dot=${item.hasAlert}
-            @click-qa-item=${() => {
+            @click-nav-item=${() => {
               this._toggleSelected(item.key!);
             }}
           >
