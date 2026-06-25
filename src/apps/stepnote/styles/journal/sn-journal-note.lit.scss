@@ -2,20 +2,20 @@
 
 #contents-root {
   height: 100%;
-  padding-inline: var(--wa-space-2xs);
 
-  thin-markdown-editor {
-    flex: 1;
-  }
+  padding-inline-start: var(--wa-space-2xs);
 
-  scrollbar-gutter: stable;
-  @include mixins.scrollable(
-    var(--wa-color-neutral-30),
-    var(--wa-color-neutral-40),
-    var(--wa-color-neutral-40)
-  );
+  .main {
+    height: 100%;
+    scrollbar-gutter: stable;
+    @include mixins.scrollable(
+      var(--wa-color-neutral-30),
+      var(--wa-color-neutral-40),
+      var(--wa-color-neutral-40)
+    );
 
-  &:hover {
-    --sb-thumb-color: var(--wa-color-neutral-20);
+    &:hover {
+      --sb-thumb-color: var(--wa-color-neutral-20);
+    }
   }
 }

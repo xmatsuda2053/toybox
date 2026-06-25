@@ -311,6 +311,27 @@ export class ThinMarkdownEditor extends LitElement {
   };
 
   /**
+   * エディタのキーアップイベントを処理する。
+   *
+   * @private
+   * @param {KeyboardEvent} e
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleMarkdownKeyup = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const textarea = this.toolbar.field;
+      if (textarea) {
+        const value = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const isLastLine = !value.slice(selectionStart).includes("\n");
+        if (isLastLine) {
+          emit(this, "keyup-enter-last-line");
+        }
+      }
+    }
+  };
+
+  /**
    * HTMLプレビュー画面に切り替える。
    *
    * @private
@@ -800,6 +821,7 @@ export class ThinMarkdownEditor extends LitElement {
       placeholder="Markdown enabled..."
       .value=${this.value}
       @input=${this._handleMarkdownInput}
+      @keyup=${this._handleMarkdownKeyup}
     ></wa-textarea>`;
   }
 

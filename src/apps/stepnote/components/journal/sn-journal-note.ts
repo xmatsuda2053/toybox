@@ -112,6 +112,22 @@ export class SnJournalNote extends LitElement {
     });
   };
 
+  /**
+   * エディタの最終行でEnterキーが押下された場合、画面最下部までスクロールします。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnJournalNote
+   */
+  private _handleKeyupEnterLastLine = (e: CustomEvent) => {
+    const target = e.target as ThinMarkdownEditor;
+    const parent = target.parentNode as HTMLElement;
+    parent.scrollTo({
+      top: parent.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -128,10 +144,13 @@ export class SnJournalNote extends LitElement {
     if (!this.notes || this.notes.length === 0) return nothing;
 
     return html`<div id="contents-root">
-      <thin-markdown-editor
-        .value=${this.notes[0].value}
-        @input=${this._handleNoteInput}
-      ></thin-markdown-editor>
+      <div class="main">
+        <thin-markdown-editor
+          .value=${this.notes[0].value}
+          @input=${this._handleNoteInput}
+          @keyup-enter-last-line=${this._handleKeyupEnterLastLine}
+        ></thin-markdown-editor>
+      </div>
     </div>`;
   }
 }
