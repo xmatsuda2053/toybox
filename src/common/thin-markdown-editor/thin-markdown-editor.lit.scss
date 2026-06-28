@@ -71,7 +71,6 @@
           wa-dropdown {
             wa-dropdown-item {
               font-size: var(--wa-font-size-s);
-              color: var(--wa-color-neutral-20);
 
               wa-icon {
                 font-size: var(--wa-font-size-m);
@@ -257,7 +256,7 @@
     }
   }
 
-  wa-dialog {
+  #table-dialog {
     --width: 250px;
     &#table-dialog {
       .inner-item {
