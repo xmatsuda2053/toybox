@@ -17,6 +17,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { ThinMarkdownEditor } from "@/common/thin-markdown-editor/thin-markdown-editor";
 import { snDB } from "@sn/database/SnDB";
 import { Note } from "@sn/models/Note";
+import { formatDate } from "@utils/DateUtils";
 
 // Internal Shared (Utils)
 import { debounce } from "@/utils/CommonUtils";
@@ -162,6 +163,14 @@ export class SnJournalNote extends LitElement {
           @keyup-enter-last-line=${this._handleKeyupEnterLastLine}
           @markdown-delete=${this._handleDeleteNote}
         ></thin-markdown-editor>
+      </div>
+      <div class="footer">
+        <span class="create-timestamp">
+          Crt.${formatDate(this.note.createdAt, "yy/MM/dd HH:mm:ss")}
+        </span>
+        <span class="update-timestamp">
+          Upd.${formatDate(this.note.updatedAt, "yy/MM/dd HH:mm:ss")}
+        </span>
       </div>
     </div>`;
   }
