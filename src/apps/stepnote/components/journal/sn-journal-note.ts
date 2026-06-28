@@ -49,10 +49,10 @@ export class SnJournalNote extends LitElement {
   /**
    * ノート一覧
    *
-   * @type {Note[]}
+   * @type {Note}
    * @memberof SnJournalNote
    */
-  @property({ type: Array }) notes!: Note[];
+  @property({ type: Object }) note!: Note;
 
   /**
    * スタイルシートを適用
@@ -105,9 +105,9 @@ export class SnJournalNote extends LitElement {
     const target = e.target as ThinMarkdownEditor;
     if (!target) return;
 
-    this.notes[0].value = target.value;
+    this.note.value = target.value;
     this._updateNoteDatabase({
-      id: this.notes[0].id,
+      id: this.note.id,
       value: target.value,
     });
   };
@@ -141,12 +141,12 @@ export class SnJournalNote extends LitElement {
    * @memberof SnJournalNote
    */
   protected render(): HTMLTemplateResult | typeof nothing {
-    if (!this.notes || this.notes.length === 0) return nothing;
+    if (!this.note) return nothing;
 
     return html`<div id="contents-root">
       <div class="main">
         <thin-markdown-editor
-          .value=${this.notes[0].value}
+          .value=${this.note.value}
           @input=${this._handleNoteInput}
           @keyup-enter-last-line=${this._handleKeyupEnterLastLine}
         ></thin-markdown-editor>
