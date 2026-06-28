@@ -65,4 +65,15 @@ export class LogRepository {
       .between([taskId, Dexie.minKey], [taskId, Dexie.maxKey])
       .toArray();
   }
+
+  /**
+   * ログを削除します。
+   *
+   * @param {number} id
+   * @return {*}  {Promise<void>}
+   * @memberof LogRepository
+   */
+  async deleteLog(id: number): Promise<void> {
+    await this.db.logs.delete(id);
+  }
 }
