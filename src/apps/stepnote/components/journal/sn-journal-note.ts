@@ -128,6 +128,16 @@ export class SnJournalNote extends LitElement {
     });
   };
 
+  /**
+   * ノート削除イベントハンドラ
+   *
+   * @private
+   * @memberof SnJournalNote
+   */
+  private _handleDeleteNote = async () => {
+    await snDB.noteRepo.deleteNote(this.note.id!);
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -147,8 +157,10 @@ export class SnJournalNote extends LitElement {
       <div class="main">
         <thin-markdown-editor
           .value=${this.note.value}
+          deletable
           @input=${this._handleNoteInput}
           @keyup-enter-last-line=${this._handleKeyupEnterLastLine}
+          @markdown-delete=${this._handleDeleteNote}
         ></thin-markdown-editor>
       </div>
     </div>`;

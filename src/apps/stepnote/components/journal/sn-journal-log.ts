@@ -207,7 +207,7 @@ export class SnJournalLog extends LitElement {
       return;
     }
 
-    await snDB.logs.delete(Number(logId));
+    await snDB.logRepo.deleteLog(Number(logId));
     this._deleteDialog.dataset.logId = "";
     this._deleteDialog.open = false;
   };

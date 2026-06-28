@@ -19,6 +19,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
+import { formatDate } from "@utils/DateUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -257,17 +258,20 @@ export class SnTabJournal extends LitElement {
       ${repeat(
         this.notes,
         (note) => note.id,
-        (note, index) => {
+        (note) => {
           const hasData = note.value.trim() !== "";
-          return html`<wa-tab panel="note_${note.id}">
-            ${hasData
-              ? html`<wa-icon
-                  class="tab-dot"
-                  library="my-icons"
-                  name="circle-solid-full"
-                ></wa-icon>`
-              : nothing}Note${index + 1}</wa-tab
-          >`;
+          return html`<wa-tooltip for="label_${note.id}" without-arrow>
+              ${formatDate(note.createdAt, "yy/MM/dd HH:mm")}
+            </wa-tooltip>
+            <wa-tab panel="note_${note.id}">
+              ${hasData
+                ? html`<wa-icon
+                    class="tab-dot"
+                    library="my-icons"
+                    name="circle-solid-full"
+                  ></wa-icon>`
+                : nothing}<span id="label_${note.id}">Note${note.id}</span>
+            </wa-tab>`;
         },
       )}
       <wa-tab-panel name="log">
