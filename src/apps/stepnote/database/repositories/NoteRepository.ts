@@ -67,4 +67,15 @@ export class NoteRepository {
       .between([taskId, Dexie.minKey], [taskId, Dexie.maxKey])
       .toArray();
   }
+
+  /**
+   * ノートを削除します。
+   *
+   * @param {number} id
+   * @return {*}  {Promise<void>}
+   * @memberof NoteRepository
+   */
+  async deleteNote(id: number): Promise<void> {
+    await this.db.notes.delete(id);
+  }
 }

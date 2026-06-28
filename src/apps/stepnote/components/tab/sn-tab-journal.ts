@@ -10,6 +10,7 @@ import { liveQuery, type Subscription } from "dexie";
 
 // Lit Extensions (Decorators & Directives)
 import { customElement, state } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 
 // Third-party UI & SDKs
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
@@ -18,6 +19,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { snDB } from "@sn/database/SnDB";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
+import { formatDate } from "@utils/DateUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -58,7 +60,7 @@ export class SnTabJournal extends LitElement {
    * @type {Log[]}
    * @memberof SnTabJournal
    */
-  @state() logs!: Log[];
+  @state() logs: Log[] = [];
 
   /**
    * ノート一覧
@@ -66,7 +68,7 @@ export class SnTabJournal extends LitElement {
    * @type {Note[]}
    * @memberof SnTabJournal
    */
-  @state() notes!: Note[];
+  @state() notes: Note[] = [];
 
   /**
    * 選択中タブ
@@ -175,6 +177,21 @@ export class SnTabJournal extends LitElement {
     this._activeTab = e.detail.name;
   }
 
+  /**
+   * 新規ノート追加ボタンクリック時の処理を制御する。
+   *
+   * @private
+   * @memberof SnTabJournal
+   */
+  private async _handleAddNoteClick() {
+    const note: Note = {
+      taskId: this.taskId,
+      value: "",
+    };
+    await snDB.noteRepo.addNote(note);
+    this._activeTab = `note_${note.id}`;
+  }
+
   // -------------------------------------------------------------
   // レンダリング
   // -------------------------------------------------------------
@@ -201,8 +218,28 @@ export class SnTabJournal extends LitElement {
    * @return {*}  {HTMLTemplateResult}
    * @memberof SnTabJournal
    */
-  private _renderHeader(): HTMLTemplateResult {
-    return html` <div class="title">JOURNAL</div> `;
+  private _renderHeader(): HTMLTemplateResult | typeof nothing {
+    return html`<div class="title">JOURNAL</div>
+      ${this._renderAddNote()}`;
+  }
+
+  /**
+   * 新規ノート作成アイコンをレンダリングする。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult | typeof nothing}
+   * @memberof SnTabJournal
+   */
+  private _renderAddNote(): HTMLTemplateResult | typeof nothing {
+    if (!this._activeTab.includes("note")) return nothing;
+    return html`<div class="menu">
+      <wa-icon
+        library="my-icons"
+        name="plus-solid-full"
+        class="icon-button"
+        @click=${this._handleAddNoteClick}
+      ></wa-icon>
+    </div>`;
   }
 
   /**
@@ -213,35 +250,48 @@ export class SnTabJournal extends LitElement {
    * @memberof SnTabJournal
    */
   private _renderMain(): HTMLTemplateResult {
-    const hasNote = this.notes?.[0]?.value.trim() !== "";
-
     return html` <wa-tab-group
       .active=${this._activeTab}
       @wa-tab-show=${this._handleTabChange}
     >
       <wa-tab panel="log">Log</wa-tab>
-      <wa-tab panel="note">
-        ${hasNote
-          ? html`<wa-icon
-              class="tab-dot"
-              library="my-icons"
-              name="circle-solid-full"
-            ></wa-icon>`
-          : nothing}
-        Note
-      </wa-tab>
+      ${repeat(
+        this.notes,
+        (note) => note.id,
+        (note) => {
+          const hasData = note.value.trim() !== "";
+          return html`<wa-tooltip for="label_${note.id}" without-arrow>
+              ${formatDate(note.createdAt, "yy/MM/dd HH:mm")}
+            </wa-tooltip>
+            <wa-tab panel="note_${note.id}">
+              ${hasData
+                ? html`<wa-icon
+                    class="tab-dot"
+                    library="my-icons"
+                    name="circle-solid-full"
+                  ></wa-icon>`
+                : nothing}<span id="label_${note.id}">Note${note.id}</span>
+            </wa-tab>`;
+        },
+      )}
       <wa-tab-panel name="log">
         <sn-journal-log
           .taskId=${this.taskId}
           .logs=${this.logs}
         ></sn-journal-log>
       </wa-tab-panel>
-      <wa-tab-panel name="note">
-        <sn-journal-note
-          .taskId=${this.taskId}
-          .notes=${this.notes}
-        ></sn-journal-note>
-      </wa-tab-panel>
+      ${repeat(
+        this.notes,
+        (note) => note.id,
+        (note) => {
+          return html` <wa-tab-panel name="note_${note.id}">
+            <sn-journal-note
+              .taskId=${this.taskId}
+              .note=${note}
+            ></sn-journal-note>
+          </wa-tab-panel>`;
+        },
+      )}
     </wa-tab-group>`;
   }
 }

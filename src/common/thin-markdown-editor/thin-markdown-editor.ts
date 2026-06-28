@@ -5,6 +5,7 @@ import {
   unsafeCSS,
   type HTMLTemplateResult,
   type PropertyValues,
+  nothing,
 } from "lit";
 import { unsafeStatic, withStatic } from "lit/static-html.js";
 import { marked } from "marked";
@@ -99,6 +100,14 @@ export class ThinMarkdownEditor extends LitElement {
   @property({ type: Boolean }) isEditMode: boolean = false;
 
   /**
+   * 削除可否の制御
+   *
+   * @type {boolean}
+   * @memberof ThinMarkdownEditor
+   */
+  @property({ type: Boolean }) deletable: boolean = false;
+
+  /**
    * プレビュー用
    *
    * @type {string}
@@ -133,6 +142,14 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof MarkdownEditor
    */
   @query("#markdown-editor") markdownEditor!: WaTextarea;
+
+  /**
+   * 削除ダイアログ
+   *
+   * @type {WaDialog}
+   * @memberof ThinMarkdownEditor
+   */
+  @query("#delete-dialog") deleteDialog!: WaDialog;
 
   /**
    * Markdownのレンダリング部品を準備
@@ -311,6 +328,27 @@ export class ThinMarkdownEditor extends LitElement {
   };
 
   /**
+   * エディタのキーアップイベントを処理する。
+   *
+   * @private
+   * @param {KeyboardEvent} e
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleMarkdownKeyup = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const textarea = this.toolbar.field;
+      if (textarea) {
+        const value = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const isLastLine = !value.slice(selectionStart).includes("\n");
+        if (isLastLine) {
+          emit(this, "keyup-enter-last-line");
+        }
+      }
+    }
+  };
+
+  /**
    * HTMLプレビュー画面に切り替える。
    *
    * @private
@@ -451,6 +489,26 @@ export class ThinMarkdownEditor extends LitElement {
 
     // 内容の変更を通知
     nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  /**
+   * 削除ボタンクリック時のハンドラ。
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleDeleteClick = () => {
+    if (this.deletable) this.deleteDialog.open = true;
+  };
+
+  /**
+   * 削除承認時のハンドラ。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleDeleteConfirm = () => {
+    emit(this, "markdown-delete");
+    this.deleteDialog.open = false;
   };
 
   /**
@@ -664,8 +722,11 @@ export class ThinMarkdownEditor extends LitElement {
           ${this._renderTableButton()}
           <!-- TimeStamp -->
           ${this._renderTimeStampButton()}
+          <!-- Delete Menu -->
+          ${this._renderDeleteButton()}
         </wa-dropdown>
       </markdown-toolbar>
+      ${this._renderDeleteDialog()}
     </div>`;
   }
 
@@ -780,6 +841,54 @@ export class ThinMarkdownEditor extends LitElement {
   }
 
   /**
+   * 削除ボタンをレンダリングします。
+   *
+   * @private
+   * @returns {HTMLTemplateResult | typeof nothing}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderDeleteButton(): HTMLTemplateResult | typeof nothing {
+    if (!this.deletable) return nothing;
+    return html`<wa-divider></wa-divider>
+      <wa-dropdown-item variant="danger" @click=${this._handleDeleteClick}>
+        <wa-icon library="my-icons" name="trash-solid-full"></wa-icon>
+        <span>Delete</span>
+      </wa-dropdown-item>`;
+  }
+
+  /**
+   * 削除確認ダイアログをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderDeleteDialog(): HTMLTemplateResult | typeof nothing {
+    if (!this.deletable) return nothing;
+    return html` <wa-dialog id="delete-dialog" label="Delete Markdown?">
+      <div class="delete-confirmation">この操作は取り消せません。</div>
+      <wa-button
+        slot="footer"
+        variant="danger"
+        appearance="accent"
+        size="small"
+        @click=${this._handleDeleteConfirm}
+      >
+        削除
+      </wa-button>
+      <wa-button
+        slot="footer"
+        variant="neutral"
+        appearance="filled-outlined"
+        size="small"
+        data-dialog="close"
+      >
+        キャンセル
+      </wa-button>
+    </wa-dialog>`;
+  }
+
+  /**
    * Markdownの編集領域をレンダリングします。
    *
    * @private
@@ -800,6 +909,7 @@ export class ThinMarkdownEditor extends LitElement {
       placeholder="Markdown enabled..."
       .value=${this.value}
       @input=${this._handleMarkdownInput}
+      @keyup=${this._handleMarkdownKeyup}
     ></wa-textarea>`;
   }
 
