@@ -1,0 +1,61 @@
+@use "../../../_shared/mixins";
+
+.contents-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+  height: 100%;
+  width: 100%;
+
+  padding-block: var(--wa-space-s);
+
+  background: var(--wa-color-neutral-20);
+
+  color: var(--wa-color-neutral-95);
+  font-size: var(--wa-font-size-m);
+  font-weight: bold;
+
+  header {
+    display: flex;
+    margin-inline: var(--wa-space-s);
+
+    .label {
+      margin-inline-end: auto;
+    }
+    wa-icon {
+      cursor: pointer;
+      font-size: var(--wa-font-size-l);
+      transition:
+        transform 0.2s ease-in-out,
+        color 0.2s;
+
+      &:hover {
+        color: var(--wa-color-neutral-70);
+      }
+    }
+  }
+
+  search-input {
+    margin-inline: var(--wa-space-s);
+  }
+
+  main {
+    flex: 1;
+    overflow-y: auto;
+
+    margin-block-start: var(--wa-space-xs);
+    margin-inline: var(--wa-space-2xs);
+    padding-inline-end: var(--wa-space-2xs);
+
+    scrollbar-gutter: stable;
+    @include mixins.scrollable(
+      var(--wa-color-neutral-90),
+      var(--wa-color-neutral-70),
+      var(--wa-color-neutral-70)
+    );
+
+    &:hover {
+      --sb-thumb-color: var(--wa-color-neutral-90);
+    }
+  }
+}

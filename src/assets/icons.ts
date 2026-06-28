@@ -13,6 +13,8 @@ import asterisk_solid_full from "@assets/icons/asterisk-solid-full.svg?raw";
 import bars_solid_full from "@assets/icons/bars-solid-full.svg?raw";
 import blockquote_left from "@assets/icons/blockquote-left.svg?raw";
 import bold_solid_full from "@assets/icons/bold-solid-full.svg?raw";
+import book_open_solid_full from "@assets/icons/book-open-solid-full.svg?raw";
+import book_solid_full from "@assets/icons/book-solid-full.svg?raw";
 import bookmark_regular_full from "@assets/icons/bookmark-regular-full.svg?raw";
 import bookmark_solid_full from "@assets/icons/bookmark-solid-full.svg?raw";
 import border_none_solid_full from "@assets/icons/border-none-solid-full.svg?raw";
@@ -96,6 +98,7 @@ import sliders_solid_full from "@assets/icons/sliders-solid-full.svg?raw";
 import stop_solid_full from "@assets/icons/stop-solid-full.svg?raw";
 import table_solid_full from "@assets/icons/table-solid-full.svg?raw";
 import tag_solid_full from "@assets/icons/tag-solid-full.svg?raw";
+import thumbtack_solid_full from "@assets/icons/thumbtack-solid-full.svg?raw";
 import trash_solid_full from "@assets/icons/trash-solid-full.svg?raw";
 import triangle_exclamation_solid_full from "@assets/icons/triangle-exclamation-solid-full.svg?raw";
 import upload_solid_full from "@assets/icons/upload-solid-full.svg?raw";
@@ -118,6 +121,8 @@ export const icons: Record<string, string> = {
   "bars-solid-full": bars_solid_full,
   "blockquote-left": blockquote_left,
   "bold-solid-full": bold_solid_full,
+  "book-open-solid-full": book_open_solid_full,
+  "book-solid-full": book_solid_full,
   "bookmark-regular-full": bookmark_regular_full,
   "bookmark-solid-full": bookmark_solid_full,
   "border-none-solid-full": border_none_solid_full,
@@ -201,6 +206,7 @@ export const icons: Record<string, string> = {
   "stop-solid-full": stop_solid_full,
   "table-solid-full": table_solid_full,
   "tag-solid-full": tag_solid_full,
+  "thumbtack-solid-full": thumbtack_solid_full,
   "trash-solid-full": trash_solid_full,
   "triangle-exclamation-solid-full": triangle_exclamation_solid_full,
   "upload-solid-full": upload_solid_full,

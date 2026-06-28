@@ -69,9 +69,13 @@ import "@sn/components/dashboard/sn-dashboard-container";
 import "@sn/components/dashboard/sn-dashboard-header";
 import "@sn/components/dashboard/sn-dashboard-kpi-container";
 import "@sn/components/dashboard/sn-dashboard-kpi-widget";
-import "@/apps/stepnote/components/dashboard/sn-dashboard-chart-status";
-import "@/apps/stepnote/components/dashboard/sn-dashboard-chart-burnup";
-import "@/apps/stepnote/components/dashboard/sn-dashboard-chart-label-breakdown";
+import "@sn/components/dashboard/sn-dashboard-chart-status";
+import "@sn/components/dashboard/sn-dashboard-chart-burnup";
+import "@sn/components/dashboard/sn-dashboard-chart-label-breakdown";
+
+import "@sn/components/free-note/sn-free-note-container";
+import "@sn/components/free-note/sn-free-note-nav";
+import "@sn/components/free-note/sn-free-note-nav-item";
 
 import "@sn/components/config/sn-config-container";
 import "@sn/components/config/sn-config-task-limit-day";

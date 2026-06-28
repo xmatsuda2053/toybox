@@ -1,0 +1,33 @@
+@use "../../../_shared/mixins";
+
+.contents-root {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  nav {
+    width: 300px;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  main {
+    flex: 1;
+    padding: var(--wa-space-xs);
+    padding-inline-end: 0;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    @include mixins.scrollable(
+      var(--wa-color-neutral-30),
+      var(--wa-color-neutral-40),
+      var(--wa-color-neutral-40)
+    );
+    &:hover {
+      --sb-thumb-color: var(--wa-color-neutral-20);
+    }
+
+    background-color: var(--wa-color-neutral-95);
+  }
+}
