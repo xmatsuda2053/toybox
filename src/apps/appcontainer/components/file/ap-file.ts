@@ -19,10 +19,10 @@ setBasePath("/");
 
 /**
  * バージョン
- * 
+ *
  * @type {string}
  */
-const VERSION: string = "0.4.4";
+const VERSION: string = "0.4.5";
 
 /**
  * アプリケーションコンテナー
