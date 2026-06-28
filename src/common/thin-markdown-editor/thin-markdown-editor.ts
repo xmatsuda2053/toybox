@@ -311,6 +311,24 @@ export class ThinMarkdownEditor extends LitElement {
     e.stopPropagation();
   };
 
+  /**
+   * Markdownの1行目からレベル1の見出しテキストを取得する。
+   *
+   * @private
+   * @param {string} value
+   * @return {*}  {string}
+   * @memberof ThinMarkdownEditor
+   */
+  private _getLevel1HeaderText(value: string): string {
+    if (!value) return "";
+    const firstLine = value.split(/\r?\n/)[0]?.trim() ?? "";
+
+    if (!firstLine.startsWith("# ")) return "";
+
+    const match = firstLine.match(/^#\s+(.+)$/);
+    return match ? match[1] : "";
+  }
+
   // -------------------------------------------------------------
   // Event
   // -------------------------------------------------------------
@@ -322,9 +340,12 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   private _handleMarkdownInput = (e: Event) => {
+    e.stopPropagation();
+
     const textarea = e.target as WaTextarea;
     this.value = textarea.value ?? "";
-    emit(this, "input");
+    const header1 = this._getLevel1HeaderText(this.value);
+    emit(this, "input", { detail: { header1: header1 } });
   };
 
   /**

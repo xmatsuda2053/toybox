@@ -56,6 +56,21 @@ export class SnFreeNoteContainer extends LitElement {
     });
   };
 
+  /**
+   * Markdown入力イベントを制御します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnFreeNoteContainer
+   */
+  private _handleInput = (e: CustomEvent) => {
+    const target = e.target as ThinMarkdownEditor;
+    const value = target.value;
+    const header1 = e.detail.header1;
+
+    console.log(header1);
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -78,6 +93,7 @@ export class SnFreeNoteContainer extends LitElement {
         <thin-markdown-editor
           deletable
           @keyup-enter-last-line=${this._handleKeyupEnterLastLine}
+          @input=${this._handleInput}
         ></thin-markdown-editor>
       </main>
     </div>`;
