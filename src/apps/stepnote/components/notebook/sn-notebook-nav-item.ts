@@ -21,7 +21,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/free-note/sn-free-note-nav-item.lit.scss?inline";
+import styles from "@sn/styles/notebook/sn-notebook-nav-item.lit.scss?inline";
 
 // Initializations
 setBasePath("/");
@@ -30,16 +30,16 @@ setBasePath("/");
  * ナビゲーションアイテム
  *
  * @export
- * @class SnFreeNoteNavItem
+ * @class SnNotebookNavItem
  * @extends {LitElement}
  */
-@customElement("sn-free-note-nav-item")
-export class SnFreeNoteNavItem extends LitElement {
+@customElement("sn-notebook-nav-item")
+export class SnNotebookNavItem extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof SnFreeNoteContainer
+   * @memberof SnNotebookNavItem
    */
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
@@ -47,7 +47,7 @@ export class SnFreeNoteNavItem extends LitElement {
    * 選択状態
    *
    * @type {boolean}
-   * @memberof SnFreeNoteNavItem
+   * @memberof SnNotebookNavItem
    */
   @property({ type: Boolean }) selected: boolean = false;
 
@@ -55,7 +55,7 @@ export class SnFreeNoteNavItem extends LitElement {
    * ピン留め状態
    *
    * @type {boolean}
-   * @memberof SnFreeNoteNavItem
+   * @memberof SnNotebookNavItem
    */
   @property({ type: Boolean }) pinned: boolean = false;
 
@@ -72,7 +72,7 @@ export class SnFreeNoteNavItem extends LitElement {
    *
    * @protected
    * @return {*}  {HTMLTemplateResult}
-   * @memberof SnFreeNoteNavItem
+   * @memberof SnNotebookNavItem
    */
   protected render(): HTMLTemplateResult {
     const baseClassMap = classMap({
@@ -100,7 +100,7 @@ export class SnFreeNoteNavItem extends LitElement {
    *
    * @private
    * @return {*}  {(HTMLTemplateResult | typeof nothing)}
-   * @memberof SnFreeNoteNavItem
+   * @memberof SnNotebookNavItem
    */
   private _renderCaret(): HTMLTemplateResult | typeof nothing {
     if (!this.selected) return nothing;

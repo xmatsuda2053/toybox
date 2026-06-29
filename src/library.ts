@@ -73,9 +73,9 @@ import "@sn/components/dashboard/sn-dashboard-chart-status";
 import "@sn/components/dashboard/sn-dashboard-chart-burnup";
 import "@sn/components/dashboard/sn-dashboard-chart-label-breakdown";
 
-import "@sn/components/free-note/sn-free-note-container";
-import "@sn/components/free-note/sn-free-note-nav";
-import "@sn/components/free-note/sn-free-note-nav-item";
+import "@sn/components/notebook/sn-notebook-container";
+import "@sn/components/notebook/sn-notebook-nav";
+import "@sn/components/notebook/sn-notebook-nav-item";
 
 import "@sn/components/config/sn-config-container";
 import "@sn/components/config/sn-config-task-limit-day";

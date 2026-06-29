@@ -15,8 +15,8 @@
 
   main {
     flex: 1;
-    padding: var(--wa-space-xs);
-    padding-inline-end: 0;
+    //padding: var(--wa-space-xs);
+    //padding-inline-end: 0;
     overflow-y: auto;
     scrollbar-gutter: stable;
     @include mixins.scrollable(

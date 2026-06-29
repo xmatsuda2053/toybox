@@ -15,25 +15,25 @@ import { ThinMarkdownEditor } from "@/common/thin-markdown-editor/thin-markdown-
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/free-note/sn-free-note-container.lit.scss?inline";
+import styles from "@sn/styles/notebook/sn-notebook-container.lit.scss?inline";
 
 // Initializations
 setBasePath("/");
 
 /**
- * フリーノートコンテナ
+ * ノートブックコンテナ
  *
  * @export
- * @class SnFreeNoteContainer
+ * @class SnNotebookContainer
  * @extends {LitElement}
  */
-@customElement("sn-free-note-container")
-export class SnFreeNoteContainer extends LitElement {
+@customElement("sn-notebook-container")
+export class SnNotebookContainer extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof SnFreeNoteContainer
+   * @memberof SnNotebookContainer
    */
   static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
 
@@ -45,7 +45,7 @@ export class SnFreeNoteContainer extends LitElement {
    *
    * @private
    * @param {CustomEvent} e
-   * @memberof SnJournalNote
+   * @memberof SnNotebookContainer
    */
   private _handleKeyupEnterLastLine = (e: CustomEvent) => {
     const target = e.target as ThinMarkdownEditor;
@@ -61,7 +61,7 @@ export class SnFreeNoteContainer extends LitElement {
    *
    * @private
    * @param {CustomEvent} e
-   * @memberof SnFreeNoteContainer
+   * @memberof SnNotebookContainer
    */
   private _handleInput = (e: CustomEvent) => {
     const target = e.target as ThinMarkdownEditor;
@@ -82,12 +82,12 @@ export class SnFreeNoteContainer extends LitElement {
    * @protected
    * @override
    * @returns {HTMLTemplateResult} レンダリングされる Lit テンプレート
-   * @memberof SnFreeNoteContainer
+   * @memberof SnNotebookContainer
    */
   protected render(): HTMLTemplateResult {
     return html`<div class="contents-root">
       <nav>
-        <sn-free-note-nav></sn-free-note-nav>
+        <sn-notebook-nav></sn-notebook-nav>
       </nav>
       <main>
         <thin-markdown-editor

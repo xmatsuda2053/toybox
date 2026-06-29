@@ -73,11 +73,11 @@ $width-list: 310px;
     }
   }
 
-  // フリーノート
-  .free-note-content {
+  // ノートブック
+  .notebook-content {
     grid-template-columns: $width-menu 1fr;
 
-    sn-free-note-container {
+    sn-notebook-container {
       min-height: 0;
     }
   }

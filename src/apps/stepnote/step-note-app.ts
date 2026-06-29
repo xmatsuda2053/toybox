@@ -99,13 +99,13 @@ export class StepNoteApp extends LitElement {
   };
 
   /**
-   * フリーノート画面を表示する
+   * ノートブック画面を表示する
    *
    * @private
    * @memberof StepNoteApp
    */
-  private _handleFreeNoteClick = () => {
-    this.selectedFeature = "free-note";
+  private _handleNotebookClick = () => {
+    this.selectedFeature = "notebook";
     this.isThinMode = false;
   };
 
@@ -161,7 +161,7 @@ export class StepNoteApp extends LitElement {
         .selectedFeature=${this.selectedFeature}
         @select-menu-main=${this._handleMainClick}
         @select-menu-dashboard=${this._handleDashboardClick}
-        @select-menu-free-note=${this._handleFreeNoteClick}
+        @select-menu-notebook=${this._handleNotebookClick}
         @select-menu-config=${this._handleConfigClick}
       ></sn-menu>
     </div>`;
@@ -204,8 +204,8 @@ export class StepNoteApp extends LitElement {
         return this._renderMain();
       case "dashboard":
         return this._renderDashboard();
-      case "free-note":
-        return this._renderFreeNote();
+      case "notebook":
+        return this._renderNotebook();
       case "config":
         return this._renderConfig();
       default:
@@ -277,15 +277,15 @@ export class StepNoteApp extends LitElement {
    * @return {*}  {HTMLTemplateResult}
    * @memberof StepNoteApp
    */
-  private _renderFreeNote(): HTMLTemplateResult {
+  private _renderNotebook(): HTMLTemplateResult {
     const baseClassMap = classMap({
       base: true,
-      "free-note-content": true,
+      "notebook-content": true,
     });
 
     return html` <div class=${baseClassMap}>
       ${this._renderMenu()}
-      <sn-free-note-container></sn-free-note-container>
+      <sn-notebook-container></sn-notebook-container>
     </div>`;
   }
 
