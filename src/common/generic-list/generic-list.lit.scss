@@ -1,0 +1,91 @@
+@use "../mixins";
+
+:host,
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+wa-input {
+  &::part(base),
+  &::part(input) {
+    outline: none;
+  }
+}
+
+.contents-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  padding-block-start: var(--wa-space-s);
+
+  background: var(--wa-color-neutral-20);
+
+  color: var(--wa-color-neutral-95);
+  font-size: var(--wa-font-size-m);
+  font-weight: bold;
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wa-space-xs);
+    margin-inline: var(--wa-space-s);
+
+    .header-top {
+      display: flex;
+
+      .label {
+        margin-inline-end: auto;
+      }
+      wa-icon {
+        cursor: pointer;
+        font-size: var(--wa-font-size-l);
+        transition:
+          transform 0.2s ease-in-out,
+          color 0.2s;
+
+        &:hover {
+          color: var(--wa-color-neutral-70);
+        }
+      }
+    }
+  }
+
+  main {
+    flex: 1;
+    overflow-y: auto;
+
+    margin-block-start: var(--wa-space-s);
+    margin-inline: var(--wa-space-2xs);
+    padding-inline-end: var(--wa-space-3xs);
+
+    scrollbar-gutter: stable;
+    @include mixins.scrollable(
+      var(--wa-color-neutral-90),
+      var(--wa-color-neutral-70),
+      var(--wa-color-neutral-70)
+    );
+
+    &:hover {
+      --sb-thumb-color: var(--wa-color-neutral-90);
+    }
+  }
+
+  footer {
+    margin-block-start: var(--wa-space-s);
+    margin-inline: var(--wa-space-s);
+
+    .footer-label {
+      width: 100%;
+      padding-block: var(--wa-space-xs);
+
+      text-align: center;
+
+      border-block-start: 1px solid var(--wa-color-neutral-60);
+      font-size: var(--wa-font-size-2xs);
+    }
+  }
+}

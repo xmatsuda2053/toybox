@@ -108,6 +108,14 @@ export class ThinMarkdownEditor extends LitElement {
   @property({ type: Boolean }) deletable: boolean = false;
 
   /**
+   * ヘッダーとコンテンツの角丸の制御
+   *
+   * @type {boolean}
+   * @memberof ThinMarkdownEditor
+   */
+  @property({ type: Boolean }) radius: boolean = true;
+
+  /**
    * プレビュー用
    *
    * @type {string}
@@ -596,7 +604,10 @@ export class ThinMarkdownEditor extends LitElement {
    * @memberof ThinMarkdownEditor
    */
   protected render(): HTMLTemplateResult {
-    return html` <div id="contents-root">
+    return html` <div
+      id="contents-root"
+      class=${classMap({ "radius-none": !this.radius })}
+    >
       <div class="sticky">
         <div class="header">
           <div class="md-tab-group">

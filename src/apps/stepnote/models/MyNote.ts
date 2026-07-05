@@ -1,7 +1,7 @@
-export interface FreeNote {
+export interface MyNote {
   id?: number;
-  header1: string;
-  value: string;
+  title?: string;
+  value?: string;
   selected?: boolean;
   pin?: boolean;
   createdAt?: Date;

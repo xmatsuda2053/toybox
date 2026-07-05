@@ -30,6 +30,7 @@ import "@common/thin-markdown-editor/thin-markdown-editor.ts";
 import "@common/copy-button/copy-button";
 import "@common/help-viewer/help-viewer";
 import "@common/search-input/search-input";
+import "@common/generic-list/generic-list";
 import "@/common/datepicker-input/datepicker-input";
 import "@/common/data-exporter/data-exporter";
 import "@/common/file-uploader/file-uploader";
