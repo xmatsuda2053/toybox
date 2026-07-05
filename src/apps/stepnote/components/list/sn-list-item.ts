@@ -205,6 +205,7 @@ export class SnListItem extends LitElement {
           </wa-dropdown-item>
         </wa-dropdown>
       </div>
+      ${this._renderTooltip()}
     </div>`;
   }
 
@@ -291,5 +292,34 @@ export class SnListItem extends LitElement {
       ${formatDate(new Date(this.task.dueDate), "yy-MM-dd")}
       <wa-icon library="my-icons" name=${iconName!}></wa-icon>
     </div>`;
+  }
+
+  /**
+   * タスクのツールチップをレンダリングします
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnListItem
+   */
+  private _renderTooltip(): HTMLTemplateResult {
+    return html`<wa-tooltip
+      for="contents-root"
+      placement="right-start"
+      without-arrow
+    >
+      <div class="tooltip-items">
+        <div class="title">タスク名</div>
+        <div class="separator">：</div>
+        <div class="value">${this.task.name}</div>
+        <div class="title">期限日</div>
+        <div class="separator">：</div>
+        <div class="value">
+          ${formatDate(new Date(this.task.dueDate), "yyyy-MM-dd")}
+        </div>
+        <div class="title">ラベル</div>
+        <div class="separator">：</div>
+        <div class="value">${this.label}</div>
+      </div>
+    </wa-tooltip>`;
   }
 }

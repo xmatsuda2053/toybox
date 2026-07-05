@@ -175,4 +175,16 @@ $status-icon-colors: (
       }
     }
   }
+
+  wa-tooltip {
+    .tooltip-items {
+      display: grid;
+      grid-template-columns: max-content auto 1fr;
+      row-gap: var(--wa-space-3xs);
+      column-gap: var(--wa-space-3xs);
+      align-items: center;
+
+      font-size: var(--wa-font-size-xs);
+    }
+  }
 }
