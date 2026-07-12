@@ -308,17 +308,12 @@ export class SnListItem extends LitElement {
       without-arrow
     >
       <div class="tooltip-items">
+        <div class="title">ID</div>
+        <div class="separator">：</div>
+        <div class="value">${this.task.id}</div>
         <div class="title">タスク名</div>
         <div class="separator">：</div>
         <div class="value">${this.task.name}</div>
-        <div class="title">期限日</div>
-        <div class="separator">：</div>
-        <div class="value">
-          ${formatDate(new Date(this.task.dueDate), "yyyy-MM-dd")}
-        </div>
-        <div class="title">ラベル</div>
-        <div class="separator">：</div>
-        <div class="value">${this.label}</div>
       </div>
     </wa-tooltip>`;
   }
