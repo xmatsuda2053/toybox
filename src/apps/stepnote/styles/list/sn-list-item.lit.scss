@@ -177,6 +177,7 @@ $status-icon-colors: (
   }
 
   wa-tooltip {
+    --max-width: 400px;
     .tooltip-items {
       display: grid;
       grid-template-columns: max-content auto 1fr;
