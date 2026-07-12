@@ -203,14 +203,13 @@ export class SnTabTask extends LitElement {
    * @return {*}  {HTMLTemplateResult}
    * @memberof SnTabTask
    */
-  private _renderHeader(): HTMLTemplateResult {
-    return html` <div class="title">TASK</div>
+  private _renderHeader(): HTMLTemplateResult | typeof nothing {
+    if (!this._task) return nothing;
+    return html` <div class="title">TASK #${this._task.id}</div>
       <div class="menu">
-        ${this._task
-          ? html` <sn-task-button
-              @change-status=${this._handleChangeStatus}
-            ></sn-task-button>`
-          : nothing}
+        <sn-task-button
+          @change-status=${this._handleChangeStatus}
+        ></sn-task-button>
       </div>`;
   }
 
