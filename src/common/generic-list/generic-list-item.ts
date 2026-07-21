@@ -92,14 +92,13 @@ export class GenericListItem extends LitElement {
       "contents-root": true,
       selected: this.selected,
     });
-    return html`<div
-      class=${baseClassMap}
-      @click=${this._handleGenericItemClick}
-    >
+    return html`<div class=${baseClassMap}>
       <slot name="icon"></slot>
-      <span class="label"
-        >${this._renderCaret()}<slot name="label"></slot
-      ></span>
+      <span class="label" @click=${this._handleGenericItemClick}>
+        ${this._renderCaret()}
+        <slot name="label"></slot>
+      </span>
+      <slot name="end"></slot>
     </div>`;
   }
 

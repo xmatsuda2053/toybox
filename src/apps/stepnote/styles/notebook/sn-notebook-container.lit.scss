@@ -11,6 +11,17 @@
     width: 300px;
     height: 100%;
     overflow-y: auto;
+
+    wa-dropdown-item {
+      span {
+        font-size: var(--wa-font-size-s);
+      }
+    }
+
+    .pin {
+      transform: rotate(45deg);
+      color: var(--wa-color-orange-60);
+    }
   }
 
   main {

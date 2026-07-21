@@ -82,4 +82,25 @@ export class NotebookRepository {
       await this.db.notebooks.update(numericId, { selected: 1 });
     });
   }
+
+  /**
+   * ノートブックのピンを設定／解除します。
+   *
+   * @param {number} id
+   * @return {*}  {Promise<void>}
+   * @memberof NotebookRepository
+   */
+  async pined(id: number): Promise<void> {
+    const numericId = Number(id);
+    await this.db.transaction("rw", [this.db.notebooks], async () => {
+      // Notebookの有無を確認する
+      const notebook = await this.db.notebooks.get(numericId);
+      if (!notebook) return;
+
+      const pin = notebook.pin == 1 ? 0 : 1;
+
+      // 指定したNotebookのpinを変更する
+      await this.db.notebooks.update(numericId, { pin: pin });
+    });
+  }
 }

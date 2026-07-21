@@ -42,8 +42,9 @@ export class NotebookQueryService {
       result = this._filterByKeywords(result, keyword);
     }
 
-    // タイトルでソートする。
+    // ピンを優先し、さらにタイトルでソートする。
     result.sort((a, b) => {
+      if (b.pin !== a.pin) return b.pin - a.pin;
       return a.title.localeCompare(b.title);
     });
 

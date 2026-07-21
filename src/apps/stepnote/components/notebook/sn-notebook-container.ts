@@ -248,6 +248,17 @@ export class SnNotebookContainer extends LitElement {
     await snDB.notebookRepo.selected(e.detail.id);
   };
 
+  /**
+   * ピンクリックイベントを制御します。
+   *
+   * @private
+   * @param {MouseEvent} e
+   * @memberof SnNotebookContainer
+   */
+  private _handlePinClick = async (id: number) => {
+    await snDB.notebookRepo.pined(id);
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -276,6 +287,19 @@ export class SnNotebookContainer extends LitElement {
    * @memberof SnNotebookContainer
    */
   private _renderNav(): HTMLTemplateResult {
+    const iconBook = html` <wa-icon
+      library="my-icons"
+      name="book-open-solid-full"
+      slot="icon"
+    ></wa-icon>`;
+
+    const iconPin = html` <wa-icon
+      library="my-icons"
+      name="thumbtack-solid-full"
+      slot="icon"
+      class="pin"
+    ></wa-icon>`;
+
     return html` <generic-list
       headerLabel="NOTEBOOK"
       addable
@@ -287,13 +311,18 @@ export class SnNotebookContainer extends LitElement {
         .items=${this._notebooks}
         .renderItem=${(item: Notebook) => html`
           <generic-list-item itemId="${item.id}" ?selected=${item.selected}>
-            <wa-icon
-              library="my-icons"
-              name="book-open-solid-full"
-              class="bookmark"
-              slot="icon"
-            ></wa-icon>
+            ${!item.pin ? iconBook : iconPin}
             <span slot="label">${item.title}</span>
+            <wa-dropdown slot="end">
+              <wa-icon
+                library="my-icons"
+                name="bars-solid-full"
+                slot="trigger"
+              ></wa-icon>
+              <wa-dropdown-item @click=${() => this._handlePinClick(item.id!)}>
+                ${iconPin}<span>Pin</span>
+              </wa-dropdown-item>
+            </wa-dropdown>
           </generic-list-item>
         `}
       ></lit-virtualizer>
