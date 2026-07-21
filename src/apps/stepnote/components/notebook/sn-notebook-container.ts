@@ -259,6 +259,19 @@ export class SnNotebookContainer extends LitElement {
     await snDB.notebookRepo.pined(id);
   };
 
+  /**
+   * 検索キーワード入力イベントを制御します。
+   *
+   * @private
+   * @param {CustomEvent} e
+   * @memberof SnNotebookContainer
+   */
+  private _handleFilterKeywordInput = (e: CustomEvent) => {
+    const keyword = e.detail.keyword ?? "";
+    this._filterKeyword = keyword.toLowerCase();
+    this._subscribeLabels();
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -306,6 +319,7 @@ export class SnNotebookContainer extends LitElement {
       searchable
       @generic-item-add=${this._handleItemAdd}
       @generic-item-click=${this._handleListItemClick}
+      @input-keyword=${this._handleFilterKeywordInput}
     >
       <lit-virtualizer
         .items=${this._notebooks}
