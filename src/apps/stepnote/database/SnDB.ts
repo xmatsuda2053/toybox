@@ -8,6 +8,7 @@ import { Task } from "@sn/models/Task";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
 import { Config } from "@sn/models/Config";
+import { Notebook } from "@sn/models/Notebook";
 
 import { LabelRepository } from "@sn/database/repositories/LabelRepository";
 import { QuickAccessRepository } from "@sn/database/repositories/QuickAccessRepository";
@@ -16,10 +17,13 @@ import { TaskRepository } from "./repositories/TaskRepository";
 import { NoteRepository } from "@sn/database/repositories/NoteRepository";
 import { ConfigRepository } from "./repositories/ConfigRepository";
 import { DashboardRepository } from "./repositories/DashboardRepository";
+import { NotebookRepository } from "./repositories/NotebookRepository";
 
 import { TaskQueryService } from "@sn/database/services/TaskQueryService";
-import { TaskStatsCalculator } from "./calculators/TaskStatsCalculator";
 import { DashboardQueryService } from "./services/DashboardQueryService";
+import { NotebookQueryService } from "./services/NotebookQueryService";
+
+import { TaskStatsCalculator } from "./calculators/TaskStatsCalculator";
 
 import { formatDate } from "@utils/DateUtils";
 
@@ -37,6 +41,7 @@ export class SnDB extends Dexie {
   logs!: Table<Log>;
   notes!: Table<Note>;
   config!: Table<Config>;
+  notebooks!: Table<Notebook>;
 
   readonly labelRepo = new LabelRepository(this);
   readonly quickAccessRepo = new QuickAccessRepository(this);
@@ -45,11 +50,13 @@ export class SnDB extends Dexie {
   readonly noteRepo = new NoteRepository(this);
   readonly configRepo = new ConfigRepository(this);
   readonly dashboardRepo = new DashboardRepository(this);
+  readonly notebookRepo = new NotebookRepository(this);
 
   readonly taskQuery = new TaskQueryService(this);
-  readonly taskStats = new TaskStatsCalculator(this);
-
   readonly dashboardQuery = new DashboardQueryService(this);
+  readonly notebookQuery = new NotebookQueryService(this);
+
+  readonly taskStats = new TaskStatsCalculator(this);
 
   // -------------------------------------------------------------
   // Lifecycle
@@ -61,13 +68,14 @@ export class SnDB extends Dexie {
    */
   constructor() {
     super("SnDB");
-    this.version(4).stores({
+    this.version(5).stores({
       labels: "++id, name, fiscalYear, isSelected",
       quickAccesses: "++id",
       tasks: "++id, statusCode, name, dueDate, fiscalYear, selected",
       logs: "++id, taskId, [taskId+id]",
       notes: "++id, taskId, [taskId+id]",
       config: "id, group, name",
+      notebooks: "++id, selected",
     });
 
     this.on("populate", () => {

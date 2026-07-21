@@ -40,7 +40,7 @@ import mdTasks from "./help/task.md?raw";
 import mdJournal from "./help/journal.md?raw";
 
 // --- Types ---
-export type features = "main" | "dashboard" | "config";
+export type features = "main" | "dashboard" | "notebook" | "config";
 
 /**
  * メニューボタンの定義
@@ -58,6 +58,13 @@ const MENU_BUTTONS = [
     tooltip: "Dashboard",
     iconName: "chart-column-solid-full",
     key: "dashboard",
+    bottom: false,
+  },
+  {
+    id: "btn-notebook",
+    tooltip: "Notebook",
+    iconName: "book-solid-full",
+    key: "notebook",
     bottom: false,
   },
   {
@@ -203,6 +210,9 @@ export class SnMenu extends LitElement {
         break;
       case "dashboard":
         emit(this, "select-menu-dashboard");
+        break;
+      case "notebook":
+        emit(this, "select-menu-notebook");
         break;
       case "import":
         this._isImportDialogOpen = true;

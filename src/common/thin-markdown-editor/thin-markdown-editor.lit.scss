@@ -276,3 +276,10 @@
 .hidden {
   display: none;
 }
+
+.radius-none {
+  .header,
+  .contents {
+    border-radius: 0 !important;
+  }
+}

@@ -1,0 +1,53 @@
+$line-height: 1.8em;
+
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.contents-root {
+  display: flex;
+  gap: var(--wa-space-xs);
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+
+  height: $line-height;
+  margin-block: var(--wa-space-3xs);
+  padding-inline: var(--wa-space-xs);
+
+  background-color: transparent;
+  border-radius: var(--wa-border-radius-m);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--wa-color-neutral-10);
+  }
+
+  .label {
+    flex: 1;
+    min-width: 0;
+
+    font-size: var(--wa-font-size-s);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.selected {
+    .label {
+      color: var(--wa-color-brand-70);
+
+      wa-icon {
+        color: var(--wa-color-brand-70);
+      }
+    }
+  }
+}

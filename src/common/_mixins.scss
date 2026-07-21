@@ -1,0 +1,38 @@
+@mixin scrollable(
+  $thumb-color: var(--wa-color-neutral-40),
+  $hover-color: var(--wa-color-neutral-50),
+  $active-color: var(--wa-color-neutral-60)
+) {
+  // 常に表示（または auto）にしておき、色だけで表示・非表示を切り替える
+  overflow-y: auto;
+
+  // スクロールバーの色を変数で定義
+  --sb-thumb-color: transparent;
+  transition: --sb-thumb-color 0.3s ease; // 色の変化をアニメーションさせる
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    // 定義した変数を使用する
+    background-color: var(--sb-thumb-color);
+    border-radius: var(--wa-border-radius-s);
+    border-right: 3px solid transparent;
+    border-left: 3px solid transparent;
+    background-clip: padding-box;
+
+    &:hover {
+      // hover時はより濃い色を指定した変数に上書き
+      background-color: $hover-color;
+    }
+
+    &:active {
+      background-color: $active-color;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
