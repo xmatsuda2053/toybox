@@ -17,11 +17,11 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // Internal Shared (Codes, Models, Database)
 
 // Internal Shared (Utils)
+import { emit } from "@utils/EventUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/notebook/sn-notebook-nav-item.lit.scss?inline";
+import styles from "./generic-list-item.lit.scss?inline?inline";
 
 // Initializations
 setBasePath("/");
@@ -30,38 +30,51 @@ setBasePath("/");
  * ナビゲーションアイテム
  *
  * @export
- * @class SnNotebookNavItem
+ * @class GenericListItem
  * @extends {LitElement}
  */
-@customElement("sn-notebook-nav-item")
-export class SnNotebookNavItem extends LitElement {
+@customElement("generic-list-item")
+export class GenericListItem extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof SnNotebookNavItem
+   * @memberof GenericListItem
    */
-  static styles = [unsafeCSS(sharedStyles), unsafeCSS(styles)];
+  static styles = [unsafeCSS(styles)];
+
+  /**
+   * アイテムID
+   *
+   * @type {string}
+   * @memberof GenericListItem
+   */
+  @property({ type: String }) itemId!: string;
 
   /**
    * 選択状態
    *
    * @type {boolean}
-   * @memberof SnNotebookNavItem
+   * @memberof GenericListItem
    */
   @property({ type: Boolean }) selected: boolean = false;
-
-  /**
-   * ピン留め状態
-   *
-   * @type {boolean}
-   * @memberof SnNotebookNavItem
-   */
-  @property({ type: Boolean }) pinned: boolean = false;
 
   // -------------------------------------------------------------
   // Event
   // -------------------------------------------------------------
+
+  /**
+   * アイテムクリックイベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof GenericListItem
+   */
+  private _handleGenericItemClick = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    emit(this, "generic-item-click", { detail: { id: this.itemId } });
+  };
 
   // -------------------------------------------------------------
   // Rendering
@@ -72,26 +85,21 @@ export class SnNotebookNavItem extends LitElement {
    *
    * @protected
    * @return {*}  {HTMLTemplateResult}
-   * @memberof SnNotebookNavItem
+   * @memberof GenericListItem
    */
   protected render(): HTMLTemplateResult {
     const baseClassMap = classMap({
       "contents-root": true,
       selected: this.selected,
-      pinned: this.pinned,
     });
-    return html`<div class=${baseClassMap}>
-      <wa-icon
-        library="my-icons"
-        name="book-open-solid-full"
-        class="bookmark"
-      ></wa-icon>
-      <span class="label">${this._renderCaret()}<slot></slot></span>
-      <wa-icon
-        library="my-icons"
-        name="thumbtack-solid-full"
-        class="pin"
-      ></wa-icon>
+    return html`<div
+      class=${baseClassMap}
+      @click=${this._handleGenericItemClick}
+    >
+      <slot name="icon"></slot>
+      <span class="label"
+        >${this._renderCaret()}<slot name="label"></slot
+      ></span>
     </div>`;
   }
 
@@ -100,7 +108,7 @@ export class SnNotebookNavItem extends LitElement {
    *
    * @private
    * @return {*}  {(HTMLTemplateResult | typeof nothing)}
-   * @memberof SnNotebookNavItem
+   * @memberof GenericListItem
    */
   private _renderCaret(): HTMLTemplateResult | typeof nothing {
     if (!this.selected) return nothing;

@@ -72,6 +72,11 @@ wa-input {
     &:hover {
       --sb-thumb-color: var(--wa-color-neutral-90);
     }
+
+    lit-virtualizer {
+      display: block;
+      width: 100%;
+    }
   }
 
   footer {

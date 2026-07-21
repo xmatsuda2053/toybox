@@ -16,6 +16,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // Internal Shared (Codes, Models, Database)
 
 // Internal Shared (Utils)
+import { emit } from "@utils/EventUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
@@ -77,6 +78,19 @@ export class GenericList extends LitElement {
   // Event
   // -------------------------------------------------------------
 
+  /**
+   * アイテム追加イベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof GenericList
+   */
+  private _handleItemAdd = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    emit(this, "generic-item-add");
+  };
+
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
@@ -107,7 +121,12 @@ export class GenericList extends LitElement {
   private _renderAddButton(): HTMLTemplateResult | typeof nothing {
     if (!this.addable) return nothing;
 
-    return html`<wa-icon id="btn-add" library="my-icons" name="plus-solid-full">
+    return html`<wa-icon
+      id="btn-add"
+      library="my-icons"
+      name="plus-solid-full"
+      @click=${this._handleItemAdd}
+    >
     </wa-icon>`;
   }
 
