@@ -139,6 +139,10 @@ export class SnTaskSummary extends LitElement {
 
   /**
    * 期限日の変更イベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnTaskSummary
    */
   private _handleDueDateChange = (e: Event) => {
     e.preventDefault();
@@ -155,6 +159,10 @@ export class SnTaskSummary extends LitElement {
 
   /**
    * 関係者（連絡先）の入力イベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnTaskSummary
    */
   private _handleContactInput = (e: Event) => {
     e.preventDefault();
@@ -170,7 +178,31 @@ export class SnTaskSummary extends LitElement {
   };
 
   /**
+   * 現在の状態の入力イベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnTaskSummary
+   */
+  private _handleCurrentStatsInput = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target as WaInput;
+    this.task["currentStatus"] = target.value ?? "";
+
+    this._update({
+      id: this.task.id,
+      currentStatus: this.task.currentStatus,
+    });
+  };
+
+  /**
    * タスク説明（エディタ）の入力イベントを制御します。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof SnTaskSummary
    */
   private _handleDescriptionInput = (e: Event) => {
     e.preventDefault();
@@ -234,6 +266,9 @@ export class SnTaskSummary extends LitElement {
       </div>
       <div class="task-item">
         <div class="has-label">${this._renderContact()}</div>
+      </div>
+      <div class="task-item">
+        <div class="has-label">${this._renderCurrentStatus()}</div>
       </div>
       <div class="task-item grow-item">${this._renderDescription()}</div>
     </div>`;
@@ -316,6 +351,31 @@ export class SnTaskSummary extends LitElement {
           @input=${this._handleContactInput}
         ></sn-task-contact>
       </div>`;
+  }
+
+  /**
+   * 現在の状態をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof SnTaskSummary
+   */
+  private _renderCurrentStatus(): HTMLTemplateResult {
+    return html`<div class="label">ＷＹＤ？</div>
+      <wa-input
+        id="currentStatus"
+        class="item"
+        size="small"
+        placeholder="What you doing?..."
+        .value=${live(this.task.currentStatus)}
+        @input=${this._handleCurrentStatsInput}
+      >
+        <wa-icon
+          library="my-icons"
+          name="comment-dots-solid-full"
+          slot="end"
+        ></wa-icon>
+      </wa-input>`;
   }
 
   /**

@@ -12,6 +12,7 @@ export interface Task {
   name: string;
   dueDate: Date;
   contacts: Contact[];
+  currentStatus: string;
   description: string;
   fiscalYear: number;
   labelId: number;
