@@ -43,8 +43,6 @@ export class TaskRepository {
         }
         data.updatedAt = now;
 
-        console.log(data);
-
         const id = await this.db.tasks.add(data);
 
         // 初期ログ、初期ノート、タスク選択状態設定、ラベル選択状態設定を平行で実施する。

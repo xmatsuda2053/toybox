@@ -45,6 +45,7 @@ import clock_regular_full from "@assets/icons/clock-regular-full.svg?raw";
 import clone_regular_full from "@assets/icons/clone-regular-full.svg?raw";
 import code_commit_solid_full from "@assets/icons/code-commit-solid-full.svg?raw";
 import code_solid_full from "@assets/icons/code-solid-full.svg?raw";
+import comment_dots_solid_full from "@assets/icons/comment-dots-solid-full.svg?raw";
 import copy_regular_full from "@assets/icons/copy-regular-full.svg?raw";
 import cubes_solid_full from "@assets/icons/cubes-solid-full.svg?raw";
 import cubes_stacked_solid_full from "@assets/icons/cubes-stacked-solid-full.svg?raw";
@@ -153,6 +154,7 @@ export const icons: Record<string, string> = {
   "clone-regular-full": clone_regular_full,
   "code-commit-solid-full": code_commit_solid_full,
   "code-solid-full": code_solid_full,
+  "comment-dots-solid-full": comment_dots_solid_full,
   "copy-regular-full": copy_regular_full,
   "cubes-solid-full": cubes_solid_full,
   "cubes-stacked-solid-full": cubes_stacked_solid_full,
