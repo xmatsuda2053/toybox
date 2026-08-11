@@ -30,6 +30,10 @@ import {
   CalloutTagExtension,
   formatMarkdown as formatCalloutMarkdown,
 } from "./extension/callout-tag";
+import {
+  TextCopyAreaExtension,
+  formatMarkdown as formatTextCopyAreaMarkdown,
+} from "./extension/text-copy-area";
 import { addTimeStamp } from "./extension/timestamp";
 import { emit } from "@utils/EventUtils";
 
@@ -223,7 +227,12 @@ export class ThinMarkdownEditor extends LitElement {
           return false; // 通常のリンクでない場合は標準処理に任せる
         },
       },
-      extensions: [IdTagExtension, ColorTagExtension, CalloutTagExtension],
+      extensions: [
+        IdTagExtension,
+        ColorTagExtension,
+        CalloutTagExtension,
+        TextCopyAreaExtension,
+      ],
     });
   }
 
@@ -503,6 +512,23 @@ export class ThinMarkdownEditor extends LitElement {
   };
 
   /**
+   * テキストコピーエリアを挿入する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddTextCopyAreaClick = () => {
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    formatTextCopyAreaMarkdown(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  /**
    * カーソル位置にタイムスタンプを挿入する。
    *
    * @private
@@ -570,6 +596,7 @@ export class ThinMarkdownEditor extends LitElement {
 
     const anchor = target.closest("a");
     const idTag = target.closest(".id-tag");
+    const textCopyArea = target.closest(".text-copy-area");
 
     if (anchor) {
       // リンククリック時、URLをクリップボードにコピー
@@ -588,6 +615,18 @@ export class ThinMarkdownEditor extends LitElement {
       event.preventDefault();
       const id = (idTag as HTMLSpanElement).dataset.id;
       emit(idTag as HTMLSpanElement, "id-click", { detail: { id: id } });
+    } else if (textCopyArea) {
+      // テキストコピーエリアクリック時、テキストをクリップボードにコピー
+      event.preventDefault();
+      const text = (textCopyArea as HTMLDivElement).dataset.text;
+      if (text) {
+        try {
+          const rawText = text.replace(/%5C/g, "\\");
+          await navigator.clipboard.writeText(rawText);
+        } catch (err) {
+          console.error("Failed to copy text: ", err);
+        }
+      }
     }
   };
 
@@ -752,6 +791,8 @@ export class ThinMarkdownEditor extends LitElement {
           ${this._renderColorButton()}
           <!-- Table-->
           ${this._renderTableButton()}
+          <!-- TextCopyArea-->
+          ${this._renderTextCopyAreaButton()}
           <!-- TimeStamp -->
           ${this._renderTimeStampButton()}
           <!-- Delete Menu -->
@@ -855,6 +896,20 @@ export class ThinMarkdownEditor extends LitElement {
     return html`<wa-dropdown-item @click=${this._handleOpenTableDialogClick}>
       <wa-icon library="my-icons" name="table-solid-full"></wa-icon>
       <span>Table</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * テキストコピーエリアを挿入するためのドロップダウンアイテムをレンダリングします。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTextCopyAreaButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._handleAddTextCopyAreaClick}>
+      <wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon>
+      <span>TextCopyArea</span>
     </wa-dropdown-item>`;
   }
 
