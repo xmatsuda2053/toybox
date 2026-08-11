@@ -409,7 +409,7 @@ export class SnNavSectionLabel extends LitElement {
           @input=${this._handleLabelInput}
         >
           <wa-icon
-            slot="end"
+            slot="start"
             library="my-icons"
             name="tag-solid-full"
           ></wa-icon>

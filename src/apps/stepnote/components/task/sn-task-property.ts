@@ -210,7 +210,7 @@ export class SnTaskProperty extends LitElement {
         <wa-icon
           library="my-icons"
           name="hashtag-solid-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
       </wa-input>`;
   }
@@ -233,7 +233,7 @@ export class SnTaskProperty extends LitElement {
         <wa-icon
           library="my-icons"
           name="calendar-day-solid-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
       </wa-input>`;
   }
@@ -256,7 +256,7 @@ export class SnTaskProperty extends LitElement {
         <wa-icon
           library="my-icons"
           name="calendar-days-solid-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
       </wa-input>`;
   }
@@ -280,7 +280,7 @@ export class SnTaskProperty extends LitElement {
         <wa-icon
           library="my-icons"
           name="calendar-regular-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
         ${repeat(
           yearList,
@@ -310,7 +310,11 @@ export class SnTaskProperty extends LitElement {
         value=${this.task.labelId}
         @change=${this._handleLabelChange}
       >
-        <wa-icon library="my-icons" name="tag-solid-full" slot="end"></wa-icon>
+        <wa-icon
+          library="my-icons"
+          name="tag-solid-full"
+          slot="start"
+        ></wa-icon>
         <wa-option value="0">未分類</wa-option>
         ${repeat(
           this.labels,
