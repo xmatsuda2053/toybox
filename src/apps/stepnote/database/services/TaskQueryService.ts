@@ -243,7 +243,7 @@ export class TaskQueryService {
         task.name?.toLowerCase(),
         task.description?.toLowerCase(),
         task.fiscalYear.toString(),
-        task.currentStatus?.toLowerCase(),
+        task.currentStatus?.text.toLowerCase(),
         "+" + formatDate(task.createdAt, "yyyy/MM/dd"),
         "@" + formatDate(task.dueDate, "yyyy/MM/dd"),
         ...task.contacts.flatMap((c) => [

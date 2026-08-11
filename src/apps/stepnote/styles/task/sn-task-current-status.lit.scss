@@ -1,0 +1,53 @@
+@use "sass:map";
+
+:host {
+  width: 100%;
+}
+
+$types: (
+  "info": (
+    "color": var(--wa-color-brand-50),
+  ),
+  "check": (
+    "color": var(--wa-color-success-50),
+  ),
+  "gear": (
+    "color": var(--wa-color-neutral-50),
+  ),
+  "warn": (
+    "color": var(--wa-color-warning-50),
+  ),
+  "alert": (
+    "color": var(--wa-color-danger-50),
+  ),
+);
+
+wa-input {
+  width: 100%;
+
+  &.alert {
+    &::part(input) {
+      color: var(--wa-color-danger-50);
+    }
+  }
+
+  wa-icon {
+    font-size: var(--wa-font-size-m);
+  }
+}
+
+@each $name, $style in $types {
+  wa-icon.#{$name} {
+    color: map.get($style, color);
+  }
+}
+
+wa-dropdown {
+  > wa-icon {
+    cursor: pointer;
+  }
+
+  wa-dropdown-item {
+    font-size: var(--wa-font-size-s);
+  }
+}

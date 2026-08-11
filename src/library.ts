@@ -60,6 +60,7 @@ import "@sn/components/tab/sn-tab-journal";
 import "@sn/components/task/sn-task-summary";
 import "@sn/components/task/sn-task-button";
 import "@sn/components/task/sn-task-contact";
+import "@sn/components/task/sn-task-current-status";
 import "@sn/components/task/sn-task-property";
 import "@sn/components/task/sn-task-deletion";
 

@@ -322,7 +322,7 @@ export class DatePickerInput extends LitElement {
       <wa-icon
         library="my-icons"
         name="calendar-solid-full"
-        slot="end"
+        slot="start"
       ></wa-icon>
     </wa-input>`;
   }
