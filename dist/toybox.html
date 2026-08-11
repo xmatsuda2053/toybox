@@ -5074,7 +5074,7 @@ ${n}
       @click=${this._handleUploadClick}
     >
       Upload
-    </wa-button>`:ot}};Ba.styles=[Le(q1)];Uo([F({type:String})],Ba.prototype,"accept",2);Uo([it("#input-file")],Ba.prototype,"inputFile",2);Uo([Ie()],Ba.prototype,"selectedFile",2);Uo([Ie()],Ba.prototype,"isDragOver",2);Ba=Uo([Re("file-uploader")],Ba);const Dl=".menu-header{cursor:pointer;display:flex;align-items:center;padding-inline:var(--wa-space-xs);color:var(--wa-color-neutral-95);border-radius:var(--wa-border-radius-s)}.menu-header span{font-size:var(--wa-font-size-s)}.menu-header:hover{background-color:var(--wa-color-neutral-40)}wa-dropdown-item::part(label),wa-dropdown-item::part(details){font-size:var(--wa-font-size-s)}wa-dropdown-item span{font-size:var(--wa-font-size-s)}.utils-dialog{--width: 70%}.utils-dialog::part(dialog){height:90%}",Z1="#version-dialog .record .version{font-size:var(--wa-font-size-xl)}#version-dialog .record .motto{color:var(--wa-color-neutral-60);font-size:var(--wa-font-size-s)}#version-dialog .record wa-badge{font-size:var(--wa-font-size-xs);margin-block-end:var(--wa-space-s)}#version-dialog .record wa-badge.oss-lit{background-color:#4c64ff}#version-dialog .record wa-badge.oss-ts{background-color:#3178c6}#version-dialog .record wa-badge.oss-sass{background-color:#cf649a}#version-dialog .record wa-badge.oss-vite{background-color:#a150ff}#version-dialog .record wa-badge.oss-md{background-color:#000}#version-dialog .record wa-badge.oss-idb{background-color:#000}#version-dialog .record wa-badge.oss-dexie{background-color:#000}#version-dialog .record wa-badge.oss-fa{background-color:#418fde}#version-dialog .record wa-badge.oss-wa{background-color:#f36944}#version-dialog .record wa-badge.oss-nodejs{background-color:#63b447}";var Q1=Object.defineProperty,J1=Object.getOwnPropertyDescriptor,$d=(r,e,t,s)=>{for(var i=s>1?void 0:s?J1(e,t):e,a=r.length-1,o;a>=0;a--)(o=r[a])&&(i=(s?o(e,t,i):o(i))||i);return s&&i&&Q1(e,t,i),i};nt("/");const ex="0.4.11";let yo=class extends et{constructor(){super(...arguments),this.selectedApp={code:"",icon:"",label:"",tag:Y``,key:"F1"},this._handleVersionClick=()=>{this.versionDialog.open=!0}}render(){return Y`<wa-dropdown>
+    </wa-button>`:ot}};Ba.styles=[Le(q1)];Uo([F({type:String})],Ba.prototype,"accept",2);Uo([it("#input-file")],Ba.prototype,"inputFile",2);Uo([Ie()],Ba.prototype,"selectedFile",2);Uo([Ie()],Ba.prototype,"isDragOver",2);Ba=Uo([Re("file-uploader")],Ba);const Dl=".menu-header{cursor:pointer;display:flex;align-items:center;padding-inline:var(--wa-space-xs);color:var(--wa-color-neutral-95);border-radius:var(--wa-border-radius-s)}.menu-header span{font-size:var(--wa-font-size-s)}.menu-header:hover{background-color:var(--wa-color-neutral-40)}wa-dropdown-item::part(label),wa-dropdown-item::part(details){font-size:var(--wa-font-size-s)}wa-dropdown-item span{font-size:var(--wa-font-size-s)}.utils-dialog{--width: 70%}.utils-dialog::part(dialog){height:90%}",Z1="#version-dialog .record .version{font-size:var(--wa-font-size-xl)}#version-dialog .record .motto{color:var(--wa-color-neutral-60);font-size:var(--wa-font-size-s)}#version-dialog .record wa-badge{font-size:var(--wa-font-size-xs);margin-block-end:var(--wa-space-s)}#version-dialog .record wa-badge.oss-lit{background-color:#4c64ff}#version-dialog .record wa-badge.oss-ts{background-color:#3178c6}#version-dialog .record wa-badge.oss-sass{background-color:#cf649a}#version-dialog .record wa-badge.oss-vite{background-color:#a150ff}#version-dialog .record wa-badge.oss-md{background-color:#000}#version-dialog .record wa-badge.oss-idb{background-color:#000}#version-dialog .record wa-badge.oss-dexie{background-color:#000}#version-dialog .record wa-badge.oss-fa{background-color:#418fde}#version-dialog .record wa-badge.oss-wa{background-color:#f36944}#version-dialog .record wa-badge.oss-nodejs{background-color:#63b447}";var Q1=Object.defineProperty,J1=Object.getOwnPropertyDescriptor,$d=(r,e,t,s)=>{for(var i=s>1?void 0:s?J1(e,t):e,a=r.length-1,o;a>=0;a--)(o=r[a])&&(i=(s?o(e,t,i):o(i))||i);return s&&i&&Q1(e,t,i),i};nt("/");const ex="0.4.12";let yo=class extends et{constructor(){super(...arguments),this.selectedApp={code:"",icon:"",label:"",tag:Y``,key:"F1"},this._handleVersionClick=()=>{this.versionDialog.open=!0}}render(){return Y`<wa-dropdown>
         <div class="menu-header" slot="trigger">
           <span>File</span>
           <wa-icon library="my-icons" name="caret-down-solid-full"></wa-icon>
@@ -5790,7 +5790,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
           @input=${this._handleLabelInput}
         >
           <wa-icon
-            slot="end"
+            slot="start"
             library="my-icons"
             name="tag-solid-full"
           ></wa-icon>
@@ -6005,7 +6005,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         .value=${this.targetTask?.name}
       >
         <wa-icon
-          slot="end"
+          slot="start"
           library="my-icons"
           name="note-sticky-solid-full"
         ></wa-icon>
@@ -6030,14 +6030,18 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         <wa-icon
           library="my-icons"
           name="calendar-regular-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
         ${n2.map(e=>Y`<wa-option value=${e}>${e}年度</wa-option>`)}
       </wa-select>
     </div>`}_renderLabel(){const r=this._labelData.find(t=>t.isSelected)?.id?.toString()??"",e=this.targetTask?.labelId??r;return Y` <div class="contents">
       <wa-tooltip for="task-label-id" placement="right">ラベル</wa-tooltip>
       <wa-select id="task-label-id" name="taskLabelId" size="small" value=${e}>
-        <wa-icon library="my-icons" name="tag-solid-full" slot="end"></wa-icon>
+        <wa-icon
+          library="my-icons"
+          name="tag-solid-full"
+          slot="start"
+        ></wa-icon>
         ${this._labelData.map(t=>Y`<wa-option value=${t.id?t.id:""}>
             ${t.name}
           </wa-option>`)}
@@ -6338,7 +6342,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         <wa-icon
           library="my-icons"
           name="hashtag-solid-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
       </wa-input>`}_renderCreatedAt(){return Y` <label class="label">作成日</label>
       <wa-input
@@ -6350,7 +6354,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         <wa-icon
           library="my-icons"
           name="calendar-day-solid-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
       </wa-input>`}_renderUpdatedAt(){return Y` <label class="label">更新日</label>
       <wa-input
@@ -6362,7 +6366,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         <wa-icon
           library="my-icons"
           name="calendar-days-solid-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
       </wa-input>`}_renderFiscalYear(){return Y` <label class="label">年度</label>
       <wa-select
@@ -6375,7 +6379,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         <wa-icon
           library="my-icons"
           name="calendar-regular-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
         ${Ii(R2,r=>r,r=>Y`<wa-option .value=${String(r)}>
               ${r}年度
@@ -6388,7 +6392,11 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
         value=${this.task.labelId}
         @change=${this._handleLabelChange}
       >
-        <wa-icon library="my-icons" name="tag-solid-full" slot="end"></wa-icon>
+        <wa-icon
+          library="my-icons"
+          name="tag-solid-full"
+          slot="start"
+        ></wa-icon>
         <wa-option value="0">未分類</wa-option>
         ${Ii(this.labels,r=>r.id,r=>Y`<wa-option .value=${String(r.id)}>
               ${r.name}
@@ -6599,7 +6607,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
       <wa-icon
         library="my-icons"
         name="calendar-regular-full"
-        slot="end"
+        slot="start"
       ></wa-icon>
       ${Ti(a4,r=>Y`<wa-option value=${r}>${r}年度</wa-option>`)}
     </wa-select>`}_renderLabels(){return Y`<wa-select
@@ -6609,7 +6617,7 @@ Note タブでは、タスクに関する自由なメモ（ノート）を1件�
       value="-1"
       @change=${this._handleLabelChange}
     >
-      <wa-icon library="my-icons" name="tag-solid-full" slot="end"></wa-icon>
+      <wa-icon library="my-icons" name="tag-solid-full" slot="start"></wa-icon>
       <wa-option value="-1">全てのラベル</wa-option>
       ${Ti(this.labels,r=>Y`<wa-option .value=${r.id}>${r.name}</wa-option>`)}
     </wa-select>`}};Eo.styles=[Le(Ct),Le(t4)];Yd([F({type:Number})],Eo.prototype,"fiscalYear",2);Yd([Ie()],Eo.prototype,"labels",2);Eo=Yd([Re("sn-dashboard-header")],Eo);const r4=".container{display:flex;gap:var(--wa-space-xs);height:100%}.container sn-dashboard-kpi-widget{flex:1}.container wa-divider{--spacing: var(--wa-space-2xs);--color: var(--wa-color-neutral-80)}";var o4=Object.defineProperty,n4=Object.getOwnPropertyDescriptor,Wd=(r,e,t,s)=>{for(var i=s>1?void 0:s?n4(e,t):e,a=r.length-1,o;a>=0;a--)(o=r[a])&&(i=(s?o(e,t,i):o(i))||i);return s&&i&&o4(e,t,i),i};const l4=[{label:"タスク総数",variant:"total"},{label:"開始待ち",variant:"pending",clickable:!0},{label:"対応中",variant:"progress",clickable:!0},{label:"完了",variant:"done",hasTotal:!0},{label:"",variant:void 0},{label:"期限間近",variant:"upcoming",animation:!0,clickable:!0},{label:"期限当日",variant:"asap",animation:!0,clickable:!0},{label:"期限切れ",variant:"overdue",animation:!0,clickable:!0}];nt("/");let To=class extends et{constructor(){super(...arguments),this.kpiWidgetValues={total:0,pending:0,progress:0,done:0,upcoming:0,asap:0,overdue:0},this.labelId=void 0,this._handleKpiWidgetClick=async r=>{switch(r.detail.variant){case"upcoming":await He.dashboardRepo.changeUpcomingMode(this.labelId);break;case"asap":await He.dashboardRepo.changeAsapMode(this.labelId);break;case"overdue":await He.dashboardRepo.changeOverdueMode(this.labelId);break;case"pending":await He.dashboardRepo.changePendingMode(this.labelId);break;case"progress":await He.dashboardRepo.changeProgressMode(this.labelId);break}xt(this,"to-main-content")}}render(){return Y`<div class="container">
