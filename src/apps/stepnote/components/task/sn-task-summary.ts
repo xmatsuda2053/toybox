@@ -181,15 +181,16 @@ export class SnTaskSummary extends LitElement {
    * 現在の状態の入力イベントを制御します。
    *
    * @private
-   * @param {Event} e
+   * @param {CustomEvent} e
    * @memberof SnTaskSummary
    */
-  private _handleCurrentStatsInput = (e: Event) => {
+  private _handleCurrentStatsChange = (e: CustomEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const target = e.target as WaInput;
-    this.task["currentStatus"] = target.value ?? "";
+    // スプレッド構文で新しいオブジェクト参照を生成し、Lit の変更検知をトリガーする
+    const newCurrentStatus = { ...e.detail.currentStatus };
+    this.task = { ...this.task, currentStatus: newCurrentStatus };
 
     this._update({
       id: this.task.id,
@@ -296,11 +297,6 @@ export class SnTaskSummary extends LitElement {
           class="status-icon"
           slot="start"
         ></wa-icon>
-        <wa-icon
-          library="my-icons"
-          name="note-sticky-solid-full"
-          slot="end"
-        ></wa-icon>
       </wa-input>`;
   }
 
@@ -362,20 +358,11 @@ export class SnTaskSummary extends LitElement {
    */
   private _renderCurrentStatus(): HTMLTemplateResult {
     return html`<div class="label">ＷＹＤ？</div>
-      <wa-input
+      <sn-task-current-status
         id="currentStatus"
-        class="item"
-        size="small"
-        placeholder="What you doing?..."
-        .value=${live(this.task.currentStatus)}
-        @input=${this._handleCurrentStatsInput}
-      >
-        <wa-icon
-          library="my-icons"
-          name="comment-dots-solid-full"
-          slot="end"
-        ></wa-icon>
-      </wa-input>`;
+        .currentStatus=${this.task.currentStatus}
+        @change-current-status=${this._handleCurrentStatsChange}
+      ></sn-task-current-status>`;
   }
 
   /**

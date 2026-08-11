@@ -68,7 +68,7 @@ export class SnDB extends Dexie {
    */
   constructor() {
     super("SnDB");
-    this.version(6).stores({
+    this.version(7).stores({
       labels: "++id, name, fiscalYear, isSelected",
       quickAccesses: "++id",
       tasks: "++id, statusCode, name, dueDate, fiscalYear, selected",

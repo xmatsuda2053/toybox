@@ -1,4 +1,5 @@
 import { Contact } from "./Contact";
+import { CurrentStatus } from "./CurrentStatus";
 
 /**
  * タスク
@@ -12,7 +13,7 @@ export interface Task {
   name: string;
   dueDate: Date;
   contacts: Contact[];
-  currentStatus: string;
+  currentStatus: CurrentStatus;
   description: string;
   fiscalYear: number;
   labelId: number;

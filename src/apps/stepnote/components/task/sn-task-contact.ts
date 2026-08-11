@@ -131,7 +131,11 @@ export class SnTaskContact extends LitElement {
             .value=${live(this.contact[item.id] ?? "")}
             @input=${this._handleInput}
           >
-            <wa-icon library="my-icons" name=${item.icon} slot="end"></wa-icon>
+            <wa-icon
+              library="my-icons"
+              name=${item.icon}
+              slot="start"
+            ></wa-icon>
           </wa-input>`;
         },
       )}
