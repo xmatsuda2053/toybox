@@ -781,7 +781,7 @@ export class ThinMarkdownEditor extends LitElement {
     const params: ParamItem[] = [
       {
         class: "info",
-        name: "sign-hanging-solid-full",
+        name: "circle-info-solid-full",
         label: "Info",
       },
       {
