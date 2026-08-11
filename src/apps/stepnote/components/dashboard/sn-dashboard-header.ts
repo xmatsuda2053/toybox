@@ -206,7 +206,7 @@ export class SnDashboardHeader extends LitElement {
       <wa-icon
         library="my-icons"
         name="calendar-regular-full"
-        slot="end"
+        slot="start"
       ></wa-icon>
       ${map(yearList, (year) => {
         return html`<wa-option value=${year}>${year}年度</wa-option>`;
@@ -229,7 +229,7 @@ export class SnDashboardHeader extends LitElement {
       value="-1"
       @change=${this._handleLabelChange}
     >
-      <wa-icon library="my-icons" name="tag-solid-full" slot="end"></wa-icon>
+      <wa-icon library="my-icons" name="tag-solid-full" slot="start"></wa-icon>
       <wa-option value="-1">全てのラベル</wa-option>
       ${map(this.labels, (label) => {
         return html`<wa-option .value=${label.id!}>${label.name}</wa-option>`;

@@ -279,7 +279,7 @@ export class SnListEditor extends LitElement {
         .value=${this.targetTask?.name!}
       >
         <wa-icon
-          slot="end"
+          slot="start"
           library="my-icons"
           name="note-sticky-solid-full"
         ></wa-icon>
@@ -330,7 +330,7 @@ export class SnListEditor extends LitElement {
         <wa-icon
           library="my-icons"
           name="calendar-regular-full"
-          slot="end"
+          slot="start"
         ></wa-icon>
         ${yearList.map((year) => {
           return html`<wa-option value=${year}>${year}年度</wa-option>`;
@@ -354,7 +354,11 @@ export class SnListEditor extends LitElement {
     return html` <div class="contents">
       <wa-tooltip for="task-label-id" placement="right">ラベル</wa-tooltip>
       <wa-select id="task-label-id" name="taskLabelId" size="small" value=${id}>
-        <wa-icon library="my-icons" name="tag-solid-full" slot="end"></wa-icon>
+        <wa-icon
+          library="my-icons"
+          name="tag-solid-full"
+          slot="start"
+        ></wa-icon>
         ${this._labelData.map((label) => {
           return html`<wa-option value=${label.id ? label.id : ""}>
             ${label.name}
