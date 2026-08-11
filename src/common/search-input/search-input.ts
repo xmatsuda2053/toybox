@@ -72,6 +72,14 @@ export class SearchInput extends LitElement {
   // -------------------------------------------------------------
 
   /**
+   * IMEコンポジション中フラグ
+   *
+   * @private
+   * @memberof SearchInput
+   */
+  private _isComposing = false;
+
+  /**
    * 検索欄の入力にデバウンスを設定します。
    *
    * @private
@@ -82,16 +90,40 @@ export class SearchInput extends LitElement {
       detail: { keyword: keyword.replace(/\s/g, " ") },
     });
     this._loading = false;
-    this.searchKeyword = keyword;
   }, 250);
 
   /**
+   * IMEコンポジション開始時にフラグを立てます。
+   *
+   * @private
+   * @memberof SearchInput
+   */
+  private _handleCompositionStart = () => {
+    this._isComposing = true;
+  };
+
+  /**
+   * IMEコンポジション終了時にフラグを下ろし、確定値で検索します。
+   *
+   * @private
+   * @memberof SearchInput
+   */
+  private _handleCompositionEnd = (e: CompositionEvent) => {
+    this._isComposing = false;
+    const input = e.target as WaInput;
+    const keyword = input.value ?? "";
+    this._debouncedSearch(keyword);
+  };
+
+  /**
    * 検索欄の入力時にローディングを表示します。
+   * IMEコンポジション中は検索をスキップします。
    *
    * @private
    * @memberof SearchInput
    */
   private _handleKeywordInput = (e: Event) => {
+    if (this._isComposing) return;
     const input = e.target as WaInput;
     const keyword = input.value ?? "";
     if (keyword) {
@@ -119,6 +151,8 @@ export class SearchInput extends LitElement {
       placeholder="filter inquiries..."
       .value=${this.searchKeyword}
       @input=${this._handleKeywordInput}
+      @compositionstart=${this._handleCompositionStart}
+      @compositionend=${this._handleCompositionEnd}
       with-clear
     >
       ${this._loading

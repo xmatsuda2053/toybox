@@ -11,6 +11,7 @@ import { liveQuery, type Subscription } from "dexie";
 
 // 2. Decorators & Directives
 import { customElement, state, query } from "lit/decorators.js";
+import { live } from "lit/directives/live.js";
 import "@lit-labs/virtualizer";
 
 // 3. Third-party Components & Utils
@@ -228,7 +229,7 @@ export class HubAddressApp extends LitElement {
         <div class="search">
           <search-input
             id="keyword-staff"
-            .searchKeyword=${this._keywordStaff}
+            .searchKeyword=${live(this._keywordStaff)}
             @input-keyword=${(e: CustomEvent) => this._searchData(e, "staff")}
           ></search-input>
         </div>
@@ -244,7 +245,7 @@ export class HubAddressApp extends LitElement {
         <div class="search">
           <search-input
             id="keyword-div"
-            .searchKeyword=${this._keywordDiv}
+            .searchKeyword=${live(this._keywordDiv)}
             @input-keyword=${(e: CustomEvent) => this._searchData(e, "div")}
           ></search-input>
         </div>
