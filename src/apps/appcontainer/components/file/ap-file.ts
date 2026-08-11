@@ -22,7 +22,7 @@ setBasePath("/");
  *
  * @type {string}
  */
-const VERSION: string = "0.4.10";
+const VERSION: string = "0.4.11";
 
 /**
  * アプリケーションコンテナー
