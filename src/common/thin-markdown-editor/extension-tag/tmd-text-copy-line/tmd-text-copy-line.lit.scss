@@ -1,0 +1,14 @@
+.text-copy-line {
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wa-spacing-2xs);
+
+  color: var(--wa-color-text-link);
+
+  &:hover {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+}

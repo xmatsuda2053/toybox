@@ -1,0 +1,41 @@
+.text-copy-area {
+  cursor: pointer;
+  display: flex;
+  gap: var(--wa-space-xs);
+
+  padding-block: var(--wa-space-m);
+  padding-inline: var(--wa-space-m);
+  padding-inline-end: var(--wa-space-s);
+  margin-block: var(--wa-space-m);
+
+  background-color: var(--wa-color-indigo-95);
+  border-radius: var(--wa-border-radius-m);
+
+  .content {
+    flex: 1;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: var(--wa-font-size-s);
+    letter-spacing: 0.05em;
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  wa-icon {
+    font-size: var(--wa-font-size-m);
+    color: transparent;
+  }
+
+  &:hover {
+    font-weight: bold;
+    text-decoration: underline;
+    color: var(--wa-color-text-link);
+    wa-icon {
+      color: var(--wa-color-neutral-40);
+    }
+  }
+}
