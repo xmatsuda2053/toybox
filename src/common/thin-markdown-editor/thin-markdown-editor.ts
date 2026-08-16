@@ -34,6 +34,10 @@ import {
   TextCopyAreaExtension,
   formatMarkdown as formatTextCopyAreaMarkdown,
 } from "./extension/text-copy-area";
+import {
+  TextCopyLineExtension,
+  formatMarkdown as formatTextCopyLineMarkdown,
+} from "./extension/text-copy-line";
 import { addTimeStamp } from "./extension/timestamp";
 import { emit } from "@utils/EventUtils";
 
@@ -232,6 +236,7 @@ export class ThinMarkdownEditor extends LitElement {
         ColorTagExtension,
         CalloutTagExtension,
         TextCopyAreaExtension,
+        TextCopyLineExtension,
       ],
     });
   }
@@ -529,6 +534,23 @@ export class ThinMarkdownEditor extends LitElement {
   };
 
   /**
+   * テキストコピー文字列を挿入する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddTextCopyLineClick = () => {
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    formatTextCopyLineMarkdown(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  /**
    * カーソル位置にタイムスタンプを挿入する。
    *
    * @private
@@ -597,6 +619,7 @@ export class ThinMarkdownEditor extends LitElement {
     const anchor = target.closest("a");
     const idTag = target.closest(".id-tag");
     const textCopyArea = target.closest(".text-copy-area");
+    const textCopyLine = target.closest(".text-copy-line");
 
     if (anchor) {
       // リンククリック時、URLをクリップボードにコピー
@@ -619,6 +642,18 @@ export class ThinMarkdownEditor extends LitElement {
       // テキストコピーエリアクリック時、テキストをクリップボードにコピー
       event.preventDefault();
       const text = (textCopyArea as HTMLDivElement).dataset.text;
+      if (text) {
+        try {
+          const rawText = text.replace(/%5C/g, "\\");
+          await navigator.clipboard.writeText(rawText);
+        } catch (err) {
+          console.error("Failed to copy text: ", err);
+        }
+      }
+    } else if (textCopyLine) {
+      // テキストコピー文字列クリック時、対応するイベントを発生させる
+      event.preventDefault();
+      const text = (textCopyLine as HTMLSpanElement).dataset.text;
       if (text) {
         try {
           const rawText = text.replace(/%5C/g, "\\");
@@ -793,6 +828,8 @@ export class ThinMarkdownEditor extends LitElement {
           ${this._renderTableButton()}
           <!-- TextCopyArea-->
           ${this._renderTextCopyAreaButton()}
+          <!-- TextCopyLine -->
+          ${this._renderTextLineButton()}
           <!-- TimeStamp -->
           ${this._renderTimeStampButton()}
           <!-- Delete Menu -->
@@ -910,6 +947,20 @@ export class ThinMarkdownEditor extends LitElement {
     return html`<wa-dropdown-item @click=${this._handleAddTextCopyAreaClick}>
       <wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon>
       <span>TextCopyArea</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * テキストコピー文字列を挿入するためのドロップダウンアイテムをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTextLineButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._handleAddTextCopyLineClick}>
+      <wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon>
+      <span>TextCopyLine</span>
     </wa-dropdown-item>`;
   }
 

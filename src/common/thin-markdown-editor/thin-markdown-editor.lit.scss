@@ -179,15 +179,22 @@
         }
 
         &:hover {
+          font-weight: bold;
+          text-decoration: underline;
+          color: var(--wa-color-text-link);
           wa-icon {
             color: var(--wa-color-neutral-40);
           }
         }
+      }
 
-        &:active {
-          .content {
-            text-decoration: underline;
-          }
+      .text-copy-line {
+        cursor: pointer;
+        color: var(--wa-color-text-link);
+
+        &:hover {
+          font-weight: bold;
+          text-decoration: underline;
         }
       }
 
