@@ -1,4 +1,5 @@
 import { TokenizerAndRendererExtension, Tokens } from "marked";
+import "@/common/thin-markdown-editor/extension-tag/tmd-text-copy-line/tmd-text-copy-line";
 
 /**
  * markdownパターン
@@ -42,8 +43,7 @@ export const TextCopyLineExtension: TokenizerAndRendererExtension = {
   },
   renderer(token: Tokens.Generic): string {
     const t = token as TextCopyLineToken;
-    const icon = `<wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon>`;
-    return `<span class="text-copy-line" data-text="${t.text}">${icon}<span>${t.text}</span></span>`;
+    return `<tmd-text-copy-line copyText="${t.text}">${t.text}</tmd-text-copy-line>`;
   },
 };
 

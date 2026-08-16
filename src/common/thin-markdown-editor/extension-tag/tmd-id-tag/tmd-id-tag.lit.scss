@@ -1,0 +1,9 @@
+.id-tag {
+  cursor: pointer;
+  color: var(--wa-color-text-link);
+
+  &:hover {
+    text-decoration: underline;
+    font-weight: bold;
+  }
+}

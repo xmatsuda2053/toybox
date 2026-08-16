@@ -46,6 +46,9 @@ import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import githubMarkdownStyles from "github-markdown-css/github-markdown-light.css?inline";
 import styles from "./thin-markdown-editor.lit.scss?inline";
 
+// Custom Tag
+import "@common/thin-markdown-editor/extension-tag/tmd-link/tmd-link";
+
 // --- Configuration & Initialization ---
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -194,20 +197,8 @@ export class ThinMarkdownEditor extends LitElement {
   constructor() {
     super();
     this.renderer.link = ({ href, text }) => {
-      const getFrontIcon = (h: string) => {
-        if (h.startsWith("http")) {
-          return "globe-solid-full";
-        } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(h)) {
-          return "envelope-solid-full";
-        } else {
-          return "folder-open-solid-full";
-        }
-      };
-
       const safeHref = href.replace(/\\/g, "%5C");
-      const frontIcon = `<wa-icon library="my-icons" name="${getFrontIcon(href)}"></wa-icon>`;
-
-      return `<a class="copy-link" href="${safeHref}">${frontIcon}<span>${text}</span></a>`;
+      return `<tmd-link href=${safeHref}>${text}</tmd-link>`;
     };
 
     marked.use({
@@ -602,66 +593,6 @@ export class ThinMarkdownEditor extends LitElement {
       await navigator.clipboard.writeText(raw);
     } catch (err) {
       console.error("Failed to copy text: ", err);
-    }
-  };
-
-  /**
-   * リンククリック時のハンドラ。
-   * hrefの内容をコンソールに出力し、デフォルトの遷移を無効化する。
-   *
-   * @private
-   * @param {MouseEvent} event
-   * @memberof MarkdownEditor
-   */
-  private _handleLinkClick = async (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-
-    const anchor = target.closest("a");
-    const idTag = target.closest(".id-tag");
-    const textCopyArea = target.closest(".text-copy-area");
-    const textCopyLine = target.closest(".text-copy-line");
-
-    if (anchor) {
-      // リンククリック時、URLをクリップボードにコピー
-      event.preventDefault();
-      const href = anchor.getAttribute("href");
-      if (href) {
-        try {
-          const rawHref = href.replace(/%5C/g, "\\");
-          await navigator.clipboard.writeText(rawHref);
-        } catch (err) {
-          console.error("Failed to copy text: ", err);
-        }
-      }
-    } else if (idTag) {
-      // IDクリック時、対応するイベントを発生させる
-      event.preventDefault();
-      const id = (idTag as HTMLSpanElement).dataset.id;
-      emit(idTag as HTMLSpanElement, "id-click", { detail: { id: id } });
-    } else if (textCopyArea) {
-      // テキストコピーエリアクリック時、テキストをクリップボードにコピー
-      event.preventDefault();
-      const text = (textCopyArea as HTMLDivElement).dataset.text;
-      if (text) {
-        try {
-          const rawText = text.replace(/%5C/g, "\\");
-          await navigator.clipboard.writeText(rawText);
-        } catch (err) {
-          console.error("Failed to copy text: ", err);
-        }
-      }
-    } else if (textCopyLine) {
-      // テキストコピー文字列クリック時、対応するイベントを発生させる
-      event.preventDefault();
-      const text = (textCopyLine as HTMLSpanElement).dataset.text;
-      if (text) {
-        try {
-          const rawText = text.replace(/%5C/g, "\\");
-          await navigator.clipboard.writeText(rawText);
-        } catch (err) {
-          console.error("Failed to copy text: ", err);
-        }
-      }
     }
   };
 
@@ -1067,7 +998,6 @@ export class ThinMarkdownEditor extends LitElement {
     return html` <div
       class=${baseClassMap}
       .innerHTML=${this.previewHtml}
-      @click=${this._handleLinkClick}
     ></div>`;
   }
   /**

@@ -1,4 +1,5 @@
 import { TokenizerAndRendererExtension, Tokens } from "marked";
+import "@common/thin-markdown-editor/extension-tag/tmd-id-tag/tmd-id-tag";
 
 /**
  * markdownパターン
@@ -44,7 +45,7 @@ export const IdTagExtension: TokenizerAndRendererExtension = {
   },
   renderer(token: Tokens.Generic): string {
     const t = token as IdTagToken;
-    return `<span class="id-tag" data-id="${t.id}">#${t.id} ${t.text}</span>`;
+    return `<tmd-id-tag taskId="${t.id}">${t.text}</tmd-id-tag>`;
   },
 };
 

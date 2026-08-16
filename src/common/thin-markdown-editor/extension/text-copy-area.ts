@@ -1,4 +1,5 @@
 import { TokenizerAndRendererExtension, Tokens } from "marked";
+import "@/common/thin-markdown-editor/extension-tag/tmd-text-copy-area/tmd-text-copy-area";
 
 /**
  * TextCopyAreaのトークンインターフェース
@@ -31,8 +32,7 @@ export const TextCopyAreaExtension: TokenizerAndRendererExtension = {
   },
   renderer(token: Tokens.Generic): string {
     const t = token as TextCopyAreaToken;
-    const icon = `<div class="icon"><wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon></div>`;
-    return `<div class="text-copy-area" data-text="${t.text}"><div class="content">${t.text}</div>${icon}</div>`;
+    return `<tmd-text-copy-area copyText="${t.text}">${t.text}</tmd-text-copy-area>`;
   },
 };
 
