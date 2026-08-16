@@ -39,6 +39,7 @@ import circle_question_regular_full from "@assets/icons/circle-question-regular-
 import circle_solid_full from "@assets/icons/circle-solid-full.svg?raw";
 import circle_stop_solid_full from "@assets/icons/circle-stop-solid-full.svg?raw";
 import circle_user_solid_full from "@assets/icons/circle-user-solid-full.svg?raw";
+import circle_xmark_regular_full from "@assets/icons/circle-xmark-regular-full.svg?raw";
 import clipboard_regular_full from "@assets/icons/clipboard-regular-full.svg?raw";
 import clipboard_solid_full from "@assets/icons/clipboard-solid-full.svg?raw";
 import clock_regular_full from "@assets/icons/clock-regular-full.svg?raw";
@@ -148,6 +149,7 @@ export const icons: Record<string, string> = {
   "circle-solid-full": circle_solid_full,
   "circle-stop-solid-full": circle_stop_solid_full,
   "circle-user-solid-full": circle_user_solid_full,
+  "circle-xmark-regular-full": circle_xmark_regular_full,
   "clipboard-regular-full": clipboard_regular_full,
   "clipboard-solid-full": clipboard_solid_full,
   "clock-regular-full": clock_regular_full,
