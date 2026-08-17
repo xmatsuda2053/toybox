@@ -9,8 +9,8 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Internal Shared (Codes, Models, Database)
 import { snDB } from "@sn/database/SnDB";
-import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
-import { variants } from "@/apps/stepnote/components/dashboard/sn-dashboard-kpi-widget/sn-dashboard-kpi-widget";
+import { KpiWidgetValue } from "@sn/models/dashboard/KpiWidgetValue";
+import { variants } from "@sn-dashboard/sn-dashboard-kpi-widget/sn-dashboard-kpi-widget";
 
 // Internal Shared (Utils)
 import { emit } from "@/utils/EventUtils";

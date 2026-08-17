@@ -16,7 +16,7 @@ import ApexCharts from "apexcharts";
 import { ApexOptions } from "apexcharts";
 
 // Internal Shared (Codes, Models, Database)
-import { LabelBreakdownValue } from "@sn/models/LabelBreakdownValue";
+import { LabelBreakdownValue } from "@sn/models/dashboard/LabelBreakdownValue";
 
 // Internal Shared (Utils)
 

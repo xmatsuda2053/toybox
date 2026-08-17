@@ -16,7 +16,7 @@ import ApexCharts from "apexcharts";
 import { ApexOptions } from "apexcharts";
 
 // Internal Shared (Codes, Models, Database)
-import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
+import { KpiWidgetValue } from "@sn/models/dashboard/KpiWidgetValue";
 
 // Internal Shared (Utils)
 

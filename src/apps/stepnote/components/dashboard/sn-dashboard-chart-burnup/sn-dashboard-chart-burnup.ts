@@ -16,7 +16,7 @@ import ApexCharts from "apexcharts";
 import { ApexOptions } from "apexcharts";
 
 // Internal Shared (Codes, Models, Database)
-import { BurnupValue } from "@sn/models/BurnupValue";
+import { BurnupValue } from "@sn/models/dashboard/BurnupValue";
 
 // Internal Shared (Utils)
 
