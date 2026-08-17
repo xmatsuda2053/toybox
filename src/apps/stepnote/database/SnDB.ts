@@ -8,7 +8,7 @@ import { Task } from "@sn/models/Task";
 import { Log } from "@sn/models/Log";
 import { Note } from "@sn/models/Note";
 import { Config } from "@sn/models/Config";
-import { Notebook } from "@sn/models/Notebook";
+import { Notebook } from "@sn/models/notebook/Notebook";
 
 import { LabelRepository } from "@sn/database/repositories/LabelRepository";
 import { QuickAccessRepository } from "@sn/database/repositories/QuickAccessRepository";

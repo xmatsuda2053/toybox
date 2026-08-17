@@ -1,5 +1,5 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Notebook } from "@sn/models/Notebook";
+import { Notebook } from "@sn/models/notebook/Notebook";
 
 /**
  * ノートブックの永続化操作を担うリポジトリクラス。
