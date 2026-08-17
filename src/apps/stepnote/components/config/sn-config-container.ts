@@ -24,7 +24,7 @@ import { configUtils } from "@/utils/ConfigUtils";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/config/sn-config-container.lit.scss?inline";
+import styles from "@sn-config/sn-config-container.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");

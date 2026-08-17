@@ -26,7 +26,7 @@ import { getCurrentFiscalYear } from "@/utils/DateUtils";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/dashboard/sn-dashboard-container.lit.scss?inline";
+import styles from "@sn-dashboard/sn-dashboard-container.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 const currentFiscalYear = getCurrentFiscalYear();

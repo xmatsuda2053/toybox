@@ -27,7 +27,7 @@ import { debounce } from "@utils/CommonUtils";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/notebook/sn-notebook-container.lit.scss?inline";
+import styles from "@sn-notebook/sn-notebook-container.lit.scss?inline";
 
 // Initializations
 setBasePath("/");

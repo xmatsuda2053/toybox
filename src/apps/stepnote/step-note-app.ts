@@ -16,14 +16,14 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Internal Modules (Database, Models, Shared Components)
 import { snDB } from "@sn/database/SnDB";
-import { features } from "./components/menu/sn-menu";
+import { features } from "./components/menu/sn-menu/sn-menu";
 
 // Internal Shared (Utils)
 import { configUtils } from "@/utils/ConfigUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@sn/styles/step-note-app.lit.scss?inline";
+import styles from "@sn/step-note-app.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");
