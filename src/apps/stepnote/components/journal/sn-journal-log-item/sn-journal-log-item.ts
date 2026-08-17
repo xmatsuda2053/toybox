@@ -16,7 +16,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // Internal Shared (Common Components, Database, Models)
 import { ThinMarkdownEditor } from "@common/thin-markdown-editor/thin-markdown-editor";
 import { snDB } from "@sn/database/SnDB";
-import { Log } from "@sn/models/Log";
+import { Log } from "@sn/models/task/Log";
 
 // Internal Shared (Utils)
 import { debounce } from "@/utils/CommonUtils";

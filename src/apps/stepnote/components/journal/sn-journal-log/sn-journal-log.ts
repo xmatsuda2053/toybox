@@ -18,7 +18,7 @@ import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // Business Logic & Models
 import { snDB } from "@sn/database/SnDB";
-import { Log } from "@sn/models/Log";
+import { Log } from "@sn/models/task/Log";
 
 // Utilities
 import { formatDate } from "@/utils/DateUtils";

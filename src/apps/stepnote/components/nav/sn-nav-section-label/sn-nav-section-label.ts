@@ -18,7 +18,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // 4. Internal Shared (Database, Models)
 import { snDB } from "@sn/database/SnDB";
-import { Label } from "@sn/models/Label";
+import { Label } from "@sn/models/task/Label";
 
 // 5. Internal Shared (Utils)
 

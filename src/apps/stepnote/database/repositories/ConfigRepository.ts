@@ -1,5 +1,5 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Config } from "@sn/models/Config";
+import { Config } from "@sn/models/task/Config";
 
 /**
  * 設定データの永続化、および設内容を管理するリポジトリクラスです。

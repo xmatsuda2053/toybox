@@ -1,5 +1,5 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Task } from "@sn/models/Task";
+import { Task } from "@sn/models/task/Task";
 import { TaskStatus } from "@sn/code/TaskStatus";
 
 /**

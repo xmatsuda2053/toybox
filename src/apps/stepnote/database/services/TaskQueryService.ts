@@ -1,6 +1,6 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Task } from "@sn/models/Task";
-import { QuickAccess } from "@sn/models/QuickAccess";
+import { Task } from "@sn/models/task/Task";
+import { QuickAccess } from "@sn/models/task/QuickAccess";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import {
   formatDate,
@@ -8,7 +8,7 @@ import {
   isAsap,
   isWithinAnyDaysBefore,
 } from "@utils/DateUtils";
-import { Label } from "@sn/models/Label";
+import { Label } from "@sn/models/task/Label";
 
 /**
  * タスクデータの状態を取得するサービスクラスです。

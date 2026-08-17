@@ -1,6 +1,6 @@
 import Dexie from "dexie";
 import { SnDB } from "@sn/database/SnDB";
-import { Log } from "@sn/models/Log";
+import { Log } from "@sn/models/task/Log";
 
 /**
  * ログデータの永続化およびデータアクセスを管理するリポジトリクラスです。

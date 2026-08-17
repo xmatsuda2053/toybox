@@ -11,7 +11,7 @@ import WaInput from "@awesome.me/webawesome/dist/components/input/input.js";
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // Internal Shared (Database, Models)
-import { Contact } from "@sn/models/Contact";
+import { Contact } from "@sn/models/task/Contact";
 
 // Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";

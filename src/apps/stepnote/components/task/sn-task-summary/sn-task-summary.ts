@@ -20,9 +20,9 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // 4. Internal Shared (Components, Codes, Models)
 import { snDB } from "@sn/database/SnDB";
 import { ThinMarkdownEditor } from "@common/thin-markdown-editor/thin-markdown-editor";
-import { SnTaskContact } from "@/apps/stepnote/components/task/sn-task-contact/sn-task-contact";
+import { SnTaskContact } from "@sn/components/task/sn-task-contact/sn-task-contact";
 import { TaskStatus } from "@sn/code/TaskStatus";
-import { Task } from "@sn/models/Task";
+import { Task } from "@sn/models/task/Task";
 import { DatePickerInput } from "@/common/datepicker-input/datepicker-input";
 
 // 5. Internal Shared (Utils)

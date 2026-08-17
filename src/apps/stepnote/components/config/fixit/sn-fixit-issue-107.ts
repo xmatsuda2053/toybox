@@ -22,7 +22,7 @@ import { snDB } from "@sn/database/SnDB";
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
 import itemStyles from "@sn-config/_shared/sn-config-item.lit.scss?inline";
-import { Task } from "@/apps/stepnote/models/Task";
+import { Task } from "@sn/models/task/Task";
 
 // --- Configuration & Initialization ---
 setBasePath("/");

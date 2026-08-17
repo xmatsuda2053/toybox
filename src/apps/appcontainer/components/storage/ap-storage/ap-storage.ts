@@ -7,7 +7,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
 // Internal Assets & Logic
-import { snDB } from "@/apps/stepnote/database/SnDB";
+import { snDB } from "@sn/database/SnDB";
 import { DataExporter } from "@/common/data-exporter/data-exporter";
 
 // Styles

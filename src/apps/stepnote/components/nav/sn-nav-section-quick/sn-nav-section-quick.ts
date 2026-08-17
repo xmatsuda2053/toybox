@@ -18,8 +18,8 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 // 4. Internal Shared (Database, Models, Codes)
 import { snDB } from "@sn/database/SnDB";
 import { TaskStatus } from "@sn/code/TaskStatus";
-import { QuickAccess } from "@sn/models/QuickAccess";
-import { navVariants } from "@/apps/stepnote/components/nav/sn-nav-item/sn-nav-item";
+import { QuickAccess } from "@sn/models/task/QuickAccess";
+import { navVariants } from "@sn/components/nav/sn-nav-item/sn-nav-item";
 
 // 5. Internal Shared (Utils)
 

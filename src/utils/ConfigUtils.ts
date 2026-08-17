@@ -1,6 +1,6 @@
 import { liveQuery } from "dexie";
 import { snDB } from "@sn/database/SnDB";
-import { Config } from "@/apps/stepnote/models/Config";
+import { Config } from "@sn/models/task/Config";
 
 /**
  * 設定データの初期値

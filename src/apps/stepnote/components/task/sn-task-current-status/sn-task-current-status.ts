@@ -11,7 +11,10 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import { classMap } from "lit/directives/class-map.js";
 
 // Internal Shared (Models)
-import { CurrentStatus, CurrentStatusType } from "@sn/models/CurrentStatus";
+import {
+  CurrentStatus,
+  CurrentStatusType,
+} from "@sn/models/task/CurrentStatus";
 
 // Internal Shared (Utils)
 import { emit } from "@utils/EventUtils";

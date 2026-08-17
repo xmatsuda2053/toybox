@@ -11,7 +11,7 @@ import WaSelect from "@awesome.me/webawesome/dist/components/select/select.js";
 
 // Internal Shared (Codes, Models, Database)
 import { snDB } from "@sn/database/SnDB";
-import { Label } from "@sn/models/Label";
+import { Label } from "@sn/models/task/Label";
 import { liveQuery, type Subscription } from "dexie";
 
 // Internal Shared (Utils)

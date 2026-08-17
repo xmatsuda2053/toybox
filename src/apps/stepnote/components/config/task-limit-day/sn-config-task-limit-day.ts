@@ -15,7 +15,7 @@ import WaNumberInput from "@awesome.me/webawesome/dist/components/number-input/n
 import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js";
 
 // Internal Shared (Codes, Models, Database)
-import { Config } from "@sn/models/Config";
+import { Config } from "@sn/models/task/Config";
 
 // Internal Shared (Utils)
 import { emit } from "@/utils/EventUtils";
