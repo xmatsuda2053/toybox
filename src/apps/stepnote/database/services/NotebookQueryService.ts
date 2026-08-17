@@ -1,5 +1,5 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Notebook } from "@sn/models/Notebook";
+import { Notebook } from "@sn/models/notebook/Notebook";
 
 /**
  * ノートブックのクエリ操作を提供するサービスクラスです。

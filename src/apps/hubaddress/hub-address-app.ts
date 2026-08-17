@@ -30,7 +30,7 @@ import { SearchInput } from "@/common/search-input/search-input";
 // 5. Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@ha/styles/hub-address-app.lit.scss?inline";
+import styles from "@ha/hub-address-app.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");

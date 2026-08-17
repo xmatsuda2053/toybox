@@ -1,0 +1,68 @@
+@use "mixins";
+
+#contents-root {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  padding-top: var(--wa-space-s);
+
+  overflow: hidden;
+  background: var(--wa-color-neutral-20);
+
+  .header {
+    display: flex;
+    padding-block: 0;
+    padding-inline: var(--wa-space-s);
+
+    color: var(--wa-color-neutral-95);
+    font-size: var(--wa-font-size-m);
+    font-weight: bold;
+
+    .title {
+      margin-inline-end: auto;
+    }
+
+    wa-icon {
+      cursor: pointer;
+      font-size: var(--wa-font-size-l);
+
+      transition:
+        transform 0.2s ease-in-out,
+        color 0.2s;
+
+      &:hover {
+        color: var(--wa-color-neutral-70);
+      }
+    }
+  }
+
+  .search {
+    padding: 0 var(--wa-space-s);
+    margin-block-start: var(--wa-space-xs);
+    margin-block-end: var(--wa-space-m);
+  }
+
+  .items {
+    padding-block: 0;
+    padding-inline-start: var(--wa-space-s);
+    padding-inline-end: var(--wa-space-2xs);
+    scrollbar-gutter: stable;
+
+    @include mixins.scrollable(
+      var(--wa-color-neutral-90),
+      var(--wa-color-neutral-70),
+      var(--wa-color-neutral-70)
+    );
+
+    &:hover {
+      --sb-thumb-color: var(--wa-color-neutral-90);
+    }
+
+    lit-virtualizer {
+      sn-list-section,
+      sn-list-item {
+        width: 100%;
+      }
+    }
+  }
+}

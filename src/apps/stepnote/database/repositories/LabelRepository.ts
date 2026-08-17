@@ -1,5 +1,5 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Label } from "@sn/models/Label";
+import { Label } from "@sn/models/task/Label";
 
 /**
  * 分類ラベルデータの永続化、およびラベルの選択状態を管理するリポジトリクラスです。

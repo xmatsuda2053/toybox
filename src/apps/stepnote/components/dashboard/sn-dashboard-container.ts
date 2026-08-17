@@ -16,9 +16,9 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Internal Shared (Codes, Models, Database)
 import { snDB } from "@sn/database/SnDB";
-import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
-import { BurnupValue } from "@sn/models/BurnupValue";
-import { LabelBreakdownValue } from "@sn/models/LabelBreakdownValue";
+import { KpiWidgetValue } from "@sn/models/dashboard/KpiWidgetValue";
+import { BurnupValue } from "@sn/models/dashboard/BurnupValue";
+import { LabelBreakdownValue } from "@sn/models/dashboard/LabelBreakdownValue";
 
 // Internal Shared (Utils)
 import { getCurrentFiscalYear } from "@/utils/DateUtils";
@@ -26,7 +26,7 @@ import { getCurrentFiscalYear } from "@/utils/DateUtils";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/dashboard/sn-dashboard-container.lit.scss?inline";
+import styles from "@sn-dashboard/sn-dashboard-container.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 const currentFiscalYear = getCurrentFiscalYear();

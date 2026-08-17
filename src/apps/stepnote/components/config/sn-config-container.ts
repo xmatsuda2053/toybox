@@ -16,7 +16,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Internal Shared (Codes, Models, Database)
 import { snDB } from "@sn/database/SnDB";
-import { Config } from "@sn/models/Config";
+import { Config } from "@sn/models/task/Config";
 
 // Internal Shared (Utils)
 import { configUtils } from "@/utils/ConfigUtils";
@@ -24,7 +24,7 @@ import { configUtils } from "@/utils/ConfigUtils";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/config/sn-config-container.lit.scss?inline";
+import styles from "@sn-config/sn-config-container.lit.scss?inline";
 
 // --- Configuration & Initialization ---
 setBasePath("/");

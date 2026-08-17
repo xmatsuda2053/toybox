@@ -1,3 +1,4 @@
+import path from "path";
 import { defineConfig } from "vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -9,6 +10,13 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [viteSingleFile(), tsconfigPaths()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          loadPaths: [path.resolve(__dirname, "src/apps/_shared")],
+        },
+      },
+    },
     esbuild: {
       minifyWhitespace: true,
       minifyIdentifiers: true,

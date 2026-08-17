@@ -17,7 +17,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Internal Shared (Codes, Models, Database)
 import { snDB } from "@sn/database/SnDB";
-import { Notebook } from "@sn/models/Notebook";
+import { Notebook } from "@sn/models/notebook/Notebook";
 import { ThinMarkdownEditor } from "@/common/thin-markdown-editor/thin-markdown-editor";
 
 // Internal Shared (Utils)
@@ -27,7 +27,7 @@ import { debounce } from "@utils/CommonUtils";
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
 import sharedStyles from "@shared/shared-css.lit.scss?inline";
-import styles from "@sn/styles/notebook/sn-notebook-container.lit.scss?inline";
+import styles from "@sn-notebook/sn-notebook-container.lit.scss?inline";
 
 // Initializations
 setBasePath("/");

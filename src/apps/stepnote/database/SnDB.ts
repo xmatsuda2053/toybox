@@ -2,13 +2,13 @@ import Dexie, { Table } from "dexie";
 import "dexie-export-import";
 import { importInto } from "dexie-export-import";
 
-import { QuickAccess } from "@sn/models/QuickAccess";
-import { Label } from "@sn/models/Label";
-import { Task } from "@sn/models/Task";
-import { Log } from "@sn/models/Log";
-import { Note } from "@sn/models/Note";
-import { Config } from "@sn/models/Config";
-import { Notebook } from "@sn/models/Notebook";
+import { QuickAccess } from "@sn/models/task/QuickAccess";
+import { Label } from "@sn/models/task/Label";
+import { Task } from "@sn/models/task/Task";
+import { Log } from "@sn/models/task/Log";
+import { Note } from "@sn/models/task/Note";
+import { Config } from "@sn/models/task/Config";
+import { Notebook } from "@sn/models/notebook/Notebook";
 
 import { LabelRepository } from "@sn/database/repositories/LabelRepository";
 import { QuickAccessRepository } from "@sn/database/repositories/QuickAccessRepository";

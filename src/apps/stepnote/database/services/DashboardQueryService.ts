@@ -1,9 +1,9 @@
 import { SnDB } from "@sn/database/SnDB";
-import { Task } from "@sn/models/Task";
-import { Label } from "@sn/models/Label";
-import { KpiWidgetValue } from "@sn/models/KpiWidgetValue";
-import { BurnupValue } from "@sn/models/BurnupValue";
-import { LabelBreakdownValue } from "@sn/models/LabelBreakdownValue";
+import { Task } from "@sn/models/task/Task";
+import { Label } from "@sn/models/task/Label";
+import { KpiWidgetValue } from "@sn/models/dashboard/KpiWidgetValue";
+import { BurnupValue } from "@sn/models/dashboard/BurnupValue";
+import { LabelBreakdownValue } from "@sn/models/dashboard/LabelBreakdownValue";
 import { TaskStatus } from "@sn/code/TaskStatus";
 import { isOverdue, isAsap, isWithinAnyDaysBefore } from "@utils/DateUtils";
 

@@ -24,8 +24,25 @@
       "@apps/*": ["./src/apps/*"],
       "@shared/*": ["./src/apps/_shared/*"],
       "@ap/*": ["./src/apps/appcontainer/*"],
+      "@ap-shared/*": ["./src/apps/appcontainer/_shared/*"],
+      "@ap-app/*": ["./src/apps/appcontainer/components/app/*"],
+      "@ap-file/*": ["./src/apps/appcontainer/components/file/*"],
+      "@ap-tool/*": ["./src/apps/appcontainer/components/tool/*"],
+      "@ap-storage/*": ["./src/apps/appcontainer/components/storage/*"],
       "@sn/*": ["./src/apps/stepnote/*"],
-      "@ha/*": ["./src/apps/hubaddress/*"]
+      "@sn-config/*": ["./src/apps/stepnote/components/config/*"],
+      "@sn-dashboard/*": ["./src/apps/stepnote/components/dashboard/*"],
+      "@sn-journal/*": ["./src/apps/stepnote/components/journal/*"],
+      "@sn-list/*": ["./src/apps/stepnote/components/list/*"],
+      "@sn-menu/*": ["./src/apps/stepnote/components/menu/*"],
+      "@sn-nav/*": ["./src/apps/stepnote/components/nav/*"],
+      "@sn-notebook/*": ["./src/apps/stepnote/components/notebook/*"],
+      "@sn-tab/*": ["./src/apps/stepnote/components/tab/*"],
+      "@sn-task/*": ["./src/apps/stepnote/components/task/*"],
+      "@ha/*": ["./src/apps/hubaddress/*"],
+      "@ha-menu/*": ["./src/apps/hubaddress/components/menu/*"],
+      "@ha-uploader/*": ["./src/apps/hubaddress/components/uploader/*"],
+      "@ha-viewer/*": ["./src/apps/hubaddress/components/viewer/*"]
     }
   },
   "include": ["src"]

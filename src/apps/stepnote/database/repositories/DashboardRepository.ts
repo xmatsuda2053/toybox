@@ -1,5 +1,5 @@
 import { snDB, SnDB } from "@sn/database/SnDB";
-import { QuickAccess } from "@sn/models/QuickAccess";
+import { QuickAccess } from "@sn/models/task/QuickAccess";
 
 /**
  * ダッシュボード画面におけるCRUDを定義します。

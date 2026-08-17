@@ -1,6 +1,6 @@
 import Dexie from "dexie";
 import { SnDB } from "@sn/database/SnDB";
-import { Note } from "@sn/models/Note";
+import { Note } from "@sn/models/task/Note";
 
 /**
  * タスクに紐づくノート（メモ）データの永続化およびデータアクセスを管理するリポジトリクラスです。

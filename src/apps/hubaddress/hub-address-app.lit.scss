@@ -1,0 +1,95 @@
+@use "mixins";
+
+$search-height: 40px;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+#contents-root {
+  display: grid;
+
+  grid-template-columns: 50px 1fr 20px 1fr;
+  overflow: hidden;
+
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+
+  background-color: #fffffc;
+
+  .menu {
+    background-color: black;
+  }
+  .divider {
+    display: flex;
+    justify-content: center;
+
+    wa-divider {
+      --space: 1px;
+    }
+  }
+
+  .base {
+    display: grid;
+    gap: var(--wa-space-xs);
+    grid-template-rows: $search-height 1fr;
+    overflow: hidden;
+
+    height: 100%;
+    width: 100%;
+    padding-block-start: var(--wa-space-m);
+    padding-block-end: var(--wa-space-s);
+    box-sizing: border-box;
+
+    &.staff {
+      padding-inline-start: var(--wa-space-s);
+    }
+    &.div {
+      padding-inline-end: var(--wa-space-s);
+    }
+
+    .search {
+      padding-inline-end: var(--wa-space-s);
+    }
+
+    .viewer {
+      height: 100%;
+      scrollbar-gutter: stable;
+      @include mixins.scrollable(
+        var(--wa-color-neutral-30),
+        var(--wa-color-neutral-40),
+        var(--wa-color-neutral-40)
+      );
+      --sb-thumb-color: var(--wa-color-neutral-50);
+      &:hover {
+        --sb-thumb-color: var(--wa-color-neutral-20);
+      }
+
+      ha-viewer-staff,
+      ha-viewer-div {
+        width: 100%;
+      }
+
+      &.empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        ha-uploader {
+          display: block;
+        }
+      }
+
+      &.loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        wa-spinner {
+          font-size: 200px;
+        }
+      }
+    }
+  }
+}
