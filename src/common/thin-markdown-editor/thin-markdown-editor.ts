@@ -197,8 +197,7 @@ export class ThinMarkdownEditor extends LitElement {
   constructor() {
     super();
     this.renderer.link = ({ href, text }) => {
-      const safeHref = href.replace(/\\/g, "%5C");
-      return `<tmd-link href=${safeHref}>${text}</tmd-link>`;
+      return `<tmd-link href=${href}>${text}</tmd-link>`;
     };
 
     marked.use({
