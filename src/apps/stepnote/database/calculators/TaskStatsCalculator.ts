@@ -31,6 +31,23 @@ export class TaskStatsCalculator {
   }
 
   /**
+   * 未分類タスク数を取得します。
+   *
+   * @return {*}  {Promise<number>}
+   * @memberof TaskStatsCalculator
+   */
+  async countUncategorized(): Promise<number> {
+    const labels = await this.db.labelRepo.getLabelsAscName();
+    const existingLabelSet = new Set(labels.map((l) => l.id));
+
+    return await this.db.tasks
+      .where("statusCode")
+      .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
+      .filter((task) => !existingLabelSet.has(task.labelId)) // ラベルなし
+      .count();
+  }
+
+  /**
    * 期限切れタスクの有無を判定します。
    *
    * @return {*}  {Promise<boolean>}
