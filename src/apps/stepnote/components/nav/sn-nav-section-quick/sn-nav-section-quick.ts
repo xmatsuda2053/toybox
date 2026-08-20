@@ -95,6 +95,14 @@ export class SnNavSectionQuick extends LitElement {
   @state() private _bookmarkCount = 0;
 
   /**
+   * 未分類件数
+   *
+   * @private
+   * @memberof SnNavSectionQuick
+   */
+  @state() private _uncategorizedCount = 0;
+
+  /**
    * 期限切れタスクの有無
    *
    * @private
@@ -184,14 +192,21 @@ export class SnNavSectionQuick extends LitElement {
    */
   private _subscribeLabels() {
     const observable = liveQuery(async () => {
-      const [quickAccess, hasOverdue, hasAsap, hasUpcoming, bookmarkCount] =
-        await Promise.all([
-          snDB.quickAccessRepo.getQuickAccess(),
-          snDB.taskStats.hasOverdue(),
-          snDB.taskStats.hasAsap(),
-          snDB.taskStats.hasUpcoming(),
-          snDB.taskStats.countBookmark(),
-        ]);
+      const [
+        quickAccess,
+        hasOverdue,
+        hasAsap,
+        hasUpcoming,
+        bookmarkCount,
+        uncategorizedCount,
+      ] = await Promise.all([
+        snDB.quickAccessRepo.getQuickAccess(),
+        snDB.taskStats.hasOverdue(),
+        snDB.taskStats.hasAsap(),
+        snDB.taskStats.hasUpcoming(),
+        snDB.taskStats.countBookmark(),
+        snDB.taskStats.countUncategorized(),
+      ]);
 
       return {
         quickAccess,
@@ -199,6 +214,7 @@ export class SnNavSectionQuick extends LitElement {
         hasAsap,
         hasUpcoming,
         bookmarkCount,
+        uncategorizedCount,
       };
     });
 
@@ -209,6 +225,7 @@ export class SnNavSectionQuick extends LitElement {
         this._hasAsap = data.hasAsap;
         this._hasUpcoming = data.hasUpcoming;
         this._bookmarkCount = data.bookmarkCount;
+        this._uncategorizedCount = data.uncategorizedCount;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -238,6 +255,7 @@ export class SnNavSectionQuick extends LitElement {
         icon: "question-solid-full",
         key: "isUncategorizedSelected",
         isSelected: isOn("isUncategorizedSelected"),
+        count: this._uncategorizedCount,
       },
       {
         isDivider: true,
