@@ -43,6 +43,7 @@ interface navItem {
   variants?: navVariants;
   isSelected?: boolean;
   hasAlert?: boolean;
+  count?: number;
   isViewable?: boolean;
 }
 
@@ -84,6 +85,14 @@ export class SnNavSectionQuick extends LitElement {
    * @memberof SnNavSectionQuick
    */
   @state() private _quickAccess!: QuickAccess;
+
+  /**
+   * ブックマーク件数
+   *
+   * @private
+   * @memberof SnNavSectionQuick
+   */
+  @state() private _bookmarkCount = 0;
 
   /**
    * 期限切れタスクの有無
@@ -175,20 +184,21 @@ export class SnNavSectionQuick extends LitElement {
    */
   private _subscribeLabels() {
     const observable = liveQuery(async () => {
-      const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
-        [
+      const [quickAccess, hasOverdue, hasAsap, hasUpcoming, bookmarkCount] =
+        await Promise.all([
           snDB.quickAccessRepo.getQuickAccess(),
           snDB.taskStats.hasOverdue(),
           snDB.taskStats.hasAsap(),
           snDB.taskStats.hasUpcoming(),
-        ],
-      );
+          snDB.taskStats.countBookmark(),
+        ]);
 
       return {
         quickAccess,
         hasOverdue,
         hasAsap,
         hasUpcoming,
+        bookmarkCount,
       };
     });
 
@@ -198,6 +208,7 @@ export class SnNavSectionQuick extends LitElement {
         this._hasOverdue = data.hasOverdue;
         this._hasAsap = data.hasAsap;
         this._hasUpcoming = data.hasUpcoming;
+        this._bookmarkCount = data.bookmarkCount;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -220,6 +231,7 @@ export class SnNavSectionQuick extends LitElement {
         key: "isBookmarkSelected",
         variants: "bookmark",
         isSelected: isOn("isBookmarkSelected"),
+        count: this._bookmarkCount,
       },
       {
         label: "未分類",
@@ -413,6 +425,7 @@ export class SnNavSectionQuick extends LitElement {
             ?viewable=${item.isViewable}
             ?animation=${item.hasAlert}
             ?dot=${item.hasAlert}
+            .count=${item.count ?? 0}
             @click-nav-item=${() => {
               this._toggleSelected(item.key!);
             }}

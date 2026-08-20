@@ -111,6 +111,10 @@ $status-colors: (
     .target-task-dot {
       color: var(--wa-color-green-60);
     }
+
+    wa-badge {
+      font-size: var(--wa-font-size-2xs);
+    }
   }
 }
 

@@ -95,6 +95,14 @@ export class SnNavItem extends LitElement {
   @property({ type: Boolean }) dot: boolean = false;
 
   /**
+   * カウント
+   *
+   * @type {number}
+   * @memberof SnNavItem
+   */
+  @property({ type: Number }) count: number = 0;
+
+  /**
    * 要素の表示非表示制御であることを示す。
    *
    * @type {boolean}
@@ -189,7 +197,9 @@ export class SnNavItem extends LitElement {
         <div class="icon">${this._renderIcon()}</div>
         <div class="label">${this._renderCaret()}${this.label}</div>
       </div>
-      <div class="end">${this._renderDot()} ${this._renderEyeIcon()}</div>
+      <div class="end">
+        ${this._renderDot()} ${this._renderEyeIcon()} ${this._renderCount()}
+      </div>
       ${this._renderMenu()}
     </div>`;
   }
@@ -255,6 +265,18 @@ export class SnNavItem extends LitElement {
         name="circle-dot-regular-full"
       ></wa-icon>
     `;
+  }
+
+  /**
+   * カウントをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof SnNavItem
+   */
+  private _renderCount(): HTMLTemplateResult | typeof nothing {
+    if (this.count === 0) return nothing;
+    return html`<wa-badge variant="brand" pill>${this.count}</wa-badge>`;
   }
 
   /**
