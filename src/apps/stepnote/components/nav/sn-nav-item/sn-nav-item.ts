@@ -34,7 +34,8 @@ export type navVariants =
   | "warning"
   | "info"
   | "success"
-  | "brand";
+  | "brand"
+  | "bookmark";
 
 /**
  * ナビゲーションアイテム

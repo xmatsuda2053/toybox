@@ -50,6 +50,8 @@ interface navItem {
  * 下記フラグをONにした場合、ラベル選択状態を初期化する
  */
 const LABEL_CLEAR_TARGET_KEYS: (keyof QuickAccess)[] = [
+  "isBookmarkSelected",
+  "isUncategorizedSelected",
   "isOverdueSelected",
   "isAsapSelected",
   "isUpcomingSelected",
@@ -213,9 +215,10 @@ export class SnNavSectionQuick extends LitElement {
         isDivider: true,
       },
       {
-        label: "お気に入り",
-        icon: "bookmark-regular-full",
+        label: "ブックマーク",
+        icon: "bookmark-solid-full",
         key: "isBookmarkSelected",
+        variants: "bookmark",
         isSelected: isOn("isBookmarkSelected"),
       },
       {
@@ -321,7 +324,7 @@ export class SnNavSectionQuick extends LitElement {
     // 並列更新の準備
     const promises: Promise<unknown>[] = [];
 
-    // 期限切れ・期限当日・期限間近をONにした場合、ラベル選択状態をリセットする
+    // 指定のキーをONにした場合、ラベル選択状態をリセットする
     if (nextSelected === 1 && LABEL_CLEAR_TARGET_KEYS.includes(key)) {
       promises.push(snDB.labelRepo.deSelectAllLabel());
 
