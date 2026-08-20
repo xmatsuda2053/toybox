@@ -17,6 +17,20 @@ export class TaskStatsCalculator {
   constructor(private db: SnDB) {}
 
   /**
+   * ブックマーク件数を取得します。
+   *
+   * @return {*}  {Promise<number>}
+   * @memberof TaskStatsCalculator
+   */
+  async countBookmark(): Promise<number> {
+    return await this.db.tasks
+      .where("statusCode")
+      .anyOf([TaskStatus.PENDING.code, TaskStatus.PROGRESS.code]) // 開始待ち,対応中
+      .filter((task) => task.bookmark === 1) // ブックマーク済み
+      .count();
+  }
+
+  /**
    * 期限切れタスクの有無を判定します。
    *
    * @return {*}  {Promise<boolean>}

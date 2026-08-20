@@ -113,15 +113,15 @@ $status-icon-colors: (
         .bookmark {
           wa-icon {
             &:hover {
-              color: var(--wa-color-brand-60);
+              color: var(--wa-color-indigo-60);
             }
           }
 
           &.active {
             wa-icon {
-              color: var(--wa-color-brand-60);
+              color: var(--wa-color-indigo-60);
               &:hover {
-                color: var(--wa-color-brand-50);
+                color: var(--wa-color-indigo-50);
               }
             }
           }

@@ -43,6 +43,7 @@ interface navItem {
   variants?: navVariants;
   isSelected?: boolean;
   hasAlert?: boolean;
+  count?: number;
   isViewable?: boolean;
 }
 
@@ -50,6 +51,8 @@ interface navItem {
  * 下記フラグをONにした場合、ラベル選択状態を初期化する
  */
 const LABEL_CLEAR_TARGET_KEYS: (keyof QuickAccess)[] = [
+  "isBookmarkSelected",
+  "isUncategorizedSelected",
   "isOverdueSelected",
   "isAsapSelected",
   "isUpcomingSelected",
@@ -82,6 +85,14 @@ export class SnNavSectionQuick extends LitElement {
    * @memberof SnNavSectionQuick
    */
   @state() private _quickAccess!: QuickAccess;
+
+  /**
+   * ブックマーク件数
+   *
+   * @private
+   * @memberof SnNavSectionQuick
+   */
+  @state() private _bookmarkCount = 0;
 
   /**
    * 期限切れタスクの有無
@@ -173,20 +184,21 @@ export class SnNavSectionQuick extends LitElement {
    */
   private _subscribeLabels() {
     const observable = liveQuery(async () => {
-      const [quickAccess, hasOverdue, hasAsap, hasUpcoming] = await Promise.all(
-        [
+      const [quickAccess, hasOverdue, hasAsap, hasUpcoming, bookmarkCount] =
+        await Promise.all([
           snDB.quickAccessRepo.getQuickAccess(),
           snDB.taskStats.hasOverdue(),
           snDB.taskStats.hasAsap(),
           snDB.taskStats.hasUpcoming(),
-        ],
-      );
+          snDB.taskStats.countBookmark(),
+        ]);
 
       return {
         quickAccess,
         hasOverdue,
         hasAsap,
         hasUpcoming,
+        bookmarkCount,
       };
     });
 
@@ -196,6 +208,7 @@ export class SnNavSectionQuick extends LitElement {
         this._hasOverdue = data.hasOverdue;
         this._hasAsap = data.hasAsap;
         this._hasUpcoming = data.hasUpcoming;
+        this._bookmarkCount = data.bookmarkCount;
       },
       error: (err) => console.error("LiveQuery Error:", err),
     });
@@ -213,10 +226,12 @@ export class SnNavSectionQuick extends LitElement {
         isDivider: true,
       },
       {
-        label: "お気に入り",
-        icon: "bookmark-regular-full",
+        label: "ブックマーク",
+        icon: "bookmark-solid-full",
         key: "isBookmarkSelected",
+        variants: "bookmark",
         isSelected: isOn("isBookmarkSelected"),
+        count: this._bookmarkCount,
       },
       {
         label: "未分類",
@@ -321,7 +336,7 @@ export class SnNavSectionQuick extends LitElement {
     // 並列更新の準備
     const promises: Promise<unknown>[] = [];
 
-    // 期限切れ・期限当日・期限間近をONにした場合、ラベル選択状態をリセットする
+    // 指定のキーをONにした場合、ラベル選択状態をリセットする
     if (nextSelected === 1 && LABEL_CLEAR_TARGET_KEYS.includes(key)) {
       promises.push(snDB.labelRepo.deSelectAllLabel());
 
@@ -410,6 +425,7 @@ export class SnNavSectionQuick extends LitElement {
             ?viewable=${item.isViewable}
             ?animation=${item.hasAlert}
             ?dot=${item.hasAlert}
+            .count=${item.count ?? 0}
             @click-nav-item=${() => {
               this._toggleSelected(item.key!);
             }}
