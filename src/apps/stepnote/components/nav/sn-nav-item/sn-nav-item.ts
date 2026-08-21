@@ -87,14 +87,6 @@ export class SnNavItem extends LitElement {
   @property({ type: Boolean }) selected: boolean = false;
 
   /**
-   * ドット表示有無
-   *
-   * @type {boolean}
-   * @memberof SnNavItem
-   */
-  @property({ type: Boolean }) dot: boolean = false;
-
-  /**
    * カウント
    *
    * @type {number}
@@ -197,9 +189,7 @@ export class SnNavItem extends LitElement {
         <div class="icon">${this._renderIcon()}</div>
         <div class="label">${this._renderCaret()}${this.label}</div>
       </div>
-      <div class="end">
-        ${this._renderDot()} ${this._renderEyeIcon()} ${this._renderCount()}
-      </div>
+      <div class="end">${this._renderEyeIcon()} ${this._renderCount()}</div>
       ${this._renderMenu()}
     </div>`;
   }
@@ -246,24 +236,6 @@ export class SnNavItem extends LitElement {
     if (!this.selected) return nothing;
     return html`
       <wa-icon library="my-icons" name="caret-right-solid-full"></wa-icon>
-    `;
-  }
-
-  /**
-   * ドットアイコンをレンダリングします。
-   *
-   * @private
-   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
-   * @memberof SnNavItem
-   */
-  private _renderDot(): HTMLTemplateResult | typeof nothing {
-    if (!this.dot) return nothing;
-    return html`
-      <wa-icon
-        class="target-task-dot"
-        library="my-icons"
-        name="circle-dot-regular-full"
-      ></wa-icon>
     `;
   }
 

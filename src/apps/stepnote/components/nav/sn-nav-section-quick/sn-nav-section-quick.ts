@@ -92,7 +92,7 @@ export class SnNavSectionQuick extends LitElement {
    * @private
    * @memberof SnNavSectionQuick
    */
-  @state() private _bookmarkCount = 0;
+  @state() private _bookmarkCount: number = 0;
 
   /**
    * 未分類件数
@@ -100,31 +100,31 @@ export class SnNavSectionQuick extends LitElement {
    * @private
    * @memberof SnNavSectionQuick
    */
-  @state() private _uncategorizedCount = 0;
+  @state() private _uncategorizedCount: number = 0;
 
   /**
-   * 期限切れタスクの有無
+   * 期限切れタスクの件数
    *
    * @private
    * @memberof SnList
    */
-  @state() private _hasOverdue = false;
+  @state() private _overdueCount: number = 0;
 
   /**
-   * 期限当日タスクの有無
+   * 期限当日タスクの件数
    *
    * @private
    * @memberof SnList
    */
-  @state() private _hasAsap = false;
+  @state() private _asapCount: number = 0;
 
   /**
-   * 期限間近タスクの有無
+   * 期限間近タスクの件数
    *
    * @private
    * @memberof SnList
    */
-  @state() private _hasUpcoming = false;
+  @state() private _upcomingCount: number = 0;
 
   /**
    * Labelテーブルの更新を検知する
@@ -194,25 +194,25 @@ export class SnNavSectionQuick extends LitElement {
     const observable = liveQuery(async () => {
       const [
         quickAccess,
-        hasOverdue,
-        hasAsap,
-        hasUpcoming,
+        overdueCount,
+        asapCount,
+        upcomingCount,
         bookmarkCount,
         uncategorizedCount,
       ] = await Promise.all([
         snDB.quickAccessRepo.getQuickAccess(),
-        snDB.taskStats.hasOverdue(),
-        snDB.taskStats.hasAsap(),
-        snDB.taskStats.hasUpcoming(),
-        snDB.taskStats.countBookmark(),
-        snDB.taskStats.countUncategorized(),
+        snDB.taskStats.getOverdueCount(),
+        snDB.taskStats.getAsapCount(),
+        snDB.taskStats.getUpcomingCount(),
+        snDB.taskStats.getBookmarkCount(),
+        snDB.taskStats.getUncategorizedCount(),
       ]);
 
       return {
         quickAccess,
-        hasOverdue,
-        hasAsap,
-        hasUpcoming,
+        overdueCount,
+        asapCount,
+        upcomingCount,
         bookmarkCount,
         uncategorizedCount,
       };
@@ -221,9 +221,9 @@ export class SnNavSectionQuick extends LitElement {
     this._dbSubscription = observable.subscribe({
       next: async (data) => {
         this._quickAccess = data.quickAccess;
-        this._hasOverdue = data.hasOverdue;
-        this._hasAsap = data.hasAsap;
-        this._hasUpcoming = data.hasUpcoming;
+        this._overdueCount = data.overdueCount;
+        this._asapCount = data.asapCount;
+        this._upcomingCount = data.upcomingCount;
         this._bookmarkCount = data.bookmarkCount;
         this._uncategorizedCount = data.uncategorizedCount;
       },
@@ -266,7 +266,8 @@ export class SnNavSectionQuick extends LitElement {
         key: "isOverdueSelected",
         variants: "danger",
         isSelected: isOn("isOverdueSelected"),
-        hasAlert: this._hasOverdue,
+        hasAlert: this._overdueCount > 0,
+        count: this._overdueCount,
       },
       {
         label: "期限当日",
@@ -274,7 +275,8 @@ export class SnNavSectionQuick extends LitElement {
         key: "isAsapSelected",
         variants: "warning",
         isSelected: isOn("isAsapSelected"),
-        hasAlert: this._hasAsap,
+        hasAlert: this._asapCount > 0,
+        count: this._asapCount,
       },
       {
         label: "期限間近",
@@ -282,7 +284,8 @@ export class SnNavSectionQuick extends LitElement {
         key: "isUpcomingSelected",
         variants: "info",
         isSelected: isOn("isUpcomingSelected"),
-        hasAlert: this._hasUpcoming,
+        hasAlert: this._upcomingCount > 0,
+        count: this._upcomingCount,
       },
       {
         isDivider: true,
@@ -442,7 +445,6 @@ export class SnNavSectionQuick extends LitElement {
             ?selected=${item.isSelected}
             ?viewable=${item.isViewable}
             ?animation=${item.hasAlert}
-            ?dot=${item.hasAlert}
             .count=${item.count ?? 0}
             @click-nav-item=${() => {
               this._toggleSelected(item.key!);
