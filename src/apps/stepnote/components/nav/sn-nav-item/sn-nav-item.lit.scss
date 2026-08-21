@@ -106,14 +106,10 @@ $status-colors: (
   }
 
   .end {
-    margin-inline-start: auto;
-
-    .target-task-dot {
-      color: var(--wa-color-green-60);
-    }
-
+    display: flex;
+    align-items: center;
     wa-badge {
-      font-size: var(--wa-font-size-2xs);
+      font-size: 0.6rem;
     }
   }
 }
