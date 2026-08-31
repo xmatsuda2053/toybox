@@ -21,11 +21,6 @@
     z-index: 10;
     background-color: var(--wa-color-neutral-95);
 
-    .label {
-      margin-bottom: var(--wa-space-2xs);
-      font-size: var(--wa-font-size-s);
-    }
-
     .header {
       display: flex;
       border-block-start: 1px solid var(--wa-color-neutral-80);
@@ -35,8 +30,23 @@
 
       background-color: var(--wa-color-neutral-95);
 
-      wa-icon {
-        font-size: var(--wa-font-size-m);
+      wa-button {
+        wa-icon {
+          font-size: var(--wa-font-size-m);
+
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          wa-icon {
+            transform: translateY(-2px);
+          }
+        }
+        &:active {
+          wa-icon {
+            transform: translateY(0);
+          }
+        }
       }
 
       .md-tab-group {
