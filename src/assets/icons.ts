@@ -69,6 +69,7 @@ import folder_regular_full from "@assets/icons/folder-regular-full.svg?raw";
 import font_awesome_solid_full from "@assets/icons/font-awesome-solid-full.svg?raw";
 import gear_solid_full from "@assets/icons/gear-solid-full.svg?raw";
 import globe_solid_full from "@assets/icons/globe-solid-full.svg?raw";
+import grip_lines_solid_full from "@assets/icons/grip-lines-solid-full.svg?raw";
 import hashtag_solid_full from "@assets/icons/hashtag-solid-full.svg?raw";
 import heading_solid_full from "@assets/icons/heading-solid-full.svg?raw";
 import html5_brands_solid_full from "@assets/icons/html5-brands-solid-full.svg?raw";
@@ -106,6 +107,7 @@ import triangle_exclamation_solid_full from "@assets/icons/triangle-exclamation-
 import upload_solid_full from "@assets/icons/upload-solid-full.svg?raw";
 import web_awesome_solid_full from "@assets/icons/web-awesome-solid-full.svg?raw";
 import xmark_solid_full from "@assets/icons/xmark-solid-full.svg?raw";
+import xmarks_lines_solid_full from "@assets/icons/xmarks-lines-solid-full.svg?raw";
 
 export const icons: Record<string, string> = {
   "algolia-brands-solid-full": algolia_brands_solid_full,
@@ -179,6 +181,7 @@ export const icons: Record<string, string> = {
   "font-awesome-solid-full": font_awesome_solid_full,
   "gear-solid-full": gear_solid_full,
   "globe-solid-full": globe_solid_full,
+  "grip-lines-solid-full": grip_lines_solid_full,
   "hashtag-solid-full": hashtag_solid_full,
   "heading-solid-full": heading_solid_full,
   "html5-brands-solid-full": html5_brands_solid_full,
@@ -216,4 +219,5 @@ export const icons: Record<string, string> = {
   "upload-solid-full": upload_solid_full,
   "web-awesome-solid-full": web_awesome_solid_full,
   "xmark-solid-full": xmark_solid_full,
+  "xmarks-lines-solid-full": xmarks_lines_solid_full,
 };

@@ -323,281 +323,13 @@ export class ThinMarkdownEditor extends LitElement {
     e.stopPropagation();
   };
 
-  /**
-   * Markdownの1行目からレベル1の見出しテキストを取得する。
-   *
-   * @private
-   * @param {string} value
-   * @return {*}  {string}
-   * @memberof ThinMarkdownEditor
-   */
-  private _getLevel1HeaderText(value: string): string {
-    if (!value) return "";
-    const firstLine = value.split(/\r?\n/)[0]?.trim() ?? "";
-
-    if (!firstLine.startsWith("# ")) return "";
-
-    const match = firstLine.match(/^#\s+(.+)$/);
-    return match ? match[1] : "";
-  }
-
-  // -------------------------------------------------------------
-  // Event
-  // -------------------------------------------------------------
-
-  /**
-   * エディタの入力イベントを処理する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleMarkdownInput = (e: Event) => {
-    e.stopPropagation();
-
-    const textarea = e.target as WaTextarea;
-    this.value = textarea.value ?? "";
-    const header1 = this._getLevel1HeaderText(this.value);
-    emit(this, "input", { detail: { header1: header1 } });
-  };
-
-  /**
-   * エディタのキーアップイベントを処理する。
-   *
-   * @private
-   * @param {KeyboardEvent} e
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleMarkdownKeyup = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      const textarea = this.toolbar.field;
-      if (textarea) {
-        const value = textarea.value;
-        const selectionStart = textarea.selectionStart;
-        const isLastLine = !value.slice(selectionStart).includes("\n");
-        if (isLastLine) {
-          emit(this, "keyup-enter-last-line");
-        }
-      }
-    }
-  };
-
-  /**
-   * HTMLプレビュー画面に切り替える。
-   *
-   * @private
-   * @memberof MarkdownEditor
-   */
-  private _handleChangePreviewModeClick = () => {
-    this.isEditMode = false;
-    emit(this, "md-mode-change-preview");
-  };
-
-  /**
-   * 編集に切り替え。
-   *
-   * @private
-   * @memberof MarkdownEditor
-   */
-  private _handleChangeEditModeClick = () => {
-    this.isEditMode = true;
-    emit(this, "md-mode-change-edit");
-  };
-
-  /**
-   * コールアウトタグを追加する。
-   *
-   * @private
-   * @param {("info" | "check" | "gear" | "warn" | "alert")} type
-   * @return {*}
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleAddCalloutClick = (
-    type: "info" | "check" | "gear" | "warn" | "alert",
-  ): void => {
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-
-    formatCalloutMarkdown(nativeTextarea, type);
-
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  };
-
-  /**
-   * 文字色を追加する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleAddColorClick = () => {
-    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-    formatColorMarkdown(nativeTextarea);
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  };
-
-  /**
-   * テーブル追加ダイアログを表示する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleOpenTableDialogClick = () => {
-    this.tableDialog.open = true;
-  };
-
-  /**
-   * テーブルを追加する
-   *
-   * @private
-   * @memberof MarkdownEditor
-   */
-  private _handleAddTableClick = () => {
-    const inputs = this.tableDialog.getElementsByTagName("wa-input");
-
-    const row = Number(inputs[0].value);
-    const col = Number(inputs[1].value);
-
-    /**
-     * テーブルMarkdownを作成するためのヘルパー関数
-     *
-     * @param {number} c - セル数
-     * @param {string} v - セルの値
-     * @return {*}  {string}
-     */
-    const createRow = (c: number, v: string): string => {
-      return `| ${Array(c).fill(v).join(" | ")} |`;
-    };
-
-    const headerRow = createRow(col, "Header");
-    const separatorRow = createRow(col, "------");
-    const dataRow = createRow(col, "Cell  ");
-    const dataRows = Array(row).fill(dataRow).join("\n");
-
-    const tableTemplate = `${headerRow}\n${separatorRow}\n${dataRows}\n`;
-
-    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-
-    // 挿入処理
-    const start = nativeTextarea.selectionStart;
-    const end = nativeTextarea.selectionEnd;
-    const oldText = nativeTextarea.value;
-
-    nativeTextarea.value =
-      oldText.substring(0, start) + tableTemplate + oldText.substring(end);
-
-    // カーソルを挿入したテーブルの直後に移動
-    nativeTextarea.selectionStart = nativeTextarea.selectionEnd =
-      start + tableTemplate.length;
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-
-    this.tableDialog.open = false;
-  };
-
-  /**
-   * テキストコピーエリアを挿入する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleAddTextCopyAreaClick = () => {
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-    formatTextCopyAreaMarkdown(nativeTextarea);
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  };
-
-  /**
-   * テキストコピー文字列を挿入する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleAddTextCopyLineClick = () => {
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-    formatTextCopyLineMarkdown(nativeTextarea);
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  };
-
-  /**
-   * カーソル位置にタイムスタンプを挿入する。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleAddTimeStampClick = () => {
-    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
-    const nativeTextarea = this.toolbar.field;
-    if (!nativeTextarea) return;
-
-    nativeTextarea.focus();
-    addTimeStamp(nativeTextarea);
-
-    // 内容の変更を通知
-    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
-  };
-
-  /**
-   * 削除ボタンクリック時のハンドラ。
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleDeleteClick = () => {
-    if (this.deletable) this.deleteDialog.open = true;
-  };
-
-  /**
-   * 削除承認時のハンドラ。
-   *
-   * @private
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleDeleteConfirm = () => {
-    emit(this, "markdown-delete");
-    this.deleteDialog.open = false;
-  };
-
-  /**
-   * Markdownの値をクリップボードにコピーする。
-   *
-   * @private
-   * @param {Event} e
-   * @memberof ThinMarkdownEditor
-   */
-  private _handleCopyRawClick = async (e: Event) => {
-    e.preventDefault();
-    try {
-      const raw = this.value;
-      await navigator.clipboard.writeText(raw);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
   // -------------------------------------------------------------
   // Rendering
   // -------------------------------------------------------------
+
+  // -------------------------------
+  // root
+  // -------------------------------
 
   /**
    * markdownエディタをレンダリングします。
@@ -638,6 +370,10 @@ export class ThinMarkdownEditor extends LitElement {
     </div>`;
   }
 
+  // -------------------------------
+  // Preview
+  // -------------------------------
+
   /**
    * プレビューボタンをレンダリングします。
    *
@@ -662,6 +398,21 @@ export class ThinMarkdownEditor extends LitElement {
       </wa-button>
     </div>`;
   }
+
+  /**
+   * HTMLプレビュー画面に切り替える。
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _handleChangePreviewModeClick = () => {
+    this.isEditMode = false;
+    emit(this, "md-mode-change-preview");
+  };
+
+  // -------------------------------
+  // Editor
+  // -------------------------------
 
   /**
    * 編集ボタンをレンダリングします。
@@ -689,6 +440,21 @@ export class ThinMarkdownEditor extends LitElement {
   }
 
   /**
+   * 編集に切り替え。
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _handleChangeEditModeClick = () => {
+    this.isEditMode = true;
+    emit(this, "md-mode-change-edit");
+  };
+
+  // -------------------------------
+  // Preview Menu
+  // -------------------------------
+
+  /**
    * プレビュー時のメニュー機能をレンダリングします。
    *
    * @private
@@ -714,6 +480,27 @@ export class ThinMarkdownEditor extends LitElement {
       </div>
     </div>`;
   }
+
+  /**
+   * Markdownの値をクリップボードにコピーする。
+   *
+   * @private
+   * @param {Event} e
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleCopyRawClick = async (e: Event) => {
+    e.preventDefault();
+    try {
+      const raw = this.value;
+      await navigator.clipboard.writeText(raw);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  // -------------------------------
+  // Editor Menu
+  // -------------------------------
 
   /**
    * 編集時のメニュー機能をレンダリングします。
@@ -769,6 +556,10 @@ export class ThinMarkdownEditor extends LitElement {
       ${this._renderDeleteDialog()}
     </div>`;
   }
+
+  // -------------------------------
+  // Extension Callout
+  // -------------------------------
 
   /**
    * コールアウト（補足説明）の選択サブメニューを持つドロップダウンアイテムをレンダリングします。
@@ -836,6 +627,31 @@ export class ThinMarkdownEditor extends LitElement {
   }
 
   /**
+   * コールアウトタグを追加する。
+   *
+   * @private
+   * @param {("info" | "check" | "gear" | "warn" | "alert")} type
+   * @return {*}
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddCalloutClick = (
+    type: "info" | "check" | "gear" | "warn" | "alert",
+  ): void => {
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+
+    formatCalloutMarkdown(nativeTextarea, type);
+
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // -------------------------------
+  // Extension Color
+  // -------------------------------
+
+  /**
    * テキストの配色を変更するためのドロップダウンアイテムをレンダリングします。
    * * クリック時にテキストの色付け処理（`_addColorText`）を呼び出します。
    *
@@ -849,6 +665,28 @@ export class ThinMarkdownEditor extends LitElement {
       <span>Color</span>
     </wa-dropdown-item>`;
   }
+
+  /**
+   * 文字色を追加する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddColorClick = () => {
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    formatColorMarkdown(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // -------------------------------
+  // Extension Table
+  // -------------------------------
 
   /**
    * テーブル（表）を挿入するためのドロップダウンアイテムをレンダリングします。
@@ -867,138 +705,15 @@ export class ThinMarkdownEditor extends LitElement {
   }
 
   /**
-   * テキストコピーエリアを挿入するためのドロップダウンアイテムをレンダリングします。
+   * テーブル追加ダイアログを表示する。
    *
    * @private
-   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
    * @memberof ThinMarkdownEditor
    */
-  private _renderTextCopyAreaButton(): HTMLTemplateResult {
-    return html`<wa-dropdown-item @click=${this._handleAddTextCopyAreaClick}>
-      <wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon>
-      <span>TextCopyArea</span>
-    </wa-dropdown-item>`;
-  }
+  private _handleOpenTableDialogClick = () => {
+    this.tableDialog.open = true;
+  };
 
-  /**
-   * テキストコピー文字列を挿入するためのドロップダウンアイテムをレンダリングします。
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof ThinMarkdownEditor
-   */
-  private _renderTextLineButton(): HTMLTemplateResult {
-    return html`<wa-dropdown-item @click=${this._handleAddTextCopyLineClick}>
-      <wa-icon library="my-icons" name="clipboard-regular-full"></wa-icon>
-      <span>TextCopyLine</span>
-    </wa-dropdown-item>`;
-  }
-
-  /**
-   * タイムスタンプを挿入するためのドロップダウンアイテムをレンダリングします。
-   *
-   * @private
-   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
-   * @memberof ThinMarkdownEditor
-   */
-  private _renderTimeStampButton(): HTMLTemplateResult {
-    return html`<wa-dropdown-item @click=${this._handleAddTimeStampClick}>
-      <wa-icon library="my-icons" name="clock-regular-full"></wa-icon>
-      <span>TimeStamp</span>
-    </wa-dropdown-item>`;
-  }
-
-  /**
-   * 削除ボタンをレンダリングします。
-   *
-   * @private
-   * @returns {HTMLTemplateResult | typeof nothing}
-   * @memberof ThinMarkdownEditor
-   */
-  private _renderDeleteButton(): HTMLTemplateResult | typeof nothing {
-    if (!this.deletable) return nothing;
-    return html`<wa-divider></wa-divider>
-      <wa-dropdown-item variant="danger" @click=${this._handleDeleteClick}>
-        <wa-icon library="my-icons" name="trash-solid-full"></wa-icon>
-        <span>Delete</span>
-      </wa-dropdown-item>`;
-  }
-
-  /**
-   * 削除確認ダイアログをレンダリングします。
-   *
-   * @private
-   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
-   * @memberof ThinMarkdownEditor
-   */
-  private _renderDeleteDialog(): HTMLTemplateResult | typeof nothing {
-    if (!this.deletable) return nothing;
-    return html` <wa-dialog id="delete-dialog" label="Delete Markdown?">
-      <div class="delete-confirmation">この操作は取り消せません。</div>
-      <wa-button
-        slot="footer"
-        variant="danger"
-        appearance="accent"
-        size="small"
-        @click=${this._handleDeleteConfirm}
-      >
-        削除
-      </wa-button>
-      <wa-button
-        slot="footer"
-        variant="neutral"
-        appearance="filled-outlined"
-        size="small"
-        data-dialog="close"
-      >
-        キャンセル
-      </wa-button>
-    </wa-dialog>`;
-  }
-
-  /**
-   * Markdownの編集領域をレンダリングします。
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof ThinMarkdownEditor
-   */
-  private _renderMarkdownEditor(): HTMLTemplateResult {
-    const baseClassMap = classMap({
-      hidden: !this.isEditMode,
-    });
-
-    return html` <wa-textarea
-      id="markdown-editor"
-      class=${baseClassMap}
-      size="small"
-      resize="auto"
-      spellcheck="false"
-      placeholder="Markdown enabled..."
-      .value=${this.value}
-      @input=${this._handleMarkdownInput}
-      @keyup=${this._handleMarkdownKeyup}
-    ></wa-textarea>`;
-  }
-
-  /**
-   * MarkdownのHTML表示領域をレンダリングします。
-   *
-   * @private
-   * @return {*}  {HTMLTemplateResult}
-   * @memberof ThinMarkdownEditor
-   */
-  private _renderMarkdownBody(): HTMLTemplateResult {
-    const baseClassMap = classMap({
-      "markdown-body": true,
-      hidden: this.isEditMode,
-    });
-
-    return html` <div
-      class=${baseClassMap}
-      .innerHTML=${this.previewHtml}
-    ></div>`;
-  }
   /**
    * テーブル追加ダイアログをレンダリングします。
    *
@@ -1043,5 +758,342 @@ export class ThinMarkdownEditor extends LitElement {
         Add
       </wa-button>
     </wa-dialog>`;
+  }
+
+  /**
+   * テーブルを追加する
+   *
+   * @private
+   * @memberof MarkdownEditor
+   */
+  private _handleAddTableClick = () => {
+    const inputs = this.tableDialog.getElementsByTagName("wa-input");
+
+    const row = Number(inputs[0].value);
+    const col = Number(inputs[1].value);
+
+    /**
+     * テーブルMarkdownを作成するためのヘルパー関数
+     *
+     * @param {number} c - セル数
+     * @param {string} v - セルの値
+     * @return {*}  {string}
+     */
+    const createRow = (c: number, v: string): string => {
+      return `| ${Array(c).fill(v).join(" | ")} |`;
+    };
+
+    const headerRow = createRow(col, "Header");
+    const separatorRow = createRow(col, "------");
+    const dataRow = createRow(col, "Cell  ");
+    const dataRows = Array(row).fill(dataRow).join("\n");
+
+    const tableTemplate = `${headerRow}\n${separatorRow}\n${dataRows}\n`;
+
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+
+    // 挿入処理
+    const start = nativeTextarea.selectionStart;
+    const end = nativeTextarea.selectionEnd;
+    const oldText = nativeTextarea.value;
+
+    nativeTextarea.value =
+      oldText.substring(0, start) + tableTemplate + oldText.substring(end);
+
+    // カーソルを挿入したテーブルの直後に移動
+    nativeTextarea.selectionStart = nativeTextarea.selectionEnd =
+      start + tableTemplate.length;
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+
+    this.tableDialog.open = false;
+  };
+
+  // -------------------------------
+  // Extension TextCopyArea
+  // -------------------------------
+
+  /**
+   * テキストコピーエリアを挿入するためのドロップダウンアイテムをレンダリングします。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTextCopyAreaButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._handleAddTextCopyAreaClick}>
+      <wa-icon library="my-icons" name="grip-lines-solid-full"></wa-icon>
+      <span>TextCopyArea</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * テキストコピーエリアを挿入する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddTextCopyAreaClick = () => {
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    formatTextCopyAreaMarkdown(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // -------------------------------
+  // Extension TextCopyLine
+  // -------------------------------
+
+  /**
+   * テキストコピー文字列を挿入するためのドロップダウンアイテムをレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTextLineButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._handleAddTextCopyLineClick}>
+      <wa-icon library="my-icons" name="xmarks-lines-solid-full"></wa-icon>
+      <span>TextCopyLine</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * テキストコピー文字列を挿入する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddTextCopyLineClick = () => {
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    formatTextCopyLineMarkdown(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // -------------------------------
+  // Extension TimeStamp
+  // -------------------------------
+
+  /**
+   * タイムスタンプを挿入するためのドロップダウンアイテムをレンダリングします。
+   *
+   * @private
+   * @returns {HTMLTemplateResult} レンダリングされるドロップダウンアイテムのテンプレート
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderTimeStampButton(): HTMLTemplateResult {
+    return html`<wa-dropdown-item @click=${this._handleAddTimeStampClick}>
+      <wa-icon library="my-icons" name="clock-regular-full"></wa-icon>
+      <span>TimeStamp</span>
+    </wa-dropdown-item>`;
+  }
+
+  /**
+   * カーソル位置にタイムスタンプを挿入する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleAddTimeStampClick = () => {
+    // textarea を取得 (firstUpdated で toolbar.field にセットされている)
+    const nativeTextarea = this.toolbar.field;
+    if (!nativeTextarea) return;
+
+    nativeTextarea.focus();
+    addTimeStamp(nativeTextarea);
+
+    // 内容の変更を通知
+    nativeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // -------------------------------
+  // Extension Delete
+  // -------------------------------
+  /**
+   * 削除ボタンをレンダリングします。
+   *
+   * @private
+   * @returns {HTMLTemplateResult | typeof nothing}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderDeleteButton(): HTMLTemplateResult | typeof nothing {
+    if (!this.deletable) return nothing;
+    return html`<wa-divider></wa-divider>
+      <wa-dropdown-item variant="danger" @click=${this._handleDeleteClick}>
+        <wa-icon library="my-icons" name="trash-solid-full"></wa-icon>
+        <span>Delete</span>
+      </wa-dropdown-item>`;
+  }
+
+  /**
+   * 削除ボタンクリック時のハンドラ。
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleDeleteClick = () => {
+    if (this.deletable) this.deleteDialog.open = true;
+  };
+
+  /**
+   * 削除確認ダイアログをレンダリングします。
+   *
+   * @private
+   * @return {*}  {(HTMLTemplateResult | typeof nothing)}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderDeleteDialog(): HTMLTemplateResult | typeof nothing {
+    if (!this.deletable) return nothing;
+    return html` <wa-dialog id="delete-dialog" label="Delete Markdown?">
+      <div class="delete-confirmation">この操作は取り消せません。</div>
+      <wa-button
+        slot="footer"
+        variant="danger"
+        appearance="accent"
+        size="small"
+        @click=${this._handleDeleteConfirm}
+      >
+        削除
+      </wa-button>
+      <wa-button
+        slot="footer"
+        variant="neutral"
+        appearance="filled-outlined"
+        size="small"
+        data-dialog="close"
+      >
+        キャンセル
+      </wa-button>
+    </wa-dialog>`;
+  }
+
+  /**
+   * 削除承認時のハンドラ。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleDeleteConfirm = () => {
+    emit(this, "markdown-delete");
+    this.deleteDialog.open = false;
+  };
+
+  // -------------------------------
+  // Editor
+  // -------------------------------
+
+  /**
+   * Markdownの編集領域をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderMarkdownEditor(): HTMLTemplateResult {
+    const baseClassMap = classMap({
+      hidden: !this.isEditMode,
+    });
+
+    return html` <wa-textarea
+      id="markdown-editor"
+      class=${baseClassMap}
+      size="small"
+      resize="auto"
+      spellcheck="false"
+      placeholder="Markdown enabled..."
+      .value=${this.value}
+      @input=${this._handleMarkdownInput}
+      @keyup=${this._handleMarkdownKeyup}
+    ></wa-textarea>`;
+  }
+
+  /**
+   * エディタの入力イベントを処理する。
+   *
+   * @private
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleMarkdownInput = (e: Event) => {
+    e.stopPropagation();
+
+    const textarea = e.target as WaTextarea;
+    this.value = textarea.value ?? "";
+    const header1 = this._getLevel1HeaderText(this.value);
+    emit(this, "input", { detail: { header1: header1 } });
+  };
+
+  /**
+   * Markdownの1行目からレベル1の見出しテキストを取得する。
+   *
+   * @private
+   * @param {string} value
+   * @return {*}  {string}
+   * @memberof ThinMarkdownEditor
+   */
+  private _getLevel1HeaderText(value: string): string {
+    if (!value) return "";
+    const firstLine = value.split(/\r?\n/)[0]?.trim() ?? "";
+
+    if (!firstLine.startsWith("# ")) return "";
+
+    const match = firstLine.match(/^#\s+(.+)$/);
+    return match ? match[1] : "";
+  }
+
+  /**
+   * エディタのキーアップイベントを処理する。
+   *
+   * @private
+   * @param {KeyboardEvent} e
+   * @memberof ThinMarkdownEditor
+   */
+  private _handleMarkdownKeyup = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const textarea = this.toolbar.field;
+      if (textarea) {
+        const value = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const isLastLine = !value.slice(selectionStart).includes("\n");
+        if (isLastLine) {
+          emit(this, "keyup-enter-last-line");
+        }
+      }
+    }
+  };
+
+  // -------------------------------
+  // Preview
+  // -------------------------------
+
+  /**
+   * MarkdownのHTML表示領域をレンダリングします。
+   *
+   * @private
+   * @return {*}  {HTMLTemplateResult}
+   * @memberof ThinMarkdownEditor
+   */
+  private _renderMarkdownBody(): HTMLTemplateResult {
+    const baseClassMap = classMap({
+      "markdown-body": true,
+      hidden: this.isEditMode,
+    });
+
+    return html` <div
+      class=${baseClassMap}
+      .innerHTML=${this.previewHtml}
+    ></div>`;
   }
 }
