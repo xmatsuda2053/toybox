@@ -1,49 +1,51 @@
 import { TokenizerAndRendererExtension, Tokens } from "marked";
-import "@/common/thin-markdown-editor/extension-tag/tmd-text-copy-line/tmd-text-copy-line";
+import "@/common/thin-markdown-editor/extension/id/tmd-id";
 
 /**
  * markdownパターン
  */
-const regExp: RegExp = /^\+\{([^}\n]+)\}\+/;
+const regExp: RegExp = new RegExp(/^(?<!\d)#\{([1-9][0-9]*)\}\{([^}\n]+)\}/);
 
 /**
- * テキストコピー文字列のインターフェースです。
- * `+{fuzz}+`
+ * IDタグのインターフェースです。
+ * `#{123}`
  *
  * @export
- * @interface TextCopyLineToken
+ * @interface IdTagToken
  * @extends {Tokens.Generic}
  */
-export interface TextCopyLineToken extends Tokens.Generic {
-  type: "TextCopyLine";
+export interface IdTagToken extends Tokens.Generic {
+  type: "IdTag";
   raw: string;
+  id: string; // 抽出した数値（1, 10, 200 など）
   text: string; // 抽出したテキスト
 }
 
 /**
- * marked.js用のテキストコピー文字列タグ拡張機能です。
+ * marked.js用のIDタグ拡張機能です。
  */
-export const TextCopyLineExtension: TokenizerAndRendererExtension = {
-  name: "TextCopyLine",
+export const Extension: TokenizerAndRendererExtension = {
+  name: "IdTag",
   level: "inline",
   start(text: string) {
     const match = regExp.exec(text);
     return match ? match.index : undefined;
   },
-  tokenizer(text: string): TextCopyLineToken | undefined {
+  tokenizer(text: string): IdTagToken | undefined {
     const match = regExp.exec(text);
     if (match) {
       return {
-        type: "TextCopyLine",
+        type: "IdTag",
         raw: match[0],
-        text: match[1],
+        id: match[1],
+        text: match[2],
       };
     }
     return undefined;
   },
   renderer(token: Tokens.Generic): string {
-    const t = token as TextCopyLineToken;
-    return `<tmd-text-copy-line copyText="${t.text}">${t.text}</tmd-text-copy-line>`;
+    const t = token as IdTagToken;
+    return `<tmd-id taskId="${t.id}">${t.text}</tmd-id>`;
   },
 };
 
@@ -61,8 +63,8 @@ export const formatMarkdown = (textarea: HTMLTextAreaElement): void => {
   const selectedText = oldText.substring(start, end);
 
   // 新しい文字列を作成
-  const textStart = "+{";
-  const textEnd = "}+";
+  const textStart = "#{id}{";
+  const textEnd = "}";
   const newText =
     oldText.substring(0, start) +
     textStart +

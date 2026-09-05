@@ -20,25 +20,39 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 import type WaTextarea from "@awesome.me/webawesome/dist/components/textarea/textarea.js";
 import type WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 
-// Internal Shared (Extensions & Utils)
-import { IdTagExtension } from "./extension/id-tag";
+// Extensions
+
+// callout
 import {
-  ColorTagExtension,
-  formatMarkdown as formatColorMarkdown,
-} from "./extension/color-tag";
-import {
-  CalloutTagExtension,
+  Extension as CalloutExtension,
   formatMarkdown as formatCalloutMarkdown,
-} from "./extension/callout-tag";
+} from "./extension/callout/callout-extension";
+
+// color
 import {
-  TextCopyAreaExtension,
+  Extension as ColorExtension,
+  formatMarkdown as formatColorMarkdown,
+} from "./extension/color/color-extension";
+
+// copy-area
+import {
+  Extension as CopyAreaExtension,
   formatMarkdown as formatTextCopyAreaMarkdown,
-} from "./extension/text-copy-area";
+} from "./extension/copy-area/copy-area-extension";
+
+// copy-area
 import {
-  TextCopyLineExtension,
+  Extension as CopyLineExtension,
   formatMarkdown as formatTextCopyLineMarkdown,
-} from "./extension/text-copy-line";
-import { addTimeStamp } from "./extension/timestamp";
+} from "./extension/copy-line/copy-line-extension";
+
+// ID
+import { Extension as IdExtension } from "./extension/id/id-extension";
+
+/// Timestamp
+import { addTimeStamp } from "./extension/timestamp/timestamp-extension";
+
+// Utils
 import { emit } from "@utils/EventUtils";
 
 // Styles
@@ -47,7 +61,7 @@ import githubMarkdownStyles from "github-markdown-css/github-markdown-light.css?
 import styles from "./thin-markdown-editor.lit.scss?inline";
 
 // Custom Tag
-import "@common/thin-markdown-editor/extension-tag/tmd-link/tmd-link";
+import "@/common/thin-markdown-editor/extension/link/tmd-link";
 
 // --- Configuration & Initialization ---
 marked.setOptions({
@@ -222,11 +236,11 @@ export class ThinMarkdownEditor extends LitElement {
         },
       },
       extensions: [
-        IdTagExtension,
-        ColorTagExtension,
-        CalloutTagExtension,
-        TextCopyAreaExtension,
-        TextCopyLineExtension,
+        IdExtension,
+        ColorExtension,
+        CalloutExtension,
+        CopyAreaExtension,
+        CopyLineExtension,
       ],
     });
   }
@@ -827,8 +841,8 @@ export class ThinMarkdownEditor extends LitElement {
    */
   private _renderTextCopyAreaButton(): HTMLTemplateResult {
     return html`<wa-dropdown-item @click=${this._handleAddTextCopyAreaClick}>
-      <wa-icon library="my-icons" name="grip-lines-solid-full"></wa-icon>
-      <span>TextCopyArea</span>
+      <wa-icon library="my-icons" name="xmarks-lines-solid-full"></wa-icon>
+      <span>CopyArea</span>
     </wa-dropdown-item>`;
   }
 
@@ -862,8 +876,8 @@ export class ThinMarkdownEditor extends LitElement {
    */
   private _renderTextLineButton(): HTMLTemplateResult {
     return html`<wa-dropdown-item @click=${this._handleAddTextCopyLineClick}>
-      <wa-icon library="my-icons" name="xmarks-lines-solid-full"></wa-icon>
-      <span>TextCopyLine</span>
+      <wa-icon library="my-icons" name="grip-lines-solid-full"></wa-icon>
+      <span>CopyLine</span>
     </wa-dropdown-item>`;
   }
 

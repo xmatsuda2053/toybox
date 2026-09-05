@@ -9,18 +9,18 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@common/thin-markdown-editor/extension-tag/tmd-text-copy-line/tmd-text-copy-line.lit.scss?inline";
+import styles from "@common/thin-markdown-editor/extension/copy-line/tmd-copy-line.lit.scss?inline";
 
 // Initializations
 setBasePath("/");
 
-@customElement("tmd-text-copy-line")
-export class TmdTextCopyLine extends LitElement {
+@customElement("tmd-copy-line")
+export class TmdCopyLine extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof TmdTextCopyLine
+   * @memberof TmdCopyLine
    */
   static styles = [unsafeCSS(styles)];
 
@@ -28,7 +28,7 @@ export class TmdTextCopyLine extends LitElement {
    * コピー用のテキスト
    *
    * @type {string}
-   * @memberof TmdTextCopyLine
+   * @memberof TmdCopyLine
    */
   @property({ type: String }) copyText: string = "";
 
@@ -41,7 +41,7 @@ export class TmdTextCopyLine extends LitElement {
    *
    * @private
    * @param {Event} e
-   * @memberof TmdTextCopyLine
+   * @memberof TmdCopyLine
    */
   private _handleClick = async (e: Event) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export class TmdTextCopyLine extends LitElement {
    *
    * @protected
    * @return {*}  {HTMLTemplateResult}
-   * @memberof TmdTextCopyLine
+   * @memberof TmdCopyLine
    */
   protected render(): HTMLTemplateResult {
     return html`<span class="text-copy-line" @click=${this._handleClick}>

@@ -3,7 +3,7 @@ import { TokenizerAndRendererExtension, Tokens } from "marked";
 /**
  * Calloutタグのトークンインターフェース
  */
-export interface CalloutTagToken extends Tokens.Generic {
+interface Token extends Tokens.Generic {
   type: "CalloutTag";
   raw: string;
   variant: string;
@@ -37,13 +37,13 @@ const iconMap: Record<string, string> = {
 /**
  * marked.js用のCalloutタグ拡張機能
  */
-export const CalloutTagExtension: TokenizerAndRendererExtension = {
+export const Extension: TokenizerAndRendererExtension = {
   name: "CalloutTag",
   level: "block",
   start(text: string) {
     return text.indexOf("///");
   },
-  tokenizer(text: string): CalloutTagToken | undefined {
+  tokenizer(text: string): Token | undefined {
     // 構文: /// {type}\n{text}\n///
     // 行頭からのマッチングを保証するため ^ を使用し、マルチライン的な動作を期待するが、
     // blockTokenizerはブロックの開始位置からtextを渡すため、そのまま実行する。
@@ -54,7 +54,7 @@ export const CalloutTagExtension: TokenizerAndRendererExtension = {
       const icon = iconMap[variant];
       const content = match[3];
 
-      const token: CalloutTagToken = {
+      const token: Token = {
         type: "CalloutTag",
         raw: match[0],
         variant: variant,
@@ -71,7 +71,7 @@ export const CalloutTagExtension: TokenizerAndRendererExtension = {
     return undefined;
   },
   renderer(token: Tokens.Generic): string {
-    const t = token as CalloutTagToken;
+    const t = token as Token;
     const icon = `<wa-icon library="my-icons" name="${t.icon}" slot="icon"></wa-icon>`;
     // 内側のトークンをパースしてHTML化
     // this.parser.parse はブロック要素をパースする

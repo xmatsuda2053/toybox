@@ -9,7 +9,7 @@ const regExp: RegExp = /^\/([a-zA-Z0-9#]+):([^/\n]+)\//;
 /**
  * カラータグのトークンインターフェース
  */
-export interface ColorTagToken extends Tokens.Generic {
+export interface Token extends Tokens.Generic {
   type: "ColorTag";
   raw: string;
   color: string;
@@ -20,16 +20,16 @@ export interface ColorTagToken extends Tokens.Generic {
 /**
  * marked.js用のカラータグ拡張機能
  */
-export const ColorTagExtension: TokenizerAndRendererExtension = {
+export const Extension: TokenizerAndRendererExtension = {
   name: "ColorTag",
   level: "inline",
   start(text: string) {
     return text.indexOf("/");
   },
-  tokenizer(text: string): ColorTagToken | undefined {
+  tokenizer(text: string): Token | undefined {
     const match = regExp.exec(text);
     if (match) {
-      const token: ColorTagToken = {
+      const token: Token = {
         type: "ColorTag",
         raw: match[0],
         color: match[1],
@@ -43,7 +43,7 @@ export const ColorTagExtension: TokenizerAndRendererExtension = {
     return undefined;
   },
   renderer(token: Tokens.Generic): string {
-    const t = token as ColorTagToken;
+    const t = token as Token;
     // 内側のトークンをパースしてHTML化
     return `<span style="color:${t.color}">${this.parser.parseInline(t.tokens || [])}</span>`;
   },

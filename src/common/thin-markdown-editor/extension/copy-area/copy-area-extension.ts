@@ -1,29 +1,29 @@
 import { TokenizerAndRendererExtension, Tokens } from "marked";
-import "@/common/thin-markdown-editor/extension-tag/tmd-text-copy-area/tmd-text-copy-area";
+import "@/common/thin-markdown-editor/extension/copy-area/tmd-copy-area";
 
 /**
- * TextCopyAreaのトークンインターフェース
+ * TmdCopyAreaのトークンインターフェース
  */
-export interface TextCopyAreaToken extends Tokens.Generic {
-  type: "TextCopyArea";
+export interface Token extends Tokens.Generic {
+  type: "TmdCopyArea";
   raw: string;
   text: string;
 }
 
 /**
- * marked.js用のTextCopyAreaタグ拡張機能
+ * marked.js用のTmdCopyAreaタグ拡張機能
  */
-export const TextCopyAreaExtension: TokenizerAndRendererExtension = {
-  name: "TextCopyArea",
+export const Extension: TokenizerAndRendererExtension = {
+  name: "TmdCopyArea",
   level: "block",
   start(text: string) {
     return text.indexOf("+++");
   },
-  tokenizer(text: string): TextCopyAreaToken | undefined {
+  tokenizer(text: string): Token | undefined {
     const match = /^(\+{3,})\s*\n([\s\S]*?)\n\1(?:\n|$)/.exec(text);
     if (match) {
       return {
-        type: "TextCopyArea",
+        type: "TmdCopyArea",
         raw: match[0],
         text: match[2],
       };
@@ -31,8 +31,14 @@ export const TextCopyAreaExtension: TokenizerAndRendererExtension = {
     return undefined;
   },
   renderer(token: Tokens.Generic): string {
-    const t = token as TextCopyAreaToken;
-    return `<tmd-text-copy-area copyText="${t.text}">${t.text}</tmd-text-copy-area>`;
+    const t = token as Token;
+    const texts = t.text.split("\n");
+    if (texts.length > 3) {
+      const firstThreeLines = texts.slice(0, 3).join("\n") + "\n...";
+      return `<tmd-copy-area copyText="${t.text}">${firstThreeLines}</tmd-copy-area>`;
+    } else {
+      return `<tmd-copy-area copyText="${t.text}">${t.text}</tmd-copy-area>`;
+    }
   },
 };
 
