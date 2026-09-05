@@ -9,7 +9,7 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@common/thin-markdown-editor/extension-tag/tmd-link/tmd-link.lit.scss?inline";
+import styles from "@common/thin-markdown-editor/extension/link/tmd-link.lit.scss?inline";
 
 // Initializations
 setBasePath("/");

@@ -9,18 +9,18 @@ import { setBasePath } from "@awesome.me/webawesome/dist/utilities/base-path.js"
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@common/thin-markdown-editor/extension-tag/tmd-text-copy-area/tmd-text-copy-area.lit.scss?inline";
+import styles from "@common/thin-markdown-editor/extension/copy-area/tmd-copy-area.lit.scss?inline";
 
 // Initializations
 setBasePath("/");
 
-@customElement("tmd-text-copy-area")
-export class TmdTextCopyArea extends LitElement {
+@customElement("tmd-copy-area")
+export class TmdCopyArea extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof TmdTextCopyArea
+   * @memberof TmdCopyArea
    */
   static styles = [unsafeCSS(styles)];
 
@@ -28,7 +28,7 @@ export class TmdTextCopyArea extends LitElement {
    * コピー用のテキスト
    *
    * @type {string}
-   * @memberof TmdTextCopyArea
+   * @memberof TmdCopyArea
    */
   @property({ type: String }) copyText: string = "";
 
@@ -41,7 +41,7 @@ export class TmdTextCopyArea extends LitElement {
    *
    * @private
    * @param {Event} e
-   * @memberof TmdTextCopyArea
+   * @memberof TmdCopyArea
    */
   private _handleClick = async (e: Event) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export class TmdTextCopyArea extends LitElement {
    *
    * @protected
    * @return {*}  {HTMLTemplateResult}
-   * @memberof TmdTextCopyArea
+   * @memberof TmdCopyArea
    */
   protected render(): HTMLTemplateResult {
     return html`<div class="text-copy-area" @click=${this._handleClick}>

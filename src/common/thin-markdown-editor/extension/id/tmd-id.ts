@@ -12,18 +12,18 @@ import { emit } from "@utils/EventUtils";
 
 // Styles
 import "@awesome.me/webawesome/dist/styles/webawesome.css";
-import styles from "@common/thin-markdown-editor/extension-tag/tmd-id-tag/tmd-id-tag.lit.scss?inline";
+import styles from "@common/thin-markdown-editor/extension/id/tmd-id.lit.scss?inline";
 
 // Initializations
 setBasePath("/");
 
-@customElement("tmd-id-tag")
-export class TmdIdTag extends LitElement {
+@customElement("tmd-id")
+export class TmdId extends LitElement {
   /**
    * スタイルシートを適用
    *
    * @static
-   * @memberof TmdIdTag
+   * @memberof TmdId
    */
   static styles = [unsafeCSS(styles)];
 
@@ -31,7 +31,7 @@ export class TmdIdTag extends LitElement {
    * 遷移先のタスクID
    *
    * @type {number}
-   * @memberof TmdIdTag
+   * @memberof TmdId
    */
   @property({ type: Number }) taskId: number = 0;
 
@@ -44,7 +44,7 @@ export class TmdIdTag extends LitElement {
    *
    * @private
    * @param {Event} e
-   * @memberof TmdIdTag
+   * @memberof TmdId
    */
   private _handleClick = async (e: Event) => {
     e.preventDefault();
@@ -62,7 +62,7 @@ export class TmdIdTag extends LitElement {
    *
    * @protected
    * @return {*}  {HTMLTemplateResult}
-   * @memberof TmdIdTag
+   * @memberof TmdId
    */
   protected render(): HTMLTemplateResult {
     return html`<span class="id-tag" @click=${this._handleClick}>
